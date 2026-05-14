@@ -258,4 +258,27 @@ router.post('/sync', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+/* ════════════════════════════════════════════════════════════
+   PROXY MERCADOLIBRE — evita bloqueo CORS/403 desde browser
+   GET /api/ml-search?q=...&limit=...&condition=...
+   ════════════════════════════════════════════════════════════ */
+router.get('/ml-search', async (req, res) => {
+    try {
+        const { q, limit = '20', condition } = req.query;
+        if (!q) return res.status(400).json({ error: 'Falta parámetro q' });
+
+        let url = `https://api.mercadolibre.com/sites/MLC/search?q=${encodeURIComponent(q)}&limit=${limit}`;
+        if (condition) url += `&condition=${condition}`;
+
+        const response = await fetch(url, {
+            headers: { 'User-Agent': 'VALTRAX-CRM/1.0' }
+        });
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const data = await response.json();
+        res.json(data);
+    } catch (e) {
+        res.status(502).json({ error: e.message });
+    }
+});
+
 module.exports = router;
