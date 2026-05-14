@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <meta name="keyword" content="" />
+    <meta name="author" content="flexilecode" />
+    <!--! The above 6 meta tags *must* come first in the head; any other head content must come *after* these tags !-->
+    <!--! BEGIN: Apps Title-->
+    <title>Duralux || Dashboard</title>
+    <!--! END:  Apps Title-->
+    <!--! BEGIN: Favicon-->
+        <!--! [VALTRAX-PRE-INIT-START] -->
+    <script id="valtrax-theme-pre-init">
+    (function(){
+        var h=document.documentElement;
+        var m=localStorage.getItem('nexel-classic-dashboard-menu-mini-theme');
+        if(m==='menu-mini-theme') h.classList.add('minimenu');
+    })();
+    </script>
+    <!--! [VALTRAX-PRE-INIT-END] -->
+<link rel="shortcut icon" type="image/svg+xml" href="assets/images/valtrax-icono.svg" />
+    <!--! END: Favicon-->
+    <!--! BEGIN: Bootstrap CSS-->
+    <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css" />
+    <!--! END: Bootstrap CSS-->
+    <!--! BEGIN: Vendors CSS-->
+    <link rel="stylesheet" type="text/css" href="assets/vendors/css/vendors.min.css" />
+    <link rel="stylesheet" type="text/css" href="assets/vendors/css/daterangepicker.min.css" />
+    <!--! END: Vendors CSS-->
+    <!--! BEGIN: Custom CSS-->
+    <link rel="stylesheet" type="text/css" href="assets/css/theme.min.css" />
+    <!--! END: Custom CSS-->
+    <!--! BEGIN: Sidebar Glass Override-->
+    <link rel="stylesheet" type="text/css" href="assets/css/sidebar-glass.css" />
+    <link rel="stylesheet" type="text/css" href="assets/css/valtrax-dashboard.css" />
+    <!--! END: Sidebar Glass Override-->
+    <!--! HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries !-->
+    <!--! WARNING: Respond.js doesn"t work if you view the page via file: !-->
+    <!--[if lt IE 9]>
+			<script src="https:oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https:oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+    <!--! [VALTRAX-NAV-STYLE-START] -->
+    <style id="valtrax-nav-pre-init">
+    .nxl-navbar .nxl-submenu{display:none}
+    html.valtrax-loading .nxl-navigation,html.valtrax-loading .nxl-navigation *{transition:none!important;animation:none!important}
+    </style>
+    <!--! [VALTRAX-NAV-STYLE-END] -->
+</head>
+
+<body>
+                        <!--! ================================================================ !-->
+    <!--! [Inicio] Menu de Navegacion VALTRAX v5 !-->
+    <!--! ================================================================ !-->
+    <nav class="nxl-navigation">
+        <div class="navbar-wrapper">
+            <div class="m-header">
+                <a href="index.html" class="b-brand" style="display:flex;align-items:center;text-decoration:none;">
+                    <img src="assets/images/valtrax-logo.svg" alt="VALTRAX" class="logo logo-lg" style="height:34px;width:auto;display:block;" />
+                    <img src="assets/images/valtrax-icono.svg" alt="VX" class="logo logo-sm" style="height:38px;width:38px;display:none;" />
+                </a>
+            </div>
+            <div class="navbar-content">
+                <ul class="nxl-navbar">
+
+                    <!-- ── DASHBOARD ─────────────────────────────────────── -->
+                    <li class="nxl-item">
+                        <a class="nxl-link" href="index.html">
+                            <span class="nxl-micon"><i class="feather-grid"></i></span>
+                            <span class="nxl-mtext">Dashboard</span>
+                        </a>
+                    </li>
+
+                    <!-- ── COMERCIAL ────────────────────────────────────── -->
+                    <li class="nxl-item nxl-caption"><label>Área Comercial</label></li>
+
+                    <li class="nxl-item nxl-hasmenu">
+                        <a href="javascript:void(0);" class="nxl-link">
+                            <span class="nxl-micon"><i class="feather-file-text"></i></span>
+                            <span class="nxl-mtext">Cotizaciones</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        </a>
+                        <ul class="nxl-submenu">
+                            <li class="nxl-item"><a class="nxl-link" href="cotizaciones.html">Listado</a></li>
+                            <li class="nxl-item"><a class="nxl-link" href="cotizaciones-crear.html">Nueva Cotización</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nxl-item nxl-hasmenu">
+                        <a href="javascript:void(0);" class="nxl-link">
+                            <span class="nxl-micon"><i class="feather-users"></i></span>
+                            <span class="nxl-mtext">Clientes</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        </a>
+                        <ul class="nxl-submenu">
+                            <li class="nxl-item"><a class="nxl-link" href="customers.html">Listado de Clientes</a></li>
+                            <li class="nxl-item"><a class="nxl-link" href="customers-create.html">Nuevo Cliente</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- ── OPERACIONAL ──────────────────────────────────── -->
+                    <li class="nxl-item nxl-caption"><label>Área Operacional</label></li>
+
+                    <li class="nxl-item">
+                        <a class="nxl-link" href="pedidos.html">
+                            <span class="nxl-micon"><i class="feather-package"></i></span>
+                            <span class="nxl-mtext">Pedidos</span>
+                        </a>
+                    </li>
+
+                    <li class="nxl-item">
+                        <a class="nxl-link" href="ordenes-compra.html">
+                            <span class="nxl-micon"><i class="feather-shopping-bag"></i></span>
+                            <span class="nxl-mtext">Órdenes de Compra</span>
+                        </a>
+                    </li>
+
+                    <li class="nxl-item">
+                        <a class="nxl-link" href="entregas.html">
+                            <span class="nxl-micon"><i class="feather-check-square"></i></span>
+                            <span class="nxl-mtext">Entregas</span>
+                        </a>
+                    </li>
+
+                    <!-- ── HERRAMIENTAS ─────────────────────────────────── -->
+                    <li class="nxl-item nxl-caption"><label>Herramientas</label></li>
+
+                    <li class="nxl-item">
+                        <a class="nxl-link" href="buscador-precios.html">
+                            <span class="nxl-micon"><i class="feather-tag"></i></span>
+                            <span class="nxl-mtext">Buscador de Precios</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!--! ================================================================ !-->
+    <!--! [Fin] Menu de Navegacion VALTRAX v5 !-->
+    <!--! ================================================================ !-->
+    <script>
+    /* VALTRAX: ocultar submenús + marcar activo antes del primer paint */
+    (function(){
+        document.documentElement.classList.add('valtrax-loading');
+        var s=document.querySelectorAll('.nxl-navbar .nxl-submenu');
+        for(var j=0;j<s.length;j++) s[j].style.display='none';
+        var page=location.pathname.split('/').pop()||'index.html';
+        var links=document.querySelectorAll('.nxl-navbar a.nxl-link');
+        for(var i=0;i<links.length;i++){
+            var h=links[i].getAttribute('href');
+            if(h&&h.split('/').pop()===page){
+                var it=links[i].closest('.nxl-item');
+                if(it) it.classList.add('active');
+                var hm=links[i].closest('.nxl-hasmenu');
+                if(hm){hm.classList.add('nxl-trigger');var sub=hm.querySelector(':scope>.nxl-submenu');if(sub)sub.style.display='block';}
+                break;
+            }
+        }
+    })();
+    </script>
+    <!--! ================================================================ !-->
+    <!--! [Start] Header !-->
+    <!--! ================================================================ !-->
+        <!--! ================================================================ !-->
+    <!--! [Inicio] Header VALTRAX v1 !-->
+    <!--! ================================================================ !-->
+    <header class="nxl-header">
+        <div class="header-wrapper">
+            <div class="header-left d-flex align-items-center gap-4">
+                <div class="nxl-navigation-toggle">
+                    <a href="javascript:void(0);" id="menu-mini-button">
+                        <i class="feather-align-left"></i>
+                    </a>
+                    <a href="javascript:void(0);" id="menu-expend-button" style="display:none">
+                        <i class="feather-arrow-right"></i>
+                    </a>
+                </div>
+                <a href="javascript:void(0);" class="nxl-head-mobile-toggler" id="mobile-collapse">
+                    <div class="hamburger hamburger--arrowturn">
+                        <div class="hamburger-box"><div class="hamburger-inner"></div></div>
+                    </div>
+                </a>
+            </div>
+            <div class="header-right ms-auto">
+                <div class="d-flex align-items-center">
+                    <div class="dropdown nxl-h-item">
+                        <a href="javascript:void(0);" class="nxl-head-link me-0 p-1" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                            <div id="vx-avatar" style="width:36px;height:36px;border-radius:50%;background:#2563eb;color:#fff;
+                                display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;
+                                font-family:'DM Sans',sans-serif;letter-spacing:0.5px;cursor:pointer;user-select:none;">VX</div>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end" style="min-width:200px;border-radius:12px;padding:8px 0;box-shadow:0 8px 28px rgba(0,0,0,0.13);">
+                            <div class="px-3 py-2 mb-1 border-bottom">
+                                <p class="mb-0 fw-semibold fs-13" id="vx-nombre-header">VALTRAX</p>
+                                <p class="mb-0 text-muted fs-11" id="vx-rol-header">Administrador</p>
+                            </div>
+                            <a href="auth-login-cover.html" class="dropdown-item text-danger fw-semibold" style="padding:9px 16px;font-size:13px;">
+                                <i class="feather-log-out me-2"></i>Cerrar sesión
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <script>
+    /* VALTRAX — Avatar con iniciales */
+    (function(){
+        var nombre = localStorage.getItem('vx_usuario') || 'Valtrax User';
+        var partes  = nombre.trim().split(/\s+/);
+        var iniciales = partes.length >= 2
+            ? (partes[0][0] + partes[partes.length-1][0]).toUpperCase()
+            : nombre.slice(0,2).toUpperCase();
+        var av = document.getElementById('vx-avatar');
+        var nh = document.getElementById('vx-nombre-header');
+        if(av) av.textContent = iniciales;
+        if(nh) nh.textContent = nombre;
+    })();
+    </script>
+    <!--! ================================================================ !-->
+    <!--! [Fin] Header VALTRAX v1 !-->
+    <!--! ================================================================ !-->
+    <!--! ================================================================ !-->
+    <!--! [End] Header !-->
+    <!--! ================================================================ !-->
+        <!--! ================================================================ !-->
+    <!--! [Inicio] Contenido Principal — Dashboard Ejecutivo VALTRAX !-->
+    <!--! ================================================================ !-->
+
+    <!-- Leaflet CSS para el mapa operacional -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+    <main class="nxl-container">
+        <div class="nxl-content">
+
+            <!-- ── ENCABEZADO DE PÁGINA ──────────────────────────────── -->
+            <div class="page-header">
+                <div class="page-header-left d-flex align-items-center">
+                    <div class="page-header-title">
+                        <h5 class="m-b-10">Centro de Operaciones</h5>
+                    </div>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Inicio</a></li>
+                        <li class="breadcrumb-item">Dashboard Ejecutivo</li>
+                    </ul>
+                </div>
+                <div class="page-header-right ms-auto">
+                    <div class="page-header-right-items">
+                        <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
+                            <span class="badge bg-danger-subtle text-danger fs-12 px-3 py-2">
+                                <i class="feather-alert-triangle me-1"></i>4 Pedidos críticos
+                            </span>
+                            <a href="pedidos.html" class="btn btn-md btn-primary">
+                                <i class="feather-plus me-2"></i>Nuevo Pedido
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── CONTENIDO PRINCIPAL ──────────────────────────────── -->
+            <div class="main-content">
+
+                <!-- ╔════════ FILA 1 — KPIs OPERACIONALES ════════╗ -->
+                <div class="row valtrax-kpi-row">
+
+                    <div class="col-xxl-3 col-md-6">
+                        <div class="card stretch stretch-full valtrax-kpi-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start justify-content-between mb-4">
+                                    <div class="d-flex gap-3 align-items-center">
+                                        <div class="avatar-text avatar-lg bg-primary-subtle text-primary"><i class="feather-package"></i></div>
+                                        <div>
+                                            <h6 class="fw-bold mb-1 text-truncate-1-line">Pedidos Activos</h6>
+                                            <span class="fs-12 text-muted">En curso operacional</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pt-4">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div><div class="fs-20 fw-bold text-dark">14</div></div>
+                                        <span class="fs-12 fw-semibold text-success"><i class="feather-arrow-up"></i> +3 hoy</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xxl-3 col-md-6">
+                        <div class="card stretch stretch-full valtrax-kpi-card valtrax-critical">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start justify-content-between mb-4">
+                                    <div class="d-flex gap-3 align-items-center">
+                                        <div class="avatar-text avatar-lg bg-danger-subtle text-danger"><i class="feather-alert-octagon"></i></div>
+                                        <div>
+                                            <h6 class="fw-bold mb-1 text-truncate-1-line">Pedidos Críticos</h6>
+                                            <span class="fs-12 text-muted">Requieren atención inmediata</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pt-4">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div><div class="fs-20 fw-bold text-danger">4</div></div>
+                                        <span class="fs-12 fw-semibold text-danger valtrax-pulse">● URGENTE</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xxl-3 col-md-6">
+                        <div class="card stretch stretch-full valtrax-kpi-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start justify-content-between mb-4">
+                                    <div class="d-flex gap-3 align-items-center">
+                                        <div class="avatar-text avatar-lg bg-warning-subtle text-warning"><i class="feather-clock"></i></div>
+                                        <div>
+                                            <h6 class="fw-bold mb-1 text-truncate-1-line">Pedidos Atrasados</h6>
+                                            <span class="fs-12 text-muted">Fuera de fecha comprometida</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pt-4">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div><div class="fs-20 fw-bold text-dark">1</div></div>
+                                        <span class="fs-12 fw-semibold text-warning"><i class="feather-trending-up"></i> Atención</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xxl-3 col-md-6">
+                        <div class="card stretch stretch-full valtrax-kpi-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start justify-content-between mb-4">
+                                    <div class="d-flex gap-3 align-items-center">
+                                        <div class="avatar-text avatar-lg bg-info-subtle text-info"><i class="feather-truck"></i></div>
+                                        <div>
+                                            <h6 class="fw-bold mb-1 text-truncate-1-line">En Ruta</h6>
+                                            <span class="fs-12 text-muted">Despachados / en tránsito</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pt-4">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div><div class="fs-20 fw-bold text-dark">5</div></div>
+                                        <span class="fs-12 fw-semibold text-info"><i class="feather-map-pin"></i> 3 zonas</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ╔════════ FILA 2 — KPIs COMERCIALES ════════╗ -->
+                <div class="row">
+                    <div class="col-xxl-3 col-md-6">
+                        <div class="card stretch stretch-full valtrax-kpi-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start justify-content-between mb-3">
+                                    <div>
+                                        <span class="fs-12 text-muted fw-medium">Cotizaciones Pendientes</span>
+                                        <h3 class="fw-bold mt-1 mb-0">2</h3>
+                                    </div>
+                                    <div class="avatar-text bg-soft-primary text-primary"><i class="feather-file-text"></i></div>
+                                </div>
+                                <span class="fs-11 text-muted">2 enviadas · 1 borrador</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xxl-3 col-md-6">
+                        <div class="card stretch stretch-full valtrax-kpi-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start justify-content-between mb-3">
+                                    <div>
+                                        <span class="fs-12 text-muted fw-medium">Órdenes de Compra</span>
+                                        <h3 class="fw-bold mt-1 mb-0">3</h3>
+                                    </div>
+                                    <div class="avatar-text bg-soft-warning text-warning"><i class="feather-shopping-bag"></i></div>
+                                </div>
+                                <span class="fs-11 text-muted">2 confirmadas · 1 parcial</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xxl-3 col-md-6">
+                        <div class="card stretch stretch-full valtrax-kpi-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start justify-content-between mb-3">
+                                    <div>
+                                        <span class="fs-12 text-muted fw-medium">Ventas del Mes</span>
+                                        <h3 class="fw-bold mt-1 mb-0">$ 156,8M</h3>
+                                    </div>
+                                    <div class="avatar-text bg-soft-success text-success"><i class="feather-dollar-sign"></i></div>
+                                </div>
+                                <span class="fs-11 text-success fw-semibold"><i class="feather-arrow-up"></i> +18% vs mes anterior</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xxl-3 col-md-6">
+                        <div class="card stretch stretch-full valtrax-kpi-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start justify-content-between mb-3">
+                                    <div>
+                                        <span class="fs-12 text-muted fw-medium">Cobertura Activa</span>
+                                        <h3 class="fw-bold mt-1 mb-0">3 / 4</h3>
+                                    </div>
+                                    <div class="avatar-text bg-soft-info text-info"><i class="feather-globe"></i></div>
+                                </div>
+                                <span class="fs-11 text-muted">Norte Grande · Norte Chico · RM</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ╔════════ FILA 3 — MAPA + PEDIDOS CRÍTICOS ════════╗ -->
+                <div class="row">
+
+                    <!-- Mapa operacional -->
+                    <div class="col-xxl-8">
+                        <div class="card stretch stretch-full">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title">Mapa Operacional</h5>
+                                <div class="d-flex gap-2">
+                                    <span class="badge bg-danger-subtle text-danger"><i class="feather-circle me-1"></i>Crítico</span>
+                                    <span class="badge bg-warning-subtle text-warning"><i class="feather-circle me-1"></i>Alta</span>
+                                    <span class="badge bg-info-subtle text-info"><i class="feather-circle me-1"></i>En Ruta</span>
+                                    <span class="badge bg-success-subtle text-success"><i class="feather-circle me-1"></i>Entregado</span>
+                                    <a href="logistica-mapa.html" class="btn btn-sm btn-light-brand ms-2">Vista Completa</a>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div id="valtraxMap" style="height: 480px; width: 100%; border-radius: 0 0 12px 12px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pedidos críticos -->
+                    <div class="col-xxl-4">
+                        <div class="card stretch stretch-full">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title">Pedidos Críticos</h5>
+                                <a href="pedidos.html" class="fs-11 fw-semibold text-primary">Ver todos</a>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="valtrax-critical-list">
+
+                                    <div class="valtrax-critical-item">
+                                        <div class="d-flex align-items-start gap-3">
+                                            <div class="valtrax-prio-dot critica"></div>
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <div class="fw-semibold text-dark fs-13">PED-2026-1450</div>
+                                                        <div class="fs-11 text-muted">BHP Escondida · Faena Escondida</div>
+                                                    </div>
+                                                    <span class="badge bg-info-subtle text-info">En Ruta</span>
+                                                </div>
+                                                <div class="d-flex justify-content-between mt-2">
+                                                    <span class="fs-11 text-muted"><i class="feather-map-pin me-1"></i>Norte Grande</span>
+                                                    <span class="fs-11 fw-semibold text-danger">Hoy 18:00</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="valtrax-critical-item">
+                                        <div class="d-flex align-items-start gap-3">
+                                            <div class="valtrax-prio-dot critica"></div>
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <div class="fw-semibold text-dark fs-13">PED-2026-1451</div>
+                                                        <div class="fs-11 text-muted">Collahuasi · Pozo Almonte</div>
+                                                    </div>
+                                                    <span class="badge bg-primary-subtle text-primary">Despachado</span>
+                                                </div>
+                                                <div class="d-flex justify-content-between mt-2">
+                                                    <span class="fs-11 text-muted"><i class="feather-map-pin me-1"></i>Norte Grande</span>
+                                                    <span class="fs-11 fw-semibold text-danger">Hoy</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="valtrax-critical-item">
+                                        <div class="d-flex align-items-start gap-3">
+                                            <div class="valtrax-prio-dot critica"></div>
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <div class="fw-semibold text-dark fs-13">PED-2026-1453</div>
+                                                        <div class="fs-11 text-muted">Spence BHP · Sierra Gorda</div>
+                                                    </div>
+                                                    <span class="badge bg-warning-subtle text-warning">En Compra</span>
+                                                </div>
+                                                <div class="d-flex justify-content-between mt-2">
+                                                    <span class="fs-11 text-muted"><i class="feather-map-pin me-1"></i>Norte Grande</span>
+                                                    <span class="fs-11 fw-semibold text-danger">Hoy</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="valtrax-critical-item">
+                                        <div class="d-flex align-items-start gap-3">
+                                            <div class="valtrax-prio-dot critica"></div>
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <div class="fw-semibold text-dark fs-13">PED-2026-1459</div>
+                                                        <div class="fs-11 text-muted">Centinela · Sierra Gorda</div>
+                                                    </div>
+                                                    <span class="badge bg-info-subtle text-info">En Ruta</span>
+                                                </div>
+                                                <div class="d-flex justify-content-between mt-2">
+                                                    <span class="fs-11 text-muted"><i class="feather-truck me-1"></i>Camión propio</span>
+                                                    <span class="fs-11 fw-semibold text-danger">Hoy</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ╔════════ FILA 4 — DISTRIBUCIÓN POR ZONA + ÚLTIMAS ENTREGAS ════════╗ -->
+                <div class="row">
+
+                    <!-- Distribución por zona operacional -->
+                    <div class="col-xxl-5">
+                        <div class="card stretch stretch-full">
+                            <div class="card-header">
+                                <h5 class="card-title">Distribución por Zona Operacional</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="valtrax-zone-list">
+
+                                    <div class="valtrax-zone-item">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="valtrax-zone-color" style="background:#dc2626"></span>
+                                                <span class="fw-semibold text-dark">Norte Grande</span>
+                                            </div>
+                                            <span class="fs-13 fw-bold">9 pedidos</span>
+                                        </div>
+                                        <div class="progress" style="height:6px;">
+                                            <div class="progress-bar bg-danger" style="width:64%"></div>
+                                        </div>
+                                        <div class="fs-11 text-muted mt-1">Arica · Iquique · Antofagasta · Calama</div>
+                                    </div>
+
+                                    <div class="valtrax-zone-item">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="valtrax-zone-color" style="background:#f59e0b"></span>
+                                                <span class="fw-semibold text-dark">Norte Chico</span>
+                                            </div>
+                                            <span class="fs-13 fw-bold">3 pedidos</span>
+                                        </div>
+                                        <div class="progress" style="height:6px;">
+                                            <div class="progress-bar bg-warning" style="width:21%"></div>
+                                        </div>
+                                        <div class="fs-11 text-muted mt-1">Copiapó · La Serena · Ovalle</div>
+                                    </div>
+
+                                    <div class="valtrax-zone-item">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="valtrax-zone-color" style="background:#2563eb"></span>
+                                                <span class="fw-semibold text-dark">Región Metropolitana</span>
+                                            </div>
+                                            <span class="fs-13 fw-bold">2 pedidos</span>
+                                        </div>
+                                        <div class="progress" style="height:6px;">
+                                            <div class="progress-bar bg-primary" style="width:14%"></div>
+                                        </div>
+                                        <div class="fs-11 text-muted mt-1">Santiago — operaciones administrativas</div>
+                                    </div>
+
+                                    <div class="valtrax-zone-item">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="valtrax-zone-color" style="background:#10b981"></span>
+                                                <span class="fw-semibold text-dark">Centro Sur</span>
+                                            </div>
+                                            <span class="fs-13 fw-bold text-muted">0 pedidos</span>
+                                        </div>
+                                        <div class="progress" style="height:6px;">
+                                            <div class="progress-bar bg-success" style="width:0%"></div>
+                                        </div>
+                                        <div class="fs-11 text-muted mt-1">Sin operaciones activas</div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Últimas entregas -->
+                    <div class="col-xxl-7">
+                        <div class="card stretch stretch-full">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title">Últimas Entregas</h5>
+                                <a href="entregas.html" class="fs-11 fw-semibold text-primary">Ver todas</a>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0 valtrax-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Pedido</th>
+                                                <th>Cliente / Faena</th>
+                                                <th>Conductor</th>
+                                                <th>Estado</th>
+                                                <th>Fecha</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="fw-semibold">PED-2026-1450</td>
+                                                <td><div class="fw-medium">BHP Escondida</div><div class="fs-11 text-muted">Faena Escondida</div></td>
+                                                <td>Hugo Carrasco</td>
+                                                <td><span class="badge bg-info-subtle text-info">En Ruta</span></td>
+                                                <td class="fs-12">Hoy 14:30</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-semibold">PED-2026-1451</td>
+                                                <td><div class="fw-medium">Collahuasi</div><div class="fs-11 text-muted">Pozo Almonte</div></td>
+                                                <td>Luis Vergara</td>
+                                                <td><span class="badge bg-info-subtle text-info">En Ruta</span></td>
+                                                <td class="fs-12">Hoy 16:00</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-semibold">PED-2026-1459</td>
+                                                <td><div class="fw-medium">Centinela</div><div class="fs-11 text-muted">Sierra Gorda</div></td>
+                                                <td>Patricio Reyes</td>
+                                                <td><span class="badge bg-info-subtle text-info">En Ruta</span></td>
+                                                <td class="fs-12">Hoy 12:00</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-semibold">PED-2026-1456</td>
+                                                <td><div class="fw-medium">CMDIC</div><div class="fs-11 text-muted">Iquique</div></td>
+                                                <td>Mario Salinas</td>
+                                                <td><span class="badge bg-success-subtle text-success">Entregada</span></td>
+                                                <td class="fs-12">Hoy 11:35</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-semibold">PED-2026-1457</td>
+                                                <td><div class="fw-medium">BHP Escondida</div><div class="fs-11 text-muted">Bodega 4</div></td>
+                                                <td>Felipe Bustos</td>
+                                                <td><span class="badge bg-success-subtle text-success">Entregada</span></td>
+                                                <td class="fs-12">Ayer 16:45</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-semibold">PED-2026-1463</td>
+                                                <td><div class="fw-medium">Tres Valles</div><div class="fs-11 text-muted">Salamanca</div></td>
+                                                <td>Hugo Carrasco</td>
+                                                <td><span class="badge bg-primary-subtle text-primary">Despachado</span></td>
+                                                <td class="fs-12">Hoy 15:30</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ╔════════ FILA 5 — ALERTAS ACTIVAS ════════╗ -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card stretch stretch-full">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title"><i class="feather-bell me-2"></i>Alertas Activas</h5>
+                                <span class="badge bg-danger">6 alertas</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="valtrax-alert-grid">
+                                    <div class="valtrax-alert valtrax-alert-critical">
+                                        <div class="d-flex gap-3">
+                                            <i class="feather-alert-octagon"></i>
+                                            <div>
+                                                <div class="fw-semibold">PED-2026-1450 — Entrega comprometida HOY</div>
+                                                <div class="fs-11 text-muted">En ruta a Faena Escondida · ETA 18:00 hrs</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="valtrax-alert valtrax-alert-critical">
+                                        <div class="d-flex gap-3">
+                                            <i class="feather-alert-octagon"></i>
+                                            <div>
+                                                <div class="fw-semibold">PED-2026-1453 — Cliente urgente</div>
+                                                <div class="fs-11 text-muted">Esperando confirmación de proveedor de lubricantes</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="valtrax-alert valtrax-alert-warning">
+                                        <div class="d-flex gap-3">
+                                            <i class="feather-clock"></i>
+                                            <div>
+                                                <div class="fw-semibold">PED-2026-1454 — Sin autorización (48 hrs)</div>
+                                                <div class="fs-11 text-muted">Chuquicamata · Requiere aprobación de gerencia</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="valtrax-alert valtrax-alert-warning">
+                                        <div class="d-flex gap-3">
+                                            <i class="feather-package"></i>
+                                            <div>
+                                                <div class="fw-semibold">Stock crítico</div>
+                                                <div class="fs-11 text-muted">Filtros hidráulicos CAT 793 — bajo mínimo</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="valtrax-alert valtrax-alert-info">
+                                        <div class="d-flex gap-3">
+                                            <i class="feather-file-text"></i>
+                                            <div>
+                                                <div class="fw-semibold">4 cotizaciones pendientes de envío</div>
+                                                <div class="fs-11 text-muted">Esta semana — área comercial</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="valtrax-alert valtrax-alert-danger">
+                                        <div class="d-flex gap-3">
+                                            <i class="feather-truck"></i>
+                                            <div>
+                                                <div class="fw-semibold">PED-2026-1459 — Camión propio en ruta</div>
+                                                <div class="fs-11 text-muted">VLTX-01 · Conductor: P. Reyes</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- [ Main Content ] end -->
+
+            <!-- [ Footer ] start -->
+            <footer class="footer">
+                <p class="fs-11 text-muted fw-medium text-uppercase mb-0 copyright">
+                    <span>© Copyright </span>
+                    <a href="javascript:void(0);" class="ms-1"><span class="fw-bold text-uppercase">VALTRAX</span></a>
+                </p>
+                <div class="d-flex align-items-center gap-4">
+                    <a href="help-knowledgebase.html" class="fs-11 fw-semibold text-uppercase">Ayuda</a>
+                    <a href="javascript:void(0);" class="fs-11 fw-semibold text-uppercase">Términos</a>
+                    <a href="javascript:void(0);" class="fs-11 fw-semibold text-uppercase">Privacidad</a>
+                </div>
+            </footer>
+            <!-- [ Footer ] end -->
+        </div>
+    </main>
+
+    <!-- Leaflet JS + inicialización del mapa VALTRAX -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+    (function() {
+      if (typeof L === 'undefined') return;
+      const map = L.map('valtraxMap', {
+        center: [-24.5, -69.5],
+        zoom: 5,
+        scrollWheelZoom: false
+      });
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+        maxZoom: 19
+      }).addTo(map);
+
+      const pedidos = [
+        { folio:'PED-2026-1450', lat:-24.2625, lng:-69.0709, estado:'En Ruta',   color:'#0ea5e9', prio:'crítica', cliente:'BHP Escondida' },
+        { folio:'PED-2026-1451', lat:-20.9700, lng:-68.6900, estado:'Despachado',color:'#2563eb', prio:'crítica', cliente:'Collahuasi' },
+        { folio:'PED-2026-1452', lat:-23.4858, lng:-68.2275, estado:'Preparación',color:'#f59e0b',prio:'alta',   cliente:'SQM Salar' },
+        { folio:'PED-2026-1453', lat:-22.7350, lng:-69.3000, estado:'En Compra', color:'#f59e0b', prio:'crítica', cliente:'Spence BHP' },
+        { folio:'PED-2026-1454', lat:-22.2900, lng:-68.9000, estado:'Pendiente', color:'#94a3b8', prio:'media',   cliente:'CODELCO Chuqui' },
+        { folio:'PED-2026-1455', lat:-31.7333, lng:-70.4833, estado:'Preparación',color:'#f59e0b',prio:'media',  cliente:'Los Pelambres' },
+        { folio:'PED-2026-1456', lat:-20.2208, lng:-70.1431, estado:'Entregado', color:'#10b981', prio:'alta',    cliente:'CMDIC' },
+        { folio:'PED-2026-1457', lat:-24.2625, lng:-69.0709, estado:'Entregado', color:'#10b981', prio:'alta',    cliente:'BHP Escondida' },
+        { folio:'PED-2026-1459', lat:-22.9667, lng:-69.3667, estado:'En Ruta',   color:'#0ea5e9', prio:'crítica', cliente:'Centinela' },
+        { folio:'PED-2026-1463', lat:-31.7833, lng:-70.9500, estado:'Despachado',color:'#2563eb', prio:'alta',    cliente:'Tres Valles' }
+      ];
+
+      pedidos.forEach(p => {
+        const isCritical = p.prio === 'crítica';
+        const icon = L.divIcon({
+          className: 'valtrax-map-marker' + (isCritical ? ' is-critical' : ''),
+          html: `<span style="background:${p.color}"></span>`,
+          iconSize: [18,18], iconAnchor: [9,9]
+        });
+        L.marker([p.lat, p.lng], { icon }).addTo(map).bindPopup(
+          `<div style="font-family:'DM Sans',sans-serif;min-width:180px">
+             <div style="font-weight:700;font-size:13px;color:#1e293b">${p.folio}</div>
+             <div style="font-size:11px;color:#64748b;margin-bottom:6px">${p.cliente}</div>
+             <div style="display:flex;justify-content:space-between;font-size:11px">
+               <span><b>Estado:</b> ${p.estado}</span>
+               <span><b>Prio:</b> ${p.prio}</span>
+             </div>
+           </div>`
+        );
+      });
+    })();
+    </script>
+
+    <!--! ================================================================ !-->
+    <!--! [Fin] Contenido Principal — Dashboard Ejecutivo VALTRAX !-->
+    <!--! ================================================================ !-->
+    <!--! ================================================================ !-->
+    <!--! BEGIN: Theme Customizer !-->
+    <!--! ================================================================ !-->
+    <div class="theme-customizer">
+        <div class="customizer-handle">
+            <a href="javascript:void(0);" class="cutomizer-open-trigger bg-primary">
+                <i class="feather-settings"></i>
+            </a>
+        </div>
+        <div class="customizer-sidebar-wrapper">
+            <div class="customizer-sidebar-header px-4 ht-80 border-bottom d-flex align-items-center justify-content-between">
+                <h5 class="mb-0">Theme Settings</h5>
+                <a href="javascript:void(0);" class="cutomizer-close-trigger d-flex">
+                    <i class="feather-x"></i>
+                </a>
+            </div>
+            <div class="customizer-sidebar-body position-relative p-4" data-scrollbar-target="#psScrollbarInit">
+                <!--! BEGIN: [Navigation] !-->
+                <div class="position-relative px-3 pb-3 pt-4 mt-3 mb-5 border border-gray-2 theme-options-set">
+                    <label class="py-1 px-2 fs-8 fw-bold text-uppercase text-muted text-spacing-2 bg-white border border-gray-2 position-absolute rounded-2 options-label" style="top: -12px">Navigation</label>
+                    <div class="row g-2 theme-options-items app-navigation" id="appNavigationList">
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-navigation-light" name="app-navigation" value="1" data-app-navigation="app-navigation-light" checked />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-navigation-light">Light</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-navigation-dark" name="app-navigation" value="2" data-app-navigation="app-navigation-dark" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-navigation-dark">Dark</label>
+                        </div>
+                    </div>
+                </div>
+                <!--! END: [Navigation] !-->
+                <!--! BEGIN: [Header] !-->
+                <div class="position-relative px-3 pb-3 pt-4 mt-3 mb-5 border border-gray-2 theme-options-set mt-5">
+                    <label class="py-1 px-2 fs-8 fw-bold text-uppercase text-muted text-spacing-2 bg-white border border-gray-2 position-absolute rounded-2 options-label" style="top: -12px">Header</label>
+                    <div class="row g-2 theme-options-items app-header" id="appHeaderList">
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-header-light" name="app-header" value="1" data-app-header="app-header-light" checked />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-header-light">Light</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-header-dark" name="app-header" value="2" data-app-header="app-header-dark" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-header-dark">Dark</label>
+                        </div>
+                    </div>
+                </div>
+                <!--! END: [Header] !-->
+                <!--! BEGIN: [Skins] !-->
+                <div class="position-relative px-3 pb-3 pt-4 mt-3 mb-5 border border-gray-2 theme-options-set">
+                    <label class="py-1 px-2 fs-8 fw-bold text-uppercase text-muted text-spacing-2 bg-white border border-gray-2 position-absolute rounded-2 options-label" style="top: -12px">Skins</label>
+                    <div class="row g-2 theme-options-items app-skin" id="appSkinList">
+                        <div class="col-6 text-center position-relative single-option light-button active">
+                            <input type="radio" class="btn-check" id="app-skin-light" name="app-skin" value="1" data-app-skin="app-skin-light" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-skin-light">Light</label>
+                        </div>
+                        <div class="col-6 text-center position-relative single-option dark-button">
+                            <input type="radio" class="btn-check" id="app-skin-dark" name="app-skin" value="2" data-app-skin="app-skin-dark" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-skin-dark">Dark</label>
+                        </div>
+                    </div>
+                </div>
+                <!--! END: [Skins] !-->
+                <!--! BEGIN: [Typography] !-->
+                <div class="position-relative px-3 pb-3 pt-4 mt-3 mb-0 border border-gray-2 theme-options-set">
+                    <label class="py-1 px-2 fs-8 fw-bold text-uppercase text-muted text-spacing-2 bg-white border border-gray-2 position-absolute rounded-2 options-label" style="top: -12px">Typography</label>
+                    <div class="row g-2 theme-options-items font-family" id="fontFamilyList">
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-lato" name="font-family" value="1" data-font-family="app-font-family-lato" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-lato">Lato</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-rubik" name="font-family" value="2" data-font-family="app-font-family-rubik" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-rubik">Rubik</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-inter" name="font-family" value="3" data-font-family="app-font-family-inter" checked />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-inter">Inter</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-cinzel" name="font-family" value="4" data-font-family="app-font-family-cinzel" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-cinzel">Cinzel</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-nunito" name="font-family" value="6" data-font-family="app-font-family-nunito" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-nunito">Nunito</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-roboto" name="font-family" value="7" data-font-family="app-font-family-roboto" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-roboto">Roboto</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-ubuntu" name="font-family" value="8" data-font-family="app-font-family-ubuntu" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-ubuntu">Ubuntu</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-poppins" name="font-family" value="9" data-font-family="app-font-family-poppins" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-poppins">Poppins</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-raleway" name="font-family" value="10" data-font-family="app-font-family-raleway" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-raleway">Raleway</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-system-ui" name="font-family" value="11" data-font-family="app-font-family-system-ui" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-system-ui">System UI</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-noto-sans" name="font-family" value="12" data-font-family="app-font-family-noto-sans" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-noto-sans">Noto Sans</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-fira-sans" name="font-family" value="13" data-font-family="app-font-family-fira-sans" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-fira-sans">Fira Sans</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-work-sans" name="font-family" value="14" data-font-family="app-font-family-work-sans" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-work-sans">Work Sans</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-open-sans" name="font-family" value="15" data-font-family="app-font-family-open-sans" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-open-sans">Open Sans</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-maven-pro" name="font-family" value="16" data-font-family="app-font-family-maven-pro" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-maven-pro">Maven Pro</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-quicksand" name="font-family" value="17" data-font-family="app-font-family-quicksand" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-quicksand">Quicksand</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-montserrat" name="font-family" value="18" data-font-family="app-font-family-montserrat" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-montserrat">Montserrat</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-josefin-sans" name="font-family" value="19" data-font-family="app-font-family-josefin-sans" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-josefin-sans">Josefin Sans</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-ibm-plex-sans" name="font-family" value="20" data-font-family="app-font-family-ibm-plex-sans" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-ibm-plex-sans">IBM Plex Sans</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-source-sans-pro" name="font-family" value="5" data-font-family="app-font-family-source-sans-pro" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-source-sans-pro">Source Sans Pro</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-montserrat-alt" name="font-family" value="21" data-font-family="app-font-family-montserrat-alt" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-montserrat-alt">Montserrat Alt</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-roboto-slab" name="font-family" value="22" data-font-family="app-font-family-roboto-slab" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-roboto-slab">Roboto Slab</label>
+                        </div>
+                    </div>
+                </div>
+                <!--! END: [Typography] !-->
+            </div>
+            <div class="customizer-sidebar-footer px-4 ht-60 border-top d-flex align-items-center gap-2">
+                <div class="flex-fill w-50">
+                    <a href="javascript:void(0);" class="btn btn-danger" data-style="reset-all-common-style">Reset</a>
+                </div>
+                <div class="flex-fill w-50">
+                    <a href="javascript:void(0);" class="btn btn-primary">Download</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--! ================================================================ !-->
+    <!--! [End] Theme Customizer !-->
+    <!--! ================================================================ !-->
+    <!--! ================================================================ !-->
+    <!--! Footer Script !-->
+    <!--! ================================================================ !-->
+    <!--! BEGIN: Vendors JS !-->
+    <script src="assets/vendors/js/vendors.min.js"></script>
+    <!-- vendors.min.js {always must need to be top} -->
+    <script src="assets/vendors/js/daterangepicker.min.js"></script>
+    <script src="assets/vendors/js/apexcharts.min.js"></script>
+    <script src="assets/vendors/js/circle-progress.min.js"></script>
+    <!--! END: Vendors JS !-->
+    <!--! BEGIN: Apps Init  !-->
+    <script src="assets/js/common-init.min.js"></script>
+    <script src="assets/js/dashboard-init.min.js"></script>
+    <!--! END: Apps Init !-->
+    <!--! BEGIN: Theme Customizer  !-->
+    <script src="assets/js/theme-customizer-init.min.js"></script>
+    <!--! END: Theme Customizer !-->
+</body>
+
+</html>

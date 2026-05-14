@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <meta name="keyword" content="" />
+    <meta name="author" content="flexilecode" />
+    <!--! The above 6 meta tags *must* come first in the head; any other head content must come *after* these tags !-->
+    <!--! BEGIN: Apps Title-->
+    <title>VALTRAX · Nueva Cotización</title>
+    <!--! END:  Apps Title-->
+    <!--! BEGIN: Favicon-->
+        <!--! [VALTRAX-PRE-INIT-START] -->
+    <script id="valtrax-theme-pre-init">
+    (function(){
+        var h=document.documentElement;
+        var m=localStorage.getItem('nexel-classic-dashboard-menu-mini-theme');
+        if(m==='menu-mini-theme') h.classList.add('minimenu');
+    })();
+    </script>
+    <!--! [VALTRAX-PRE-INIT-END] -->
+<link rel="shortcut icon" type="image/svg+xml" href="assets/images/valtrax-icono.svg" />
+    <!--! END: Favicon-->
+    <!--! BEGIN: Bootstrap CSS-->
+    <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css" />
+    <!--! END: Bootstrap CSS-->
+    <!--! BEGIN: Vendors CSS-->
+    <link rel="stylesheet" type="text/css" href="assets/vendors/css/vendors.min.css" />
+    <link rel="stylesheet" type="text/css" href="assets/vendors/css/daterangepicker.min.css" />
+    <!--! END: Vendors CSS-->
+    <!--! BEGIN: Custom CSS-->
+    <link rel="stylesheet" type="text/css" href="assets/css/theme.min.css" />
+    <!--! END: Custom CSS-->
+    <!--! BEGIN: Sidebar Glass Override-->
+    <link rel="stylesheet" type="text/css" href="assets/css/sidebar-glass.css" />
+    <link rel="stylesheet" type="text/css" href="assets/css/valtrax-dashboard.css" />
+    <link rel="stylesheet" type="text/css" href="assets/css/cotizacion.css" />
+    <!--! END: Sidebar Glass Override-->
+    <!--! HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries !-->
+    <!--! WARNING: Respond.js doesn"t work if you view the page via file: !-->
+    <!--[if lt IE 9]>
+			<script src="https:oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https:oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+    <!--! [VALTRAX-NAV-STYLE-START] -->
+    <style id="valtrax-nav-pre-init">
+    .nxl-navbar .nxl-submenu{display:none}
+    html.valtrax-loading .nxl-navigation,html.valtrax-loading .nxl-navigation *{transition:none!important;animation:none!important}
+    </style>
+    <!--! [VALTRAX-NAV-STYLE-END] -->
+</head>
+
+<body>
+                        <!--! ================================================================ !-->
+    <!--! [Inicio] Menu de Navegacion VALTRAX v5 !-->
+    <!--! ================================================================ !-->
+    <nav class="nxl-navigation">
+        <div class="navbar-wrapper">
+            <div class="m-header">
+                <a href="index.html" class="b-brand" style="display:flex;align-items:center;text-decoration:none;">
+                    <img src="assets/images/valtrax-logo.svg" alt="VALTRAX" class="logo logo-lg" style="height:34px;width:auto;display:block;" />
+                    <img src="assets/images/valtrax-icono.svg" alt="VX" class="logo logo-sm" style="height:38px;width:38px;display:none;" />
+                </a>
+            </div>
+            <div class="navbar-content">
+                <ul class="nxl-navbar">
+
+                    <!-- ── DASHBOARD ─────────────────────────────────────── -->
+                    <li class="nxl-item">
+                        <a class="nxl-link" href="index.html">
+                            <span class="nxl-micon"><i class="feather-grid"></i></span>
+                            <span class="nxl-mtext">Dashboard</span>
+                        </a>
+                    </li>
+
+                    <!-- ── COMERCIAL ────────────────────────────────────── -->
+                    <li class="nxl-item nxl-caption"><label>Área Comercial</label></li>
+
+                    <li class="nxl-item nxl-hasmenu">
+                        <a href="javascript:void(0);" class="nxl-link">
+                            <span class="nxl-micon"><i class="feather-file-text"></i></span>
+                            <span class="nxl-mtext">Cotizaciones</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        </a>
+                        <ul class="nxl-submenu">
+                            <li class="nxl-item"><a class="nxl-link" href="cotizaciones.html">Listado</a></li>
+                            <li class="nxl-item"><a class="nxl-link" href="cotizaciones-crear.html">Nueva Cotización</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nxl-item nxl-hasmenu">
+                        <a href="javascript:void(0);" class="nxl-link">
+                            <span class="nxl-micon"><i class="feather-users"></i></span>
+                            <span class="nxl-mtext">Clientes</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        </a>
+                        <ul class="nxl-submenu">
+                            <li class="nxl-item"><a class="nxl-link" href="customers.html">Listado de Clientes</a></li>
+                            <li class="nxl-item"><a class="nxl-link" href="customers-create.html">Nuevo Cliente</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- ── OPERACIONAL ──────────────────────────────────── -->
+                    <li class="nxl-item nxl-caption"><label>Área Operacional</label></li>
+
+                    <li class="nxl-item">
+                        <a class="nxl-link" href="pedidos.html">
+                            <span class="nxl-micon"><i class="feather-package"></i></span>
+                            <span class="nxl-mtext">Pedidos</span>
+                        </a>
+                    </li>
+
+                    <li class="nxl-item">
+                        <a class="nxl-link" href="ordenes-compra.html">
+                            <span class="nxl-micon"><i class="feather-shopping-bag"></i></span>
+                            <span class="nxl-mtext">Órdenes de Compra</span>
+                        </a>
+                    </li>
+
+                    <li class="nxl-item">
+                        <a class="nxl-link" href="entregas.html">
+                            <span class="nxl-micon"><i class="feather-check-square"></i></span>
+                            <span class="nxl-mtext">Entregas</span>
+                        </a>
+                    </li>
+
+                    <!-- ── HERRAMIENTAS ─────────────────────────────────── -->
+                    <li class="nxl-item nxl-caption"><label>Herramientas</label></li>
+
+                    <li class="nxl-item">
+                        <a class="nxl-link" href="buscador-precios.html">
+                            <span class="nxl-micon"><i class="feather-tag"></i></span>
+                            <span class="nxl-mtext">Buscador de Precios</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!--! ================================================================ !-->
+    <!--! [Fin] Menu de Navegacion VALTRAX v5 !-->
+    <!--! ================================================================ !-->
+    <script>
+    /* VALTRAX: ocultar submenús + marcar activo antes del primer paint */
+    (function(){
+        document.documentElement.classList.add('valtrax-loading');
+        var s=document.querySelectorAll('.nxl-navbar .nxl-submenu');
+        for(var j=0;j<s.length;j++) s[j].style.display='none';
+        var page=location.pathname.split('/').pop()||'index.html';
+        var links=document.querySelectorAll('.nxl-navbar a.nxl-link');
+        for(var i=0;i<links.length;i++){
+            var h=links[i].getAttribute('href');
+            if(h&&h.split('/').pop()===page){
+                var it=links[i].closest('.nxl-item');
+                if(it) it.classList.add('active');
+                var hm=links[i].closest('.nxl-hasmenu');
+                if(hm){hm.classList.add('nxl-trigger');var sub=hm.querySelector(':scope>.nxl-submenu');if(sub)sub.style.display='block';}
+                break;
+            }
+        }
+    })();
+    </script>
+    <!--! ================================================================ !-->
+    <!--! [Start] Header !-->
+    <!--! ================================================================ !-->
+        <!--! ================================================================ !-->
+    <!--! [Inicio] Header VALTRAX v1 !-->
+    <!--! ================================================================ !-->
+    <header class="nxl-header">
+        <div class="header-wrapper">
+            <div class="header-left d-flex align-items-center gap-4">
+                <div class="nxl-navigation-toggle">
+                    <a href="javascript:void(0);" id="menu-mini-button">
+                        <i class="feather-align-left"></i>
+                    </a>
+                    <a href="javascript:void(0);" id="menu-expend-button" style="display:none">
+                        <i class="feather-arrow-right"></i>
+                    </a>
+                </div>
+                <a href="javascript:void(0);" class="nxl-head-mobile-toggler" id="mobile-collapse">
+                    <div class="hamburger hamburger--arrowturn">
+                        <div class="hamburger-box"><div class="hamburger-inner"></div></div>
+                    </div>
+                </a>
+            </div>
+            <div class="header-right ms-auto">
+                <div class="d-flex align-items-center">
+                    <div class="dropdown nxl-h-item">
+                        <a href="javascript:void(0);" class="nxl-head-link me-0 p-1" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                            <div id="vx-avatar" style="width:36px;height:36px;border-radius:50%;background:#2563eb;color:#fff;
+                                display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;
+                                font-family:'DM Sans',sans-serif;letter-spacing:0.5px;cursor:pointer;user-select:none;">VX</div>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end" style="min-width:200px;border-radius:12px;padding:8px 0;box-shadow:0 8px 28px rgba(0,0,0,0.13);">
+                            <div class="px-3 py-2 mb-1 border-bottom">
+                                <p class="mb-0 fw-semibold fs-13" id="vx-nombre-header">VALTRAX</p>
+                                <p class="mb-0 text-muted fs-11" id="vx-rol-header">Administrador</p>
+                            </div>
+                            <a href="auth-login-cover.html" class="dropdown-item text-danger fw-semibold" style="padding:9px 16px;font-size:13px;">
+                                <i class="feather-log-out me-2"></i>Cerrar sesión
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <script>
+    /* VALTRAX — Avatar con iniciales */
+    (function(){
+        var nombre = localStorage.getItem('vx_usuario') || 'Valtrax User';
+        var partes  = nombre.trim().split(/\s+/);
+        var iniciales = partes.length >= 2
+            ? (partes[0][0] + partes[partes.length-1][0]).toUpperCase()
+            : nombre.slice(0,2).toUpperCase();
+        var av = document.getElementById('vx-avatar');
+        var nh = document.getElementById('vx-nombre-header');
+        if(av) av.textContent = iniciales;
+        if(nh) nh.textContent = nombre;
+    })();
+    </script>
+    <!--! ================================================================ !-->
+    <!--! [Fin] Header VALTRAX v1 !-->
+    <!--! ================================================================ !-->
+    <!--! ================================================================ !-->
+    <!--! [End] Header !-->
+    <!--! ================================================================ !-->
+        <!--! ================================================================ !-->
+        <!--! ================================================================ !-->
+    <!--! [Inicio] Contenido Principal — Nueva Cotización VALTRAX !-->
+    <!--! ================================================================ !-->
+    <main class="nxl-container">
+        <div class="nxl-content">
+            <div class="page-header">
+                <div class="page-header-left d-flex align-items-center">
+                    <div class="page-header-title">
+                        <h5 class="m-b-10">Nueva Cotización</h5>
+                    </div>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Inicio</a></li>
+                        <li class="breadcrumb-item">Área Comercial</li>
+                        <li class="breadcrumb-item">Nueva Cotización</li>
+                    </ul>
+                </div>
+                <div class="page-header-right ms-auto">
+                    <div class="d-flex gap-2">
+                        <a href="cotizaciones.html" class="btn btn-sm btn-outline-secondary">
+                            <i class="feather-arrow-left me-1"></i>Volver
+                        </a>
+                        <button class="btn btn-sm btn-outline-success" onclick="abrirComision()">
+                            <i class="feather-percent me-1"></i>Comisión
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-content">
+
+                <!-- ── CABECERA ─────────────────────────────────────────── -->
+                <div class="cot-section">
+                    <div class="cot-section-title">
+                        Cabecera de Cotización
+                        <button type="button" class="btn btn-sm btn-link text-primary p-0 fs-12" onclick="abrirModalNuevoCliente()">
+                            <i class="feather-user-plus me-1"></i>Nuevo Cliente
+                        </button>
+                    </div>
+
+                    <div class="row g-3">
+                        <!-- Fila 1 -->
+                        <div class="col-md-6">
+                            <div class="cot-field" style="position:relative;">
+                                <label>Cliente <span class="req">*</span></label>
+                                <input type="text" id="cotCliente" placeholder="Buscar cliente..." autocomplete="off"
+                                    style="padding-right:32px;"
+                                    oninput="clienteAutocompleteFiltrar(this.value)"
+                                    onfocus="clienteAutocompleteFiltrar(this.value)"
+                                    onblur="setTimeout(clienteAutocompleteOcultar,180)">
+                                <input type="hidden" id="cotClienteId">
+                                <!-- dropdown resultados -->
+                                <div id="dropClientes" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:9999;
+                                    background:#fff;border:1.5px solid #cbd5e1;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.12);
+                                    max-height:220px;overflow-y:auto;margin-top:2px;"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="cot-field">
+                                <label>Fecha Cotización <span class="req">*</span></label>
+                                <input type="date" id="cotFecha" value="2026-05-13">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="cot-field">
+                                <label>Fecha de Solicitud <span class="req">*</span></label>
+                                <input type="date" id="cotFechaSol">
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="cot-field">
+                                <label>Vigencia (días)</label>
+                                <input type="number" id="cotVigencia" value="30" min="1">
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="cot-field">
+                                <label>Responsable</label>
+                                <input type="text" id="cotResponsable" value="Pedro Sánchez" readonly style="background:#f8fafc; color:#64748b;">
+                            </div>
+                        </div>
+
+                        <!-- Fila 2 -->
+                        <div class="col-md-2">
+                            <div class="cot-field">
+                                <label>Moneda</label>
+                                <select id="cotMoneda">
+                                    <option value="CLP" selected>CLP</option>
+                                    <option value="USD">USD</option>
+                                    <option value="UF">UF</option>
+                                    <option value="EUR">EUR</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="cot-field">
+                                <label>IVA</label>
+                                <select id="cotIva">
+                                    <option value="19" selected>Con IVA (19%)</option>
+                                    <option value="0">Sin IVA (Exento)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="cot-field">
+                                <label>Forma de Pago <span class="req">*</span></label>
+                                <select id="cotPago">
+                                    <option>50% Inicio - 50% Contra entrega</option>
+                                    <option>100% Anticipo</option>
+                                    <option>30 días factura</option>
+                                    <option>60 días factura</option>
+                                    <option>Crédito 30/60/90 días</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="cot-field">
+                                <label>Garantía <span class="req">*</span></label>
+                                <select id="cotGarantia">
+                                    <option>No incluye</option>
+                                    <option>6 meses contra defecto de fabricación</option>
+                                    <option>12 meses</option>
+                                    <option>24 meses</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Fila 3 -->
+                        <div class="col-md-5">
+                            <div class="cot-field">
+                                <label>Lugar de Entrega <span class="req">*</span></label>
+                                <input type="text" id="cotLugar" list="listaFaenas" placeholder="Para retiro en bodega" autocomplete="off">
+                                <datalist id="listaFaenas">
+                                    <option value="Para retiro en bodega VALTRAX Antofagasta">
+                                    <option value="Faena Escondida — Acceso principal">
+                                    <option value="Chuquicamata — Portería Norte">
+                                    <option value="Collahuasi — Bodega central">
+                                    <option value="Candelaria — Almacén 3">
+                                    <option value="Salar de Atacama — Planta">
+                                    <option value="Los Pelambres — Recepción">
+                                </datalist>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="cot-field">
+                                <label>Tiempo de Entrega <span class="req">*</span></label>
+                                <select id="cotTiempo">
+                                    <option>Inmediato (stock disponible)</option>
+                                    <option selected>15 días hábiles</option>
+                                    <option>30 días hábiles</option>
+                                    <option>45 días hábiles</option>
+                                    <option>A coordinar con cliente</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="cot-field">
+                                <label>Abono / Anticipo</label>
+                                <div class="cot-prefix">
+                                    <span>$</span>
+                                    <input type="number" id="cotAbono" value="0" min="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Fila 4 -->
+                        <div class="col-12">
+                            <div class="cot-field">
+                                <label>Observación General</label>
+                                <textarea id="cotObs" placeholder="Observaciones generales de la cotización..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── ÍTEMS ─────────────────────────────────────────────── -->
+                <div class="cot-section">
+                    <div class="cot-section-title">
+                        Ítems de la Cotización
+                        <button class="btn btn-sm btn-primary" onclick="agregarItem()">
+                            <i class="feather-plus me-1"></i>+ Agregar Ítem
+                        </button>
+                    </div>
+
+                    <!-- Cabecera columnas -->
+                    <div class="cot-items-header d-none d-xl-grid">
+                        <span>#</span>
+                        <span>Nombre del ítem / servicio</span>
+                        <span>Cant.</span>
+                        <span>Unidad</span>
+                        <span>Precio Unit.</span>
+                        <span>Desc. %</span>
+                        <span></span>
+                        <span style="text-align:right">Total</span>
+                        <span></span>
+                    </div>
+
+                    <!-- Lista de ítems -->
+                    <div id="listaItems"></div>
+
+                    <!-- Botón agregar (mobile) -->
+                    <div class="mt-3">
+                        <button class="btn btn-sm btn-outline-primary" onclick="agregarItem()">
+                            <i class="feather-plus me-1"></i>Agregar otro ítem
+                        </button>
+                    </div>
+
+                    <!-- Totales -->
+                    <div class="cot-totals">
+                        <div class="cot-totals-table">
+                            <div class="cot-totals-row">
+                                <span class="label">Subtotal neto:</span>
+                                <span class="value" id="totNeto">$ 0</span>
+                            </div>
+                            <div class="cot-totals-row">
+                                <span class="label">Descuentos:</span>
+                                <span class="value" id="totDesc" style="color:#dc2626">- $ 0</span>
+                            </div>
+                            <div class="cot-totals-row">
+                                <span class="label">Base imponible:</span>
+                                <span class="value" id="totBase">$ 0</span>
+                            </div>
+                            <div class="cot-totals-row">
+                                <span class="label">IVA (19%):</span>
+                                <span class="value" id="totIva">$ 0</span>
+                            </div>
+                            <div class="cot-totals-row total-final">
+                                <span class="label">TOTAL:</span>
+                                <span class="value" id="totFinal">$ 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Acciones -->
+                    <div class="cot-actions">
+                        <button class="btn btn-outline-success" onclick="abrirComision()">
+                            <i class="feather-percent me-1"></i>Comisión
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="abrirModalNuevaCot()">
+                            <i class="feather-file me-1"></i>Nueva Cotización
+                        </button>
+                        <button class="btn btn-primary" onclick="enviarCotizacion()">
+                            <i class="feather-send me-1"></i>Emitir Cotización
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ── MODAL NUEVA COTIZACIÓN ────────────────────────────────── -->
+                <div id="modalNuevaCot" style="display:none; position:fixed; inset:0; z-index:10000; background:rgba(15,23,42,0.5); backdrop-filter:blur(4px); align-items:center; justify-content:center;">
+                    <div style="background:#fff; border-radius:16px; padding:32px 28px; min-width:340px; max-width:420px; box-shadow:0 20px 60px rgba(0,0,0,0.18); font-family:'DM Sans',sans-serif;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+                            <h6 style="margin:0; font-weight:700; color:#1e293b; font-size:15px;">
+                                <i class="feather-alert-triangle" style="color:#f59e0b; margin-right:8px;"></i>Nueva Cotización
+                            </h6>
+                            <button onclick="cerrarModalNuevaCot()" style="background:none; border:none; font-size:22px; cursor:pointer; color:#94a3b8;">×</button>
+                        </div>
+                        <p style="font-size:14px; color:#475569; margin-bottom:24px;">
+                            ¿Confirmas que deseas comenzar una <strong>nueva cotización</strong>?<br>
+                            <span style="color:#dc2626;">Se borrarán todos los datos ingresados actualmente.</span>
+                        </p>
+                        <div style="display:flex; gap:10px; justify-content:flex-end;">
+                            <button onclick="cerrarModalNuevaCot()" style="border:1.5px solid #e2e8f0; background:#fff; border-radius:8px; padding:9px 20px; font-size:13px; cursor:pointer; color:#64748b; font-family:'DM Sans',sans-serif;">Cancelar</button>
+                            <button onclick="confirmarNuevaCot()" style="background:#2563eb; color:#fff; border:none; border-radius:8px; padding:9px 22px; font-size:13px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif;">
+                                <i class="feather-file me-1"></i>Nueva Cotización
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── MODAL POST-EMISIÓN ─────────────────────────────── -->
+                <div id="modalPostEmision" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(10,18,35,0.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center;">
+                    <div style="background:rgba(255,255,255,0.97);border-radius:20px;padding:36px 32px;min-width:360px;max-width:460px;width:90%;box-shadow:0 24px 70px rgba(0,0,0,0.35);font-family:'DM Sans',sans-serif;text-align:center;border:1.5px solid rgba(255,255,255,0.8);">
+                        <div style="width:60px;height:60px;background:#d1fae5;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;">
+                            <i class="feather-check-circle" style="color:#059669;font-size:28px;"></i>
+                        </div>
+                        <h5 style="font-weight:700;color:#1e293b;margin-bottom:6px;font-size:17px;">¡Cotización Emitida!</h5>
+                        <p id="postEmisionFolio" style="color:#64748b;font-size:13px;margin-bottom:28px;">Folio generado correctamente</p>
+                        <div style="display:flex;flex-direction:column;gap:10px;">
+                            <button onclick="postEmisionNueva()" style="background:#2563eb;color:#fff;border:none;border-radius:10px;padding:12px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;">
+                                <i class="feather-plus-circle"></i> Nueva Cotización
+                            </button>
+                            <button onclick="postEmisionMantener()" style="background:#f1f5f9;color:#334155;border:none;border-radius:10px;padding:12px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;">
+                                <i class="feather-edit-2"></i> Seguir en la misma
+                            </button>
+                            <button onclick="postEmisionPDF()" style="background:#0f172a;color:#fff;border:none;border-radius:10px;padding:12px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;">
+                                <i class="feather-printer"></i> Ver e Imprimir PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── MODAL VISOR PDF ───────────────────────────────── -->
+                <div id="modalPDFVisor" style="display:none;position:fixed;inset:0;z-index:11000;background:rgba(0,0,0,0.88);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center;justify-content:center;flex-direction:column;">
+                    <div style="background:#1e293b;border-radius:14px;width:96%;max-width:860px;height:92vh;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,0.5);">
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid #334155;flex-shrink:0;">
+                            <span id="pdfVisorTitulo" style="color:#f1f5f9;font-weight:600;font-size:14px;font-family:'DM Sans',sans-serif;"><i class="feather-file-text" style="margin-right:8px;"></i>Visor PDF</span>
+                            <div style="display:flex;gap:8px;">
+                                <button onclick="imprimirVisorPDF()" style="background:#2563eb;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:6px;"><i class="feather-printer"></i> Imprimir</button>
+                                <button onclick="cerrarPDFVisor()" style="background:#475569;color:#f1f5f9;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">✕ Cerrar</button>
+                            </div>
+                        </div>
+                        <iframe id="pdfVisorFrame" style="flex:1;border:none;border-radius:0 0 14px 14px;background:#525659;"></iframe>
+                    </div>
+                </div>
+
+                <!-- ── MODAL COMISIÓN ────────────────────────────────── -->
+                <div id="modalComision" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(15,23,42,0.45); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); align-items:center; justify-content:center;">
+                    <div style="background:#fff; border-radius:16px; padding:32px 28px; min-width:340px; max-width:420px; box-shadow:0 20px 60px rgba(0,0,0,0.18); font-family:'DM Sans',sans-serif;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                            <h6 style="margin:0; font-weight:700; color:#1e293b; font-size:15px;">
+                                <i class="feather-percent" style="color:#2563eb; margin-right:8px;"></i>Comisión de Venta
+                            </h6>
+                            <button onclick="cerrarComision()" style="background:none; border:none; font-size:22px; line-height:1; cursor:pointer; color:#94a3b8;">×</button>
+                        </div>
+                        <div style="margin-bottom:16px;">
+                            <label style="font-size:11px; font-weight:600; color:#2563eb; display:block; margin-bottom:6px;">Porcentaje de Comisión</label>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <input id="comisionInput" type="number" min="0" max="100" step="0.1" value="0"
+                                    style="flex:1; border:1.5px solid #d1d5db; border-radius:10px; padding:10px 14px; font-size:15px; color:#1e293b; font-family:'DM Sans',sans-serif; outline:none;"
+                                    oninput="calcComision()">
+                                <span style="font-size:22px; color:#64748b; font-weight:700;">%</span>
+                            </div>
+                        </div>
+                        <div style="background:#f8fafc; border-radius:10px; padding:14px 16px; margin-bottom:22px;">
+                            <div style="display:flex; justify-content:space-between; font-size:12px; color:#64748b; margin-bottom:8px;">
+                                <span>Total cotización (con IVA):</span>
+                                <span id="comisionBase" style="font-weight:600; color:#1e293b;">$ 0</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; font-size:14px;">
+                                <span style="font-weight:600; color:#1e293b;">Monto comisión:</span>
+                                <span id="comisionMonto" style="font-weight:700; color:#2563eb; font-size:17px;">$ 0</span>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:10px; justify-content:flex-end;">
+                            <button onclick="cerrarComision()" style="border:1.5px solid #e2e8f0; background:#fff; border-radius:8px; padding:9px 20px; font-size:13px; cursor:pointer; color:#64748b; font-family:'DM Sans',sans-serif;">Cancelar</button>
+                            <button onclick="guardarComision()" style="background:#2563eb; color:#fff; border:none; border-radius:8px; padding:9px 22px; font-size:13px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif;">Aplicar</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /main-content -->
+
+            <!-- ── MODAL NUEVO CLIENTE ──────────────────────────────── -->
+            <div id="modalNuevoCliente" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(15,23,42,0.45);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+                <div style="background:#fff;border-radius:16px;padding:32px 28px;min-width:360px;max-width:460px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.18);font-family:'DM Sans',sans-serif;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                        <h6 style="margin:0;font-weight:700;color:#1e293b;font-size:15px;"><i class="feather-user-plus" style="color:#2563eb;margin-right:8px;"></i>Nueva Entidad</h6>
+                        <button onclick="cerrarModalNuevoCliente()" style="background:none;border:none;font-size:22px;line-height:1;cursor:pointer;color:#94a3b8;">×</button>
+                    </div>
+                    <form id="formNuevoCliente">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="cot-field">
+                                    <label>Tipo de Entidad <span class="req">*</span></label>
+                                    <select id="nc_tipo" required style="width:100%;border:1.5px solid #d1d5db;border-radius:10px;padding:10px 13px;font-size:13px;">
+                                        <option value="">Seleccionar...</option>
+                                        <option>Cliente Natural</option><option>Cliente Juridico</option>
+                                        <option>Proveedor</option><option>Contacto Tecnico</option><option>Tercero</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="cot-field">
+                                    <label>Nombre / Razón Social <span class="req">*</span></label>
+                                    <input type="text" id="nc_nombre" required placeholder="Ej: Collahuasi SpA" style="width:100%;border:1.5px solid #d1d5db;border-radius:10px;padding:10px 13px;font-size:13px;">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="cot-field">
+                                    <label>RUT <span class="req">*</span></label>
+                                    <input type="text" id="nc_rut" required placeholder="76.234.567-8" oninput="formatRut(this)" maxlength="12" style="width:100%;border:1.5px solid #d1d5db;border-radius:10px;padding:10px 13px;font-size:13px;">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="cot-field">
+                                    <label>Teléfono</label>
+                                    <input type="tel" id="nc_tel" value="+56" style="width:100%;border:1.5px solid #d1d5db;border-radius:10px;padding:10px 13px;font-size:13px;">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="cot-field">
+                                    <label>Correo</label>
+                                    <input type="email" id="nc_correo" placeholder="contacto@empresa.cl" style="width:100%;border:1.5px solid #d1d5db;border-radius:10px;padding:10px 13px;font-size:13px;">
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
+                            <button type="button" onclick="cerrarModalNuevoCliente()" style="border:1.5px solid #e2e8f0;background:#fff;border-radius:8px;padding:9px 20px;font-size:13px;cursor:pointer;color:#64748b;">Cancelar</button>
+                            <button type="submit" style="background:#2563eb;color:#fff;border:none;border-radius:8px;padding:9px 22px;font-size:13px;font-weight:600;cursor:pointer;"><i class="feather-save" style="margin-right:6px;"></i>Guardar y seleccionar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <footer class="footer">
+                <p class="fs-11 text-muted fw-medium text-uppercase mb-0 copyright">
+                    <span>© Copyright </span>
+                    <a href="javascript:void(0);" class="ms-1"><span class="fw-bold text-uppercase">VALTRAX</span></a>
+                </p>
+                <div class="d-flex align-items-center gap-4">
+                    <a href="help-knowledgebase.html" class="fs-11 fw-semibold text-uppercase">Ayuda</a>
+                </div>
+            </footer>
+        </div>
+    </main>
+
+    <!-- ── JS Cotización ────────────────────────────────────── -->
+    <script src="assets/js/valtrax-db.js"></script>
+    <script>
+    (function(){
+        const UNIDADES = ['UN','KG','MT','LT','CJ','PK','HR','GL','M2','M3','TON','PAR','SET'];
+        let itemCount = 0;
+
+        function fmt(n){ return '$ ' + Math.round(n).toLocaleString('es-CL'); }
+
+        function calcRow(row){
+            const cant  = parseFloat(row.querySelector('.i-cant').value)  || 0;
+            const prec  = parseFloat(row.querySelector('.i-precio').value) || 0;
+            const desc  = parseFloat(row.querySelector('.i-desc').value)   || 0;
+            const sub   = cant * prec;
+            const total = sub * (1 - desc/100);
+            row.querySelector('.i-total').textContent = fmt(total);
+            row._total = total;
+            calcGlobal();
+        }
+
+        function calcGlobal(){
+            let neto=0, dcto=0;
+            document.querySelectorAll('.cot-item-row').forEach(r=>{
+                const cant  = parseFloat(r.querySelector('.i-cant').value)  || 0;
+                const prec  = parseFloat(r.querySelector('.i-precio').value) || 0;
+                const desc  = parseFloat(r.querySelector('.i-desc').value)   || 0;
+                const sub   = cant * prec;
+                neto += sub;
+                dcto += sub * (desc/100);
+            });
+            const base  = neto - dcto;
+            const ivaPct = parseFloat(document.getElementById('cotIva').value) || 19;
+            const iva   = base * ivaPct/100;
+            const total = base + iva;
+            document.getElementById('totNeto').textContent  = fmt(neto);
+            document.getElementById('totDesc').textContent  = '- ' + fmt(dcto);
+            document.getElementById('totBase').textContent  = fmt(base);
+            document.getElementById('totIva').textContent   = fmt(iva);
+            document.getElementById('totFinal').textContent = fmt(total);
+        }
+
+        function renumberItems(){
+            document.querySelectorAll('#listaItems > .cot-item-wrapper').forEach((wrapper, i)=>{
+                const numEl = wrapper.querySelector('.cot-item-num');
+                if(numEl) numEl.textContent = i + 1;
+            });
+        }
+
+        window.agregarItem = function(){
+            itemCount++;
+            const idx = itemCount;
+            const div = document.createElement('div');
+            div.className = 'cot-item-wrapper';
+            div.dataset.item = idx;
+
+            const uOpts = UNIDADES.map(u=>`<option value="${u}">${u}</option>`).join('');
+
+            div.innerHTML = `
+              <div class="cot-item-row" data-item="${idx}">
+                <div class="cot-item-num">${idx}</div>
+                <input type="text" class="i-nombre" placeholder="Nombre del ítem / servicio">
+                <input type="number" class="i-cant"   placeholder="1"   value="1"  min="0" step="any">
+                <select class="i-unidad">${uOpts}</select>
+                <input type="number" class="i-precio" placeholder="0"   value="0"  min="0" step="any">
+                <input type="number" class="i-desc"   placeholder="0"   value="0"  min="0" max="100" step="0.1">
+                <div style="display:flex;align-items:center;">
+                  <button class="cot-btn-subitem" onclick="agregarSubItem(${idx})"><i class="feather-plus" style="font-size:10px"></i> Sub-ítem</button>
+                </div>
+                <div class="i-total cot-item-total">$ 0</div>
+                <div class="cot-item-actions">
+                  <button class="cot-btn-del" onclick="eliminarItem(this, ${idx})">&#x1F5D1;</button>
+                </div>
+              </div>
+              <div id="subitems-${idx}"></div>
+            `;
+
+            document.getElementById('listaItems').appendChild(div);
+
+            // eventos calc
+            div.querySelectorAll('.i-cant,.i-precio,.i-desc').forEach(el=>
+                el.addEventListener('input', ()=>calcRow(div.querySelector('.cot-item-row')))
+            );
+
+            renumberItems();
+        };
+
+        window.agregarSubItem = function(parentIdx){
+            const cnt = document.getElementById(`subitems-${parentIdx}`);
+            const uOpts = UNIDADES.map(u=>`<option value="${u}">${u}</option>`).join('');
+            const sub = document.createElement('div');
+            sub.className = 'cot-subitem-row';
+            sub.innerHTML = `
+              <span class="cot-arrow">↳</span>
+              <input type="text" placeholder="Descripción del sub-ítem">
+              <input type="number" placeholder="1" value="1" min="0" step="any">
+              <select>${uOpts}</select>
+              <input type="number" placeholder="0" value="0" min="0" step="any">
+              <input type="number" placeholder="0" value="0" min="0" max="100" step="0.1">
+              <div></div>
+              <span class="cot-item-total fs-12">$ 0</span>
+              <button class="cot-btn-del" onclick="this.parentElement.remove()">✕</button>
+            `;
+            cnt.appendChild(sub);
+        };
+
+        window.eliminarItem = function(btn, idx){
+            const wrapper = btn.closest('.cot-item-wrapper');
+            if(wrapper) wrapper.remove();
+            calcGlobal();
+            renumberItems();
+        };
+
+        document.getElementById('cotIva').addEventListener('change', calcGlobal);
+
+        // Un ítem por defecto
+        agregarItem();
+
+        /* ── Autocomplete buscador de clientes ── */
+        function cargarDatalistClientes(){ /* compatibilidad: no hace nada */ }
+
+        (function(){
+            const inputEl  = document.getElementById('cotCliente');
+            const hiddenEl = document.getElementById('cotClienteId');
+            const dropEl   = document.getElementById('dropClientes');
+
+            function seleccionar(nombre, id){
+                inputEl.value  = nombre;
+                hiddenEl.value = id;
+                dropEl.style.display = 'none';
+            }
+
+            window.clienteAutocompleteOcultar = function(){
+                dropEl.style.display = 'none';
+            };
+
+            window.clienteAutocompleteFiltrar = function(q){
+                const ents = ValtraxDB.getEntidades();
+                const term = q.trim().toLowerCase();
+                const matches = term
+                    ? ents.filter(e => e.nombre.toLowerCase().includes(term) ||
+                                       (e.rut||'').toLowerCase().includes(term))
+                    : ents;
+
+                if(matches.length === 0){
+                    dropEl.innerHTML = '<div style="padding:12px 14px;font-size:13px;color:#94a3b8;">Sin resultados</div>';
+                    dropEl.style.display = 'block';
+                    return;
+                }
+
+                dropEl.innerHTML = matches.map(e => {
+                    const hi = q.trim()
+                        ? e.nombre.replace(new RegExp('('+q.trim().replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),
+                            '<strong style="color:#2563eb;">$1</strong>')
+                        : e.nombre;
+                    return `<div class="ac-item" data-id="${e.id}" data-nombre="${e.nombre.replace(/"/g,'&quot;')}"
+                        style="padding:9px 14px;cursor:pointer;font-size:13px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;">
+                        <span>${hi}</span>
+                        <span style="font-size:11px;color:#94a3b8;">${e.rut||''}</span>
+                    </div>`;
+                }).join('');
+
+                dropEl.querySelectorAll('.ac-item').forEach(item => {
+                    item.addEventListener('mousedown', function(){
+                        seleccionar(this.dataset.nombre, this.dataset.id);
+                    });
+                    item.addEventListener('mouseover', function(){ this.style.background='#f0f7ff'; });
+                    item.addEventListener('mouseout',  function(){ this.style.background=''; });
+                });
+
+                dropEl.style.display = 'block';
+            };
+
+            /* Si el modal nuevo cliente selecciona un cliente, cerramos dropdown */
+            window._clienteSeleccionar = seleccionar;
+        })();
+
+        window.sincronizarClienteId = function(){};  // no-op legacy
+
+        /* ── Modal: Nueva Cotización ─────────────────────────────── */
+        window.abrirModalNuevaCot = function(){
+            document.getElementById('modalNuevaCot').style.display='flex';
+        };
+        window.cerrarModalNuevaCot = function(){
+            document.getElementById('modalNuevaCot').style.display='none';
+        };
+        window.confirmarNuevaCot = function(){
+            cerrarModalNuevaCot();
+            // Reset formulario
+            document.getElementById('cotCliente').value='';
+            document.getElementById('cotClienteId').value='';
+            document.getElementById('cotFecha').value=new Date().toISOString().slice(0,10);
+            document.getElementById('cotFechaSol').value='';
+            document.getElementById('cotVigencia').value='30';
+            document.getElementById('cotObs').value='';
+            document.getElementById('cotLugar').value='';
+            document.getElementById('cotAbono').value='0';
+            document.getElementById('listaItems').innerHTML='';
+            // reset totales
+            ['totNeto','totDesc','totBase','totIva','totFinal'].forEach(id=>{
+                const el=document.getElementById(id);
+                if(el) el.textContent='$ 0';
+            });
+            // agregar 1 ítem en blanco
+            if(typeof window.agregarItem==='function') window.agregarItem();
+        };
+
+        window.enviarCotizacion = function(){
+            const cliente = document.getElementById('cotCliente').value.trim();
+            if(!cliente){ alert('Ingrese un cliente antes de emitir.'); return; }
+            const items = recogerItems();
+            if(!items.length){ alert('Agregue al menos un ítem.'); return; }
+            const cot = {
+                cliente: cliente,
+                clienteId: document.getElementById('cotClienteId').value||null,
+                fecha: document.getElementById('cotFecha').value,
+                vigencia: document.getElementById('cotVigencia')?.value||'',
+                faena: document.getElementById('cotLugar')?.value||'',
+                estado: 'Pendiente',
+                items: items,
+                total: parseFloat(document.getElementById('totFinal').textContent.replace(/[^0-9]/g,''))||0,
+            };
+            const saved = ValtraxDB.saveCotizacion(cot);
+            generarPDF(saved);
+        };
+
+        /* ── Generar PDF con plantilla VALTRAX ─────────────────── */
+        function generarPDF(cot){
+            // Cargar jsPDF dinámicamente si no está disponible
+            function doGenerar(){
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+                const PW = 210; // ancho página mm
+                const PH = 297; // alto página mm
+
+                // ── FONDO / DECORACIÓN VALTRAX ──────────────────────────────
+                // Curva inferior izquierda azul marino
+                doc.setFillColor(15, 30, 60);   // #0f1e3c
+                doc.ellipse(0, PH+12, 42, 32, 'F');
+                // Curva inferior derecha gris azul
+                doc.setFillColor(140, 160, 195); // #8ca0c3
+                doc.ellipse(PW+10, PH-18, 55, 28, 'F');
+                // Banda superior izquierda
+                doc.setFillColor(15, 30, 60);
+                doc.triangle(0,0, 38,0, 0,42, 'F');
+
+                // ── LOGO VALTRAX (texto como fallback) ───────────────────────
+                try {
+                    // Si hay imagen base64 disponible
+                    if(window.VALTRAX_LOGO_B64){
+                        doc.addImage(window.VALTRAX_LOGO_B64,'PNG', PW-68, 8, 58, 20);
+                    } else {
+                        // Texto de marca
+                        doc.setFontSize(18); doc.setFont('helvetica','bold');
+                        doc.setTextColor(15,30,60);
+                        doc.text('VALTRAX', PW-65, 18);
+                        doc.setFontSize(7); doc.setFont('helvetica','normal');
+                        doc.setTextColor(100,120,160);
+                        doc.text('— INDUSTRIAL SPA —', PW-65, 23);
+                    }
+                } catch(e){}
+
+                // ── FOLIO + TÍTULO ────────────────────────────────────────
+                doc.setTextColor(15,30,60);
+                doc.setFontSize(11); doc.setFont('helvetica','bold');
+                doc.text('Cotización N° ' + cot.folio, 18, 52);
+                doc.setFontSize(8); doc.setFont('helvetica','normal');
+                doc.setTextColor(80,100,130);
+                doc.text('Fecha: ' + cot.fecha + '   Vigencia: ' + (cot.vigencia||'30') + ' días', 18, 58);
+
+                // ── DATOS CLIENTE ─────────────────────────────────────────
+                doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(15,30,60);
+                doc.text('Señores:', 18, 68);
+                doc.setFont('helvetica','normal'); doc.setTextColor(50,60,80);
+                doc.text(cot.cliente, 18, 74);
+                if(cot.faena){
+                    doc.setFontSize(8); doc.setTextColor(100,120,140);
+                    doc.text('Lugar de entrega: ' + cot.faena, 18, 79);
+                }
+
+                // ── LÍNEA SEPARADORA ─────────────────────────────────────
+                doc.setDrawColor(200,210,225); doc.setLineWidth(0.3);
+                doc.line(18, 84, PW-18, 84);
+
+                // ── TABLA DE ÍTEMS ────────────────────────────────────────
+                const cols = [9, 98, 18, 18, 28, 22]; // x posiciones
+                const headers = ['#','Descripción','Cant.','Und.','P. Unit.','Total'];
+                let y = 92;
+
+                // Encabezado tabla
+                doc.setFillColor(15,30,60);
+                doc.roundedRect(18, y-5, PW-36, 8, 1.5, 1.5, 'F');
+                doc.setTextColor(255,255,255); doc.setFontSize(8); doc.setFont('helvetica','bold');
+                const colX = [19, 26, 116, 130, 143, 168];
+                headers.forEach((h,i)=>doc.text(h, colX[i], y));
+                y += 7;
+
+                // Filas de ítems
+                const fmtMoney = n => '$ ' + Math.round(n).toLocaleString('es-CL');
+                let subtotal = 0;
+                (cot.items||[]).forEach((item,i)=>{
+                    const total = (parseFloat(item.qty)||1) * (parseFloat(item.precio)||0);
+                    subtotal += total;
+                    const fill = i%2===0 ? [245,248,253] : [255,255,255];
+                    doc.setFillColor(...fill);
+                    doc.rect(18, y-4.5, PW-36, 7, 'F');
+                    doc.setTextColor(40,55,75); doc.setFont('helvetica','normal'); doc.setFontSize(8);
+                    doc.text(String(i+1), colX[0], y);
+                    // truncar descripción
+                    const desc = (item.desc||'').substring(0,55);
+                    doc.text(desc, colX[1], y);
+                    doc.text(String(item.qty||1), colX[2], y);
+                    doc.text('Un', colX[3], y);
+                    doc.text(fmtMoney(item.precio||0), colX[4], y);
+                    doc.setFont('helvetica','bold');
+                    doc.text(fmtMoney(total), colX[5], y);
+                    y += 7;
+                    if(y > PH - 50){ doc.addPage(); y = 20; }
+                });
+
+                // Línea cierre tabla
+                doc.setDrawColor(200,210,225); doc.setLineWidth(0.3);
+                doc.line(18, y, PW-18, y);
+                y += 6;
+
+                // ── TOTALES ───────────────────────────────────────────────
+                const ivaRate = parseInt(document.getElementById('cotIva')?.value||'19');
+                const iva = subtotal * ivaRate / 100;
+                const total = subtotal + iva;
+
+                const totX1 = 130, totX2 = PW-18;
+                doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(80,100,130);
+                doc.text('Subtotal neto:', totX1, y); doc.text(fmtMoney(subtotal), totX2, y, {align:'right'}); y+=6;
+                if(ivaRate>0){
+                    doc.text('IVA (' + ivaRate + '%):', totX1, y); doc.text(fmtMoney(iva), totX2, y, {align:'right'}); y+=6;
+                }
+                // Total box
+                doc.setFillColor(15,30,60);
+                doc.roundedRect(totX1-4, y-4, totX2-totX1+4+4, 9, 2, 2, 'F');
+                doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(10);
+                doc.text('TOTAL:', totX1, y+2);
+                doc.text(fmtMoney(total), totX2, y+2, {align:'right'});
+                y += 14;
+
+                // ── NOTA ──────────────────────────────────────────────────
+                const obs = document.getElementById('cotObs')?.value||'';
+                const nota = obs || 'La cotización es válida por ' + (document.getElementById('cotVigencia')?.value||'30') + ' días desde su emisión.';
+                doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(40,55,75);
+                doc.text('Nota:', 18, y); y+=5;
+                doc.setFont('helvetica','normal'); doc.setTextColor(80,100,130);
+                const notaLines = doc.splitTextToSize(nota, 100);
+                doc.text(notaLines, 18, y);
+
+                // ── FIRMA ─────────────────────────────────────────────────
+                doc.setDrawColor(100,120,150); doc.setLineWidth(0.4);
+                doc.line(PW-70, y+18, PW-18, y+18);
+                doc.setFontSize(8); doc.setTextColor(80,100,130); doc.setFont('helvetica','normal');
+                const resp = document.getElementById('cotResponsable')?.value || 'VALTRAX Industrial SpA';
+                doc.text(resp, PW-44, y+23, {align:'center'});
+
+                // ── PIE DE PÁGINA ────────────────────────────────────────
+                doc.setFontSize(7); doc.setTextColor(120,140,170);
+                doc.text('(316) 212-3XXX   ·   contacto@valtrax.com.co   ·   www.valtrax.com.co', PW/2, PH-8, {align:'center'});
+
+                // Guardar doc para descarga posterior sin auto-descargar
+                generarPDF._lastDoc = doc;
+                generarPDF._lastCot = cot;
+                // Generar blob URL para visor (sin abrir nueva pestaña)
+                const pdfBlob = doc.output('blob');
+                generarPDF._lastBlobUrl = URL.createObjectURL(pdfBlob);
+                // Mostrar modal de opciones
+                abrirModalPostEmision(cot);
+            }
+
+            if(window.jspdf){
+                doGenerar();
+            } else {
+                const s = document.createElement('script');
+                s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+                s.onload = doGenerar;
+                s.onerror = function(){
+                    abrirModalPostEmision(cot);
+                };
+                document.head.appendChild(s);
+            }
+        }
+
+        function recogerItems(){
+            const items = [];
+            document.querySelectorAll('.cot-item-wrapper').forEach(w=>{
+                const desc = w.querySelector('input[type=text],textarea');
+                const qty  = w.querySelectorAll('input[type=number]')[0];
+                const precio = w.querySelectorAll('input[type=number]')[1];
+                if(desc) items.push({ desc: desc.value, qty: qty?.value||1, precio: precio?.value||0 });
+            });
+            return items;
+        }
+
+        // ── MODAL POST-EMISIÓN ──────────────────────────────────────────
+        var _cotEmitida = null;
+        window.abrirModalPostEmision = function(cot){
+            _cotEmitida = cot;
+            document.getElementById('postEmisionFolio').textContent = 'Folio: ' + cot.folio + '  ·  Cliente: ' + cot.cliente;
+            const m = document.getElementById('modalPostEmision');
+            m.style.display = 'flex';
+        };
+        window.postEmisionNueva = function(){
+            document.getElementById('modalPostEmision').style.display = 'none';
+            if(typeof window.nuevaCotizacion === 'function') window.nuevaCotizacion();
+        };
+        window.postEmisionMantener = function(){
+            document.getElementById('modalPostEmision').style.display = 'none';
+            // Simplemente cierra el modal; el formulario sigue con los datos
+        };
+        window.postEmisionPDF = function(){
+            document.getElementById('modalPostEmision').style.display = 'none';
+            if(generarPDF._lastBlobUrl){
+                abrirPDFVisor(generarPDF._lastBlobUrl, _cotEmitida ? _cotEmitida.folio : 'Cotización');
+            } else if(generarPDF._lastDoc){
+                const pdfBlob = generarPDF._lastDoc.output('blob');
+                generarPDF._lastBlobUrl = URL.createObjectURL(pdfBlob);
+                abrirPDFVisor(generarPDF._lastBlobUrl, _cotEmitida ? _cotEmitida.folio : 'Cotización');
+            } else if(_cotEmitida){
+                generarPDF(_cotEmitida);
+            }
+        };
+        window.abrirPDFVisor = function(blobUrl, titulo){
+            document.getElementById('pdfVisorTitulo').innerHTML = '<i class="feather-file-text" style="margin-right:8px;"></i>' + (titulo || 'PDF Cotización');
+            document.getElementById('pdfVisorFrame').src = blobUrl;
+            document.getElementById('modalPDFVisor').style.display = 'flex';
+        };
+        window.cerrarPDFVisor = function(){
+            document.getElementById('modalPDFVisor').style.display = 'none';
+            document.getElementById('pdfVisorFrame').src = '';
+        };
+        window.imprimirVisorPDF = function(){
+            const fr = document.getElementById('pdfVisorFrame');
+            try { fr.contentWindow.print(); } catch(e){
+                // fallback: abrir en nueva pestaña solo para imprimir
+                window.open(fr.src, '_blank');
+            }
+        };
+
+        // ── COMISIÓN ────────────────────────────────────────────────────
+        window.abrirComision = function(){
+            const modal = document.getElementById('modalComision');
+            modal.style.display = 'flex';
+            calcComision();
+        };
+        window.cerrarComision = function(){
+            document.getElementById('modalComision').style.display = 'none';
+        };
+        window.calcComision = function(){
+            const pct   = parseFloat(document.getElementById('comisionInput').value) || 0;
+            const total = parseFloat(document.getElementById('totFinal').textContent.replace(/[^0-9]/g,'')) || 0;
+            const monto = total * pct / 100;
+            document.getElementById('comisionBase').textContent  = '$ ' + Math.round(total).toLocaleString('es-CL');
+            document.getElementById('comisionMonto').textContent = '$ ' + Math.round(monto).toLocaleString('es-CL');
+        };
+        window.guardarComision = function(){
+            const pct = parseFloat(document.getElementById('comisionInput').value) || 0;
+            cerrarComision();
+            // Mostrar badge en el botón del header si pct > 0
+            document.querySelectorAll('.btn-comision-badge').forEach(e=>e.remove());
+            if(pct > 0){
+                document.querySelectorAll('button[onclick="abrirComision()"]').forEach(btn=>{
+                    const badge = document.createElement('span');
+                    badge.className = 'btn-comision-badge';
+                    badge.style.cssText = 'display:inline-block;background:#10b981;color:#fff;border-radius:20px;font-size:10px;font-weight:700;padding:1px 7px;margin-left:6px;';
+                    badge.textContent = pct + '%';
+                    btn.appendChild(badge);
+                });
+            }
+        };
+        // Cerrar modal al hacer click fuera
+        document.getElementById('modalComision').addEventListener('click', function(e){
+            if(e.target === this) cerrarComision();
+        });
+
+        /* ── Modal Nuevo Cliente ── */
+        window.abrirModalNuevoCliente = function(){
+            document.getElementById('modalNuevoCliente').style.display='flex';
+        };
+        window.cerrarModalNuevoCliente = function(){
+            document.getElementById('modalNuevoCliente').style.display='none';
+            document.getElementById('formNuevoCliente').reset();
+        };
+        document.getElementById('modalNuevoCliente').addEventListener('click',function(e){ if(e.target===this) cerrarModalNuevoCliente(); });
+        document.getElementById('modalNuevaCot').addEventListener('click',function(e){ if(e.target===this) cerrarModalNuevaCot(); });
+        document.getElementById('formNuevoCliente').addEventListener('submit',function(e){
+            e.preventDefault();
+            const nombre = document.getElementById('nc_nombre').value.trim();
+            const tipo   = document.getElementById('nc_tipo').value;
+            const rut    = document.getElementById('nc_rut').value.trim();
+            const tel    = document.getElementById('nc_tel').value.trim();
+            const correo = document.getElementById('nc_correo').value.trim();
+            if(!nombre||!tipo||!rut){ alert('Complete Tipo, Nombre y RUT.'); return; }
+            const nueva = ValtraxDB.saveEntidad({ nombre, tipo, rut, tel, correo, estado:'Activo', ciudad:'', giro:'', contacto:nombre, cargo:'', pago:'Contado', moneda:'CLP', credito:0, descuento:0, obs:'' });
+            cargarDatalistClientes();
+            window._clienteSeleccionar(nueva.nombre, nueva.id);
+            cerrarModalNuevoCliente();
+        });
+    })();
+    </script>
+    <!--! ================================================================ !-->
+    <!--! [Fin] Contenido Principal — Nueva Cotización VALTRAX !-->
+    <!--! ================================================================ !-->
+    <!--! ================================================================ !-->
+    <!--! ================================================================ !-->
+    <!--! BEGIN: Theme Customizer !-->
+    <!--! ================================================================ !-->
+    <div class="theme-customizer">
+        <div class="customizer-handle">
+            <a href="javascript:void(0);" class="cutomizer-open-trigger bg-primary">
+                <i class="feather-settings"></i>
+            </a>
+        </div>
+        <div class="customizer-sidebar-wrapper">
+            <div class="customizer-sidebar-header px-4 ht-80 border-bottom d-flex align-items-center justify-content-between">
+                <h5 class="mb-0">Theme Settings</h5>
+                <a href="javascript:void(0);" class="cutomizer-close-trigger d-flex">
+                    <i class="feather-x"></i>
+                </a>
+            </div>
+            <div class="customizer-sidebar-body position-relative p-4" data-scrollbar-target="#psScrollbarInit">
+                <!--! BEGIN: [Navigation] !-->
+                <div class="position-relative px-3 pb-3 pt-4 mt-3 mb-5 border border-gray-2 theme-options-set">
+                    <label class="py-1 px-2 fs-8 fw-bold text-uppercase text-muted text-spacing-2 bg-white border border-gray-2 position-absolute rounded-2 options-label" style="top: -12px">Navigation</label>
+                    <div class="row g-2 theme-options-items app-navigation" id="appNavigationList">
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-navigation-light" name="app-navigation" value="1" data-app-navigation="app-navigation-light" checked />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-navigation-light">Light</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-navigation-dark" name="app-navigation" value="2" data-app-navigation="app-navigation-dark" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-navigation-dark">Dark</label>
+                        </div>
+                    </div>
+                </div>
+                <!--! END: [Navigation] !-->
+                <!--! BEGIN: [Header] !-->
+                <div class="position-relative px-3 pb-3 pt-4 mt-3 mb-5 border border-gray-2 theme-options-set mt-5">
+                    <label class="py-1 px-2 fs-8 fw-bold text-uppercase text-muted text-spacing-2 bg-white border border-gray-2 position-absolute rounded-2 options-label" style="top: -12px">Header</label>
+                    <div class="row g-2 theme-options-items app-header" id="appHeaderList">
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-header-light" name="app-header" value="1" data-app-header="app-header-light" checked />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-header-light">Light</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-header-dark" name="app-header" value="2" data-app-header="app-header-dark" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-header-dark">Dark</label>
+                        </div>
+                    </div>
+                </div>
+                <!--! END: [Header] !-->
+                <!--! BEGIN: [Skins] !-->
+                <div class="position-relative px-3 pb-3 pt-4 mt-3 mb-5 border border-gray-2 theme-options-set">
+                    <label class="py-1 px-2 fs-8 fw-bold text-uppercase text-muted text-spacing-2 bg-white border border-gray-2 position-absolute rounded-2 options-label" style="top: -12px">Skins</label>
+                    <div class="row g-2 theme-options-items app-skin" id="appSkinList">
+                        <div class="col-6 text-center position-relative single-option light-button active">
+                            <input type="radio" class="btn-check" id="app-skin-light" name="app-skin" value="1" data-app-skin="app-skin-light" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-skin-light">Light</label>
+                        </div>
+                        <div class="col-6 text-center position-relative single-option dark-button">
+                            <input type="radio" class="btn-check" id="app-skin-dark" name="app-skin" value="2" data-app-skin="app-skin-dark" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-skin-dark">Dark</label>
+                        </div>
+                    </div>
+                </div>
+                <!--! END: [Skins] !-->
+                <!--! BEGIN: [Typography] !-->
+                <div class="position-relative px-3 pb-3 pt-4 mt-3 mb-0 border border-gray-2 theme-options-set">
+                    <label class="py-1 px-2 fs-8 fw-bold text-uppercase text-muted text-spacing-2 bg-white border border-gray-2 position-absolute rounded-2 options-label" style="top: -12px">Typography</label>
+                    <div class="row g-2 theme-options-items font-family" id="fontFamilyList">
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-lato" name="font-family" value="1" data-font-family="app-font-family-lato" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-lato">Lato</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-rubik" name="font-family" value="2" data-font-family="app-font-family-rubik" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-rubik">Rubik</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-inter" name="font-family" value="3" data-font-family="app-font-family-inter" checked />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-inter">Inter</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-cinzel" name="font-family" value="4" data-font-family="app-font-family-cinzel" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-cinzel">Cinzel</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-nunito" name="font-family" value="6" data-font-family="app-font-family-nunito" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-nunito">Nunito</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-roboto" name="font-family" value="7" data-font-family="app-font-family-roboto" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-roboto">Roboto</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-ubuntu" name="font-family" value="8" data-font-family="app-font-family-ubuntu" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-ubuntu">Ubuntu</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-poppins" name="font-family" value="9" data-font-family="app-font-family-poppins" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-poppins">Poppins</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-raleway" name="font-family" value="10" data-font-family="app-font-family-raleway" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-raleway">Raleway</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-system-ui" name="font-family" value="11" data-font-family="app-font-family-system-ui" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-system-ui">System UI</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-noto-sans" name="font-family" value="12" data-font-family="app-font-family-noto-sans" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-noto-sans">Noto Sans</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-fira-sans" name="font-family" value="13" data-font-family="app-font-family-fira-sans" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-fira-sans">Fira Sans</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-work-sans" name="font-family" value="14" data-font-family="app-font-family-work-sans" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-work-sans">Work Sans</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-open-sans" name="font-family" value="15" data-font-family="app-font-family-open-sans" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-open-sans">Open Sans</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-maven-pro" name="font-family" value="16" data-font-family="app-font-family-maven-pro" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-maven-pro">Maven Pro</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-quicksand" name="font-family" value="17" data-font-family="app-font-family-quicksand" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-quicksand">Quicksand</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-montserrat" name="font-family" value="18" data-font-family="app-font-family-montserrat" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-montserrat">Montserrat</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-josefin-sans" name="font-family" value="19" data-font-family="app-font-family-josefin-sans" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-josefin-sans">Josefin Sans</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-ibm-plex-sans" name="font-family" value="20" data-font-family="app-font-family-ibm-plex-sans" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-ibm-plex-sans">IBM Plex Sans</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-source-sans-pro" name="font-family" value="5" data-font-family="app-font-family-source-sans-pro" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-source-sans-pro">Source Sans Pro</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-montserrat-alt" name="font-family" value="21" data-font-family="app-font-family-montserrat-alt" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-montserrat-alt">Montserrat Alt</label>
+                        </div>
+                        <div class="col-6 text-center single-option">
+                            <input type="radio" class="btn-check" id="app-font-family-roboto-slab" name="font-family" value="22" data-font-family="app-font-family-roboto-slab" />
+                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-roboto-slab">Roboto Slab</label>
+                        </div>
+                    </div>
+                </div>
+                <!--! END: [Typography] !-->
+            </div>
+            <div class="customizer-sidebar-footer px-4 ht-60 border-top d-flex align-items-center gap-2">
+                <div class="flex-fill w-50">
+                    <a href="javascript:void(0);" class="btn btn-danger" data-style="reset-all-common-style">Reset</a>
+                </div>
+                <div class="flex-fill w-50">
+                    <a href="javascript:void(0);" class="btn btn-primary">Download</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--! ================================================================ !-->
+    <!--! [End] Theme Customizer !-->
+    <!--! ================================================================ !-->
+    <!--! ================================================================ !-->
+    <!--! Footer Script !-->
+    <!--! ================================================================ !-->
+    <!--! BEGIN: Vendors JS !-->
+    <script src="assets/vendors/js/vendors.min.js"></script>
+    <!-- vendors.min.js {always must need to be top} -->
+    <script src="assets/vendors/js/daterangepicker.min.js"></script>
+    <script src="assets/vendors/js/apexcharts.min.js"></script>
+    <script src="assets/vendors/js/circle-progress.min.js"></script>
+    <!--! END: Vendors JS !-->
+    <!--! BEGIN: Apps Init  !-->
+    <script src="assets/js/common-init.min.js"></script>
+    <script src="assets/js/dashboard-init.min.js"></script>
+    <!--! END: Apps Init !-->
+    <!--! BEGIN: Theme Customizer  !-->
+    <script src="assets/js/theme-customizer-init.min.js"></script>
+    <!--! END: Theme Customizer !-->
+</body>
+
+</html>

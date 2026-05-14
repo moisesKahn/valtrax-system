@@ -1,0 +1,283 @@
+/* ============================================================
+   VALTRAX — Formulario de Cotización
+   ============================================================ */
+
+/* Tarjeta sección */
+.cot-section {
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    border: 1px solid rgba(37,99,235,0.12);
+    border-radius: 14px;
+    padding: 28px 28px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(37,99,235,0.06);
+}
+
+.cot-section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b;
+    letter-spacing: .02em;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Campos floating label */
+.cot-field {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.cot-field label {
+    position: absolute;
+    top: -9px;
+    left: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #2563eb;
+    letter-spacing: .03em;
+    white-space: nowrap;
+    background: rgba(255,255,255,0.5);
+    padding: 0 5px;
+    border-radius: 4px;
+    z-index: 1;
+    line-height: 1.4;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.cot-field label .req {
+    color: #dc2626;
+    margin-left: 2px;
+}
+
+.cot-field input,
+.cot-field select,
+.cot-field textarea {
+    display: block;
+    width: 100%;
+    border: 1.5px solid #d1d5db;
+    border-radius: 12px;
+    padding: 10px 13px;
+    font-size: 13.5px;
+    color: #1e293b;
+    background: #fff;
+    transition: border-color .2s, box-shadow .2s;
+    font-family: 'DM Sans', sans-serif;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.cot-field input:focus,
+.cot-field select:focus,
+.cot-field textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+.cot-field textarea {
+    resize: vertical;
+    min-height: 72px;
+}
+
+/* Prefijo moneda */
+.cot-prefix {
+    position: relative;
+}
+.cot-prefix span {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 600;
+    pointer-events: none;
+}
+.cot-prefix input {
+    padding-left: 28px !important;
+}
+
+/* ── ÍTEMS ───────────────────────────────────────────────── */
+.cot-items-header {
+    display: grid;
+    grid-template-columns: 32px 1fr 80px 90px 90px 70px 90px 100px 80px;
+    gap: 6px;
+    padding: 0 0 6px;
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 8px;
+}
+
+.cot-items-header span {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+
+/* fila ítem */
+.cot-item-row {
+    display: grid;
+    grid-template-columns: 32px 1fr 80px 90px 90px 70px 90px 100px 80px;
+    gap: 6px;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.cot-item-num {
+    width: 28px;
+    height: 28px;
+    background: #2563eb;
+    color: #fff;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.cot-item-row input,
+.cot-item-row select {
+    border: 1.5px solid #e2e8f0;
+    border-radius: 7px;
+    padding: 7px 9px;
+    font-size: 12.5px;
+    color: #1e293b;
+    background: #fff;
+    font-family: 'DM Sans', sans-serif;
+    width: 100%;
+    transition: border-color .15s;
+}
+
+.cot-item-row input:focus,
+.cot-item-row select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37,99,235,0.09);
+}
+
+.cot-item-total {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2563eb;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.cot-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+.cot-btn-subitem {
+    font-size: 11px;
+    font-weight: 600;
+    color: #10b981;
+    border: 1.5px solid #10b981;
+    background: transparent;
+    border-radius: 6px;
+    padding: 3px 7px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .15s, color .15s;
+}
+.cot-btn-subitem:hover { background: #10b981; color: #fff; }
+
+.cot-btn-del {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #dc2626;
+    padding: 2px 4px;
+    font-size: 16px;
+    line-height: 1;
+}
+
+/* fila sub-ítem */
+.cot-subitem-row {
+    display: grid;
+    grid-template-columns: 32px 1fr 80px 90px 90px 70px 90px 100px 80px;
+    gap: 6px;
+    align-items: center;
+    padding: 6px 0;
+    background: #f8fafc;
+    border-radius: 8px;
+    margin-bottom: 4px;
+}
+
+.cot-subitem-row input,
+.cot-subitem-row select {
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-size: 12px;
+    color: #475569;
+    background: rgba(148, 163, 184, 0.08);
+    font-family: 'DM Sans', sans-serif;
+    width: 100%;
+}
+
+.cot-subitem-row input:focus,
+.cot-subitem-row select:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+.cot-arrow {
+    color: #94a3b8;
+    font-size: 16px;
+}
+
+/* ── TOTALES ─────────────────────────────────────────────── */
+.cot-totals {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.cot-totals-table {
+    min-width: 340px;
+}
+
+.cot-totals-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13.5px;
+    color: #334155;
+}
+
+.cot-totals-row:last-child { border-bottom: none; }
+
+.cot-totals-row.total-final {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1e293b;
+    padding-top: 12px;
+}
+
+.cot-totals-row .label { color: #64748b; font-weight: 500; }
+.cot-totals-row .value { font-weight: 600; color: #1e293b; }
+.cot-totals-row.total-final .value { color: #2563eb; font-size: 17px; }
+
+/* Botones acción principal */
+.cot-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}

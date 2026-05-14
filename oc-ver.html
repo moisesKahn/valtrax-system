@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>VALTRAX · Detalle OC</title>
+    <script id="valtrax-theme-pre-init">
+    (function(){
+        var h=document.documentElement;
+        var m=localStorage.getItem('nexel-classic-dashboard-menu-mini-theme');
+        if(m==='menu-mini-theme') h.classList.add('minimenu');
+    })();
+    </script>
+    <link rel="shortcut icon" type="image/svg+xml" href="assets/images/valtrax-icono.svg" />
+    <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/vendors/css/vendors.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/theme.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/sidebar-glass.css" />
+    <link rel="stylesheet" type="text/css" href="assets/css/valtrax-dashboard.css" />
+    <style id="valtrax-nav-pre-init">
+    .nxl-navbar .nxl-submenu{display:none}
+    html.valtrax-loading .nxl-navigation,html.valtrax-loading .nxl-navigation *{transition:none!important;animation:none!important}
+    </style>
+</head>
+
+<body>
+    <!--! [Inicio] Menu de Navegacion VALTRAX v5 !-->
+    <nav class="nxl-navigation">
+        <div class="navbar-wrapper">
+            <div class="m-header">
+                <a href="index.html" class="b-brand" style="display:flex;align-items:center;text-decoration:none;">
+                    <img src="assets/images/valtrax-logo.svg" alt="VALTRAX" class="logo logo-lg" style="height:34px;width:auto;display:block;" />
+                    <img src="assets/images/valtrax-icono.svg" alt="VX" class="logo logo-sm" style="height:38px;width:38px;display:none;" />
+                </a>
+            </div>
+            <div class="navbar-content">
+                <ul class="nxl-navbar">
+
+                    <!-- ── DASHBOARD ─────────────────────────────────────── -->
+                    <li class="nxl-item">
+                        <a class="nxl-link" href="index.html">
+                            <span class="nxl-micon"><i class="feather-grid"></i></span>
+                            <span class="nxl-mtext">Dashboard</span>
+                        </a>
+                    </li>
+
+                    <!-- ── COMERCIAL ────────────────────────────────────── -->
+                    <li class="nxl-item nxl-caption"><label>Área Comercial</label></li>
+
+                    <li class="nxl-item nxl-hasmenu">
+                        <a href="javascript:void(0);" class="nxl-link">
+                            <span class="nxl-micon"><i class="feather-file-text"></i></span>
+                            <span class="nxl-mtext">Cotizaciones</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        </a>
+                        <ul class="nxl-submenu">
+                            <li class="nxl-item"><a class="nxl-link" href="cotizaciones.html">Listado</a></li>
+                            <li class="nxl-item"><a class="nxl-link" href="cotizaciones-crear.html">Nueva Cotización</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nxl-item nxl-hasmenu">
+                        <a href="javascript:void(0);" class="nxl-link">
+                            <span class="nxl-micon"><i class="feather-users"></i></span>
+                            <span class="nxl-mtext">Clientes</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        </a>
+                        <ul class="nxl-submenu">
+                            <li class="nxl-item"><a class="nxl-link" href="customers.html">Listado de Clientes</a></li>
+                            <li class="nxl-item"><a class="nxl-link" href="customers-create.html">Nuevo Cliente</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- ── OPERACIONAL ──────────────────────────────────── -->
+                    <li class="nxl-item nxl-caption"><label>Área Operacional</label></li>
+
+                    <li class="nxl-item">
+                        <a class="nxl-link" href="pedidos.html">
+                            <span class="nxl-micon"><i class="feather-package"></i></span>
+                            <span class="nxl-mtext">Pedidos</span>
+                        </a>
+                    </li>
+
+                    <li class="nxl-item">
+                        <a class="nxl-link" href="ordenes-compra.html">
+                            <span class="nxl-micon"><i class="feather-shopping-bag"></i></span>
+                            <span class="nxl-mtext">Órdenes de Compra</span>
+                        </a>
+                    </li>
+
+                    <li class="nxl-item">
+                        <a class="nxl-link" href="entregas.html">
+                            <span class="nxl-micon"><i class="feather-check-square"></i></span>
+                            <span class="nxl-mtext">Entregas</span>
+                        </a>
+                    </li>
+
+                    <!-- ── HERRAMIENTAS ─────────────────────────────────── -->
+                    <li class="nxl-item nxl-caption"><label>Herramientas</label></li>
+
+                    <li class="nxl-item">
+                        <a class="nxl-link" href="buscador-precios.html">
+                            <span class="nxl-micon"><i class="feather-tag"></i></span>
+                            <span class="nxl-mtext">Buscador de Precios</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!--! [Fin] Menu de Navegacion VALTRAX v5 !-->
+    <script>
+    (function(){
+        document.documentElement.classList.add('valtrax-loading');
+        var s=document.querySelectorAll('.nxl-navbar .nxl-submenu');
+        for(var j=0;j<s.length;j++) s[j].style.display='none';
+        var page=location.pathname.split('/').pop()||'index.html';
+        var links=document.querySelectorAll('.nxl-navbar a.nxl-link');
+        for(var i=0;i<links.length;i++){
+            var h=links[i].getAttribute('href');
+            if(h&&h.split('/').pop()===page){
+                var it=links[i].closest('.nxl-item');
+                if(it) it.classList.add('active');
+                var hm=links[i].closest('.nxl-hasmenu');
+                if(hm){hm.classList.add('nxl-trigger');var sub=hm.querySelector(':scope>.nxl-submenu');if(sub)sub.style.display='block';}
+                break;
+            }
+        }
+    })();
+    </script>
+    <!--! [Inicio] Header VALTRAX v1 !-->
+    <header class="nxl-header">
+        <div class="header-wrapper">
+            <div class="header-left d-flex align-items-center gap-4">
+                <div class="nxl-navigation-toggle">
+                    <a href="javascript:void(0);" id="menu-mini-button"><i class="feather-align-left"></i></a>
+                    <a href="javascript:void(0);" id="menu-expend-button" style="display:none"><i class="feather-arrow-right"></i></a>
+                </div>
+                <a href="javascript:void(0);" class="nxl-head-mobile-toggler" id="mobile-collapse">
+                    <div class="hamburger hamburger--arrowturn"><div class="hamburger-box"><div class="hamburger-inner"></div></div></div>
+                </a>
+            </div>
+            <div class="header-right ms-auto">
+                <div class="d-flex align-items-center">
+                    <div class="dropdown nxl-h-item">
+                        <a href="javascript:void(0);" class="nxl-head-link me-0 p-1" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                            <div id="vx-avatar" style="width:36px;height:36px;border-radius:50%;background:#2563eb;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:'DM Sans',sans-serif;letter-spacing:0.5px;cursor:pointer;user-select:none;">VX</div>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end" style="min-width:200px;border-radius:12px;padding:8px 0;box-shadow:0 8px 28px rgba(0,0,0,0.13);">
+                            <div class="px-3 py-2 mb-1 border-bottom">
+                                <p class="mb-0 fw-semibold fs-13" id="vx-nombre-header">VALTRAX</p>
+                                <p class="mb-0 text-muted fs-11" id="vx-rol-header">Administrador</p>
+                            </div>
+                            <a href="auth-login-cover.html" class="dropdown-item text-danger fw-semibold" style="padding:9px 16px;font-size:13px;">
+                                <i class="feather-log-out me-2"></i>Cerrar sesion
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <script>
+    (function(){
+        var nombre = localStorage.getItem('vx_usuario') || 'Valtrax User';
+        var partes  = nombre.trim().split(/\s+/);
+        var iniciales = partes.length >= 2 ? (partes[0][0] + partes[partes.length-1][0]).toUpperCase() : nombre.slice(0,2).toUpperCase();
+        var av = document.getElementById('vx-avatar');
+        var nh = document.getElementById('vx-nombre-header');
+        if(av) av.textContent = iniciales;
+        if(nh) nh.textContent = nombre;
+    })();
+    </script>
+    <!--! [Fin] Header VALTRAX v1 !-->
+
+    <!--! [Inicio] Contenido Principal - Detalle OC VALTRAX !-->
+    <main class="nxl-container">
+        <div class="nxl-content">
+            <div class="page-header">
+                <div class="page-header-left d-flex align-items-center">
+                    <div class="page-header-title"><h5 class="m-b-10" id="tituloPagina">Orden de Compra</h5></div>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Inicio</a></li>
+                        <li class="breadcrumb-item"><a href="ordenes-compra.html">Ordenes de Compra</a></li>
+                        <li class="breadcrumb-item" id="breadFolio">Detalle</li>
+                    </ul>
+                </div>
+                <div class="page-header-right ms-auto d-flex gap-2" id="accionesHeader"></div>
+            </div>
+
+            <div class="main-content" id="contenidoOC">
+                <div class="text-center py-5 text-muted" id="msgCargando">
+                    <p class="mt-2">Cargando OC...</p>
+                </div>
+            </div>
+
+            <footer class="footer">
+                <p class="fs-11 text-muted fw-medium text-uppercase mb-0 copyright">
+                    <span>&copy; Copyright </span>
+                    <a href="javascript:void(0);" class="ms-1"><span class="fw-bold">VALTRAX</span></a>
+                </p>
+            </footer>
+        </div>
+    </main>
+    <!--! [Fin] Contenido Principal - Detalle OC VALTRAX !-->
+
+    <script src="assets/js/valtrax-db.js"></script>
+    <script>
+    ValtraxDB.seedIfEmpty();
+
+    const params = new URLSearchParams(location.search);
+    const folioParam = params.get('folio') || '';
+
+    const emOC = {
+      'Borrador': 'bg-secondary-subtle text-secondary',
+      'Aprobada': 'bg-success-subtle text-success',
+      'Comprada': 'bg-primary-subtle text-primary'
+    };
+
+    const fmtMoney = n => '$ ' + Math.round(n||0).toLocaleString('es-CL');
+
+    function cargarOC() {
+        const oc = ValtraxDB.getOrdenesCompra().find(o => o.folio === folioParam);
+        const contenido = document.getElementById('contenidoOC');
+        const msgCargando = document.getElementById('msgCargando');
+
+        if (!oc) {
+            msgCargando.innerHTML =
+                '<div class="text-center py-5">' +
+                '<i class="feather-alert-circle text-danger" style="font-size:48px;"></i>' +
+                '<h5 class="mt-3 text-danger">OC no encontrada</h5>' +
+                '<p class="text-muted">No existe la OC <strong>' + (folioParam||'(sin folio)') + '</strong>.</p>' +
+                '<a href="ordenes-compra.html" class="btn btn-primary mt-2"><i class="feather-arrow-left me-2"></i>Volver al listado</a>' +
+                '</div>';
+            return;
+        }
+
+        msgCargando.style.display = 'none';
+        document.getElementById('tituloPagina').textContent = oc.folio;
+        document.getElementById('breadFolio').textContent = oc.folio;
+        document.title = 'VALTRAX - ' + oc.folio;
+
+        const actDiv = document.getElementById('accionesHeader');
+        if (oc.estado === 'Borrador') {
+            actDiv.innerHTML =
+                '<button class="btn btn-sm btn-success" onclick="aprobarOC()">' +
+                '<i class="feather-check me-1"></i>Aprobar OC</button>';
+        } else if (oc.estado === 'Aprobada') {
+            actDiv.innerHTML =
+                '<button class="btn btn-sm btn-primary" onclick="comprarOC()">' +
+                '<i class="feather-shopping-bag me-1"></i>Marcar Comprada</button>';
+        }
+
+        const esBorrador = oc.estado === 'Borrador';
+        const items = oc.items || [];
+        const subtotal = (oc.total||0) / 1.19;
+        const iva = (oc.total||0) - subtotal;
+
+        const dotColor = (cond) => cond ? '#16a34a' : '#e5e7eb';
+        const dotClass = (cond) => cond ? 'text-dark' : 'text-muted';
+
+        contenido.innerHTML =
+        '<div class="row g-3">' +
+
+        // Barra de estado
+        '<div class="col-12">' +
+        '<div class="card" style="border-left:4px solid ' + (oc.estado==='Borrador'?'#94a3b8':oc.estado==='Aprobada'?'#16a34a':'#2563eb') + ';">' +
+        '<div class="card-body py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">' +
+        '<div class="d-flex align-items-center gap-3">' +
+        '<span class="badge ' + (emOC[oc.estado]||'bg-secondary-subtle text-secondary') + '" style="font-size:13px;padding:7px 14px;">' + oc.estado + '</span>' +
+        '<span class="fw-bold fs-15">' + oc.folio + '</span>' +
+        '<span class="text-muted fs-13">· Pedido: <a href="pedidos-ver.html?folio=' + (oc.pedidoFolio||'') + '" class="text-primary fw-semibold">' + (oc.pedidoFolio||'-') + '</a></span>' +
+        '</div>' +
+        '<div class="text-end"><div class="fs-11 text-muted">Fecha creacion</div><div class="fw-semibold">' + (oc.fecha||'-') + '</div></div>' +
+        '</div></div></div>' +
+
+        // Info principal
+        '<div class="col-lg-7">' +
+        '<div class="card h-100">' +
+        '<div class="card-header d-flex align-items-center justify-content-between">' +
+        '<h6 class="card-title mb-0"><i class="feather-info me-2 text-primary"></i>Informacion de la OC</h6>' +
+        (esBorrador ? '<span class="badge bg-warning-subtle text-warning fs-10"><i class="feather-edit-2 me-1"></i>Editable</span>' : '') +
+        '</div>' +
+        '<div class="card-body">' +
+        '<div class="row g-3">' +
+        '<div class="col-sm-6"><label class="form-label fw-semibold fs-12">Cliente</label>' +
+        '<input type="text" class="form-control form-control-sm" id="fCliente" value="' + (oc.cliente||'') + '" ' + (esBorrador?'':'readonly') + '></div>' +
+        '<div class="col-sm-6"><label class="form-label fw-semibold fs-12">Faena / Proyecto</label>' +
+        '<input type="text" class="form-control form-control-sm" id="fFaena" value="' + (oc.faena||'') + '" ' + (esBorrador?'':'readonly') + '></div>' +
+        '<div class="col-sm-6"><label class="form-label fw-semibold fs-12">Proveedor</label>' +
+        '<input type="text" class="form-control form-control-sm" id="fProveedor" value="' + (oc.proveedor||'') + '" placeholder="Nombre del proveedor" ' + (esBorrador?'':'readonly') + '></div>' +
+        '<div class="col-sm-6"><label class="form-label fw-semibold fs-12">Gestor / Comprador</label>' +
+        '<input type="text" class="form-control form-control-sm" id="fGestor" value="' + (oc.gestor||'') + '" ' + (esBorrador?'':'readonly') + '></div>' +
+        '<div class="col-sm-6"><label class="form-label fw-semibold fs-12">Fecha entrega esperada</label>' +
+        '<input type="date" class="form-control form-control-sm" id="fFechaEntrega" value="' + (oc.fechaEntrega||'') + '" ' + (esBorrador?'':'readonly') + '></div>' +
+        '<div class="col-sm-6"><label class="form-label fw-semibold fs-12">Condicion de pago</label>' +
+        '<input type="text" class="form-control form-control-sm" id="fCondPago" value="' + (oc.condPago||'') + '" placeholder="Ej: 30 dias" ' + (esBorrador?'':'readonly') + '></div>' +
+        '<div class="col-12"><label class="form-label fw-semibold fs-12">Observaciones</label>' +
+        '<textarea class="form-control form-control-sm" id="fObs" rows="3" ' + (esBorrador?'':'readonly') + '>' + (oc.observaciones||'') + '</textarea></div>' +
+        (esBorrador ? '<div class="col-12 d-flex justify-content-end gap-2 mt-2"><button type="button" class="btn btn-sm btn-primary" onclick="guardarCambios()"><i class="feather-save me-1"></i>Guardar cambios</button></div>' : '') +
+        '</div></div></div></div>' +
+
+        // Resumen financiero
+        '<div class="col-lg-5">' +
+        '<div class="card h-100">' +
+        '<div class="card-header"><h6 class="card-title mb-0"><i class="feather-dollar-sign me-2 text-success"></i>Resumen Financiero</h6></div>' +
+        '<div class="card-body">' +
+        '<div class="d-flex justify-content-between align-items-center py-2 border-bottom"><span class="text-muted fs-13">Subtotal neto</span><span class="fw-semibold">' + fmtMoney(subtotal) + '</span></div>' +
+        '<div class="d-flex justify-content-between align-items-center py-2 border-bottom"><span class="text-muted fs-13">IVA (19%)</span><span class="fw-semibold">' + fmtMoney(iva) + '</span></div>' +
+        '<div class="d-flex justify-content-between align-items-center py-3"><span class="fw-bold fs-14">Total OC</span><span class="fw-bold fs-16 text-primary" id="resTotal">' + fmtMoney(oc.total||0) + '</span></div>' +
+        '<hr>' +
+        '<div class="mt-2"><div class="fs-11 text-muted fw-semibold text-uppercase mb-2">Ciclo de vida</div>' +
+        '<div class="d-flex flex-column gap-2">' +
+        '<div class="d-flex align-items-center gap-2"><div style="width:10px;height:10px;border-radius:50%;background:#16a34a;flex-shrink:0;"></div><span class="fs-12 text-dark">Borrador creado</span></div>' +
+        '<div class="d-flex align-items-center gap-2"><div style="width:10px;height:10px;border-radius:50%;background:' + dotColor(oc.estado==='Aprobada'||oc.estado==='Comprada') + ';flex-shrink:0;"></div><span class="fs-12 ' + dotClass(oc.estado==='Aprobada'||oc.estado==='Comprada') + '">Aprobada</span></div>' +
+        '<div class="d-flex align-items-center gap-2"><div style="width:10px;height:10px;border-radius:50%;background:' + dotColor(oc.estado==='Comprada') + ';flex-shrink:0;"></div><span class="fs-12 ' + dotClass(oc.estado==='Comprada') + '">Comprada / En transito</span></div>' +
+        '</div></div>' +
+        '</div></div></div>' +
+
+        // Tabla de items
+        '<div class="col-12">' +
+        '<div class="card">' +
+        '<div class="card-header d-flex align-items-center justify-content-between">' +
+        '<h6 class="card-title mb-0"><i class="feather-list me-2 text-primary"></i>Items de la Orden</h6>' +
+        (esBorrador ? '<button class="btn btn-xs btn-outline-primary" onclick="agregarFila()" style="font-size:12px;padding:4px 12px;"><i class="feather-plus me-1"></i>Agregar item</button>' : '') +
+        '</div>' +
+        '<div class="card-body p-0"><div class="table-responsive">' +
+        '<table class="table valtrax-table mb-0" id="tablaItems">' +
+        '<thead><tr>' +
+        '<th style="width:40px">#</th><th>Descripcion</th><th style="width:140px">Parte / SKU</th>' +
+        '<th style="width:110px">Cantidad</th>' +
+        (esBorrador ? '<th style="width:50px"></th>' : '') +
+        '</tr></thead>' +
+        '<tbody id="bodyItems"></tbody>' +
+        '</table></div></div></div></div>' +
+
+        '</div>';
+
+        renderItems(items, esBorrador);
+    }
+
+    function renderItems(items, esBorrador) {
+        const tbody = document.getElementById('bodyItems');
+        if (!tbody) return;
+        if (!items || items.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="' + (esBorrador?5:4) + '" class="text-center text-muted py-3 fs-12">Sin items registrados</td></tr>';
+            return;
+        }
+        tbody.innerHTML = items.map(function(it, i) {
+            var desc = esBorrador
+                ? '<input type="text" class="form-control form-control-sm" value="' + (it.descripcion||'').replace(/"/g,'&quot;') + '" onchange="editarItem(' + i + ',\'descripcion\',this.value)">'
+                : (it.descripcion||'-');
+            var sku = esBorrador
+                ? '<input type="text" class="form-control form-control-sm" value="' + (it.sku||'') + '" onchange="editarItem(' + i + ',\'sku\',this.value)">'
+                : (it.sku||'-');
+            var cant = esBorrador
+                ? '<input type="number" class="form-control form-control-sm" value="' + (it.cantidad||1) + '" min="1" onchange="editarItem(' + i + ',\'cantidad\',parseFloat(this.value)||1)">'
+                : (it.cantidad||0);
+            var btnDel = esBorrador
+                ? '<td><button class="btn btn-xs" style="background:#fef2f2;color:#dc2626;border:1px solid #fecaca;padding:2px 8px;font-size:11px;" onclick="eliminarFila(' + i + ')"><i class="feather-trash-2"></i></button></td>'
+                : '';
+            return '<tr><td class="text-muted fs-12">' + (i+1) + '</td><td>' + desc + '</td><td>' + sku + '</td><td>' + cant + '</td>' + btnDel + '</tr>';
+        }).join('');
+    }
+
+    window.editarItem = function(idx, campo, valor) {
+        var oc = ValtraxDB.getOrdenesCompra().find(function(o){ return o.folio === folioParam; });
+        if (!oc) return;
+        if (!oc.items) oc.items = [];
+        if (!oc.items[idx]) oc.items[idx] = {};
+        oc.items[idx][campo] = valor;
+        ValtraxDB.updateOrdenCompra(oc.id, { items: oc.items });
+    };
+
+    window.recalcular = function() {
+        var oc = ValtraxDB.getOrdenesCompra().find(function(o){ return o.folio === folioParam; });
+        if (!oc || !oc.items) return;
+        var total = oc.items.reduce(function(s, it){ return s + (it.cantidad||0)*(it.precioUnit||0); }, 0);
+        ValtraxDB.updateOrdenCompra(oc.id, { total: total });
+        var tEl = document.getElementById('totalItems');
+        if (tEl) tEl.textContent = fmtMoney(total);
+        var resTotal = document.getElementById('resTotal');
+        if (resTotal) resTotal.textContent = fmtMoney(total);
+        oc.items.forEach(function(it, i) {
+            var cel = document.querySelector('.item-total-' + i);
+            if (cel) cel.textContent = fmtMoney((it.cantidad||0)*(it.precioUnit||0));
+        });
+    };
+
+    window.agregarFila = function() {
+        var oc = ValtraxDB.getOrdenesCompra().find(function(o){ return o.folio === folioParam; });
+        if (!oc) return;
+        if (!oc.items) oc.items = [];
+        oc.items.push({ descripcion: '', sku: '', cantidad: 1, precioUnit: 0 });
+        ValtraxDB.updateOrdenCompra(oc.id, { items: oc.items });
+        renderItems(oc.items, true);
+    };
+
+    window.eliminarFila = function(idx) {
+        var oc = ValtraxDB.getOrdenesCompra().find(function(o){ return o.folio === folioParam; });
+        if (!oc || !oc.items) return;
+        oc.items.splice(idx, 1);
+        ValtraxDB.updateOrdenCompra(oc.id, { items: oc.items });
+        recalcular();
+        renderItems(oc.items, true);
+    };
+
+    window.guardarCambios = function() {
+        var oc = ValtraxDB.getOrdenesCompra().find(function(o){ return o.folio === folioParam; });
+        if (!oc) return;
+        var cambios = {
+            cliente:      document.getElementById('fCliente') ? document.getElementById('fCliente').value : oc.cliente,
+            faena:        document.getElementById('fFaena') ? document.getElementById('fFaena').value : oc.faena,
+            proveedor:    document.getElementById('fProveedor') ? document.getElementById('fProveedor').value : oc.proveedor,
+            gestor:       document.getElementById('fGestor') ? document.getElementById('fGestor').value : oc.gestor,
+            fechaEntrega: document.getElementById('fFechaEntrega') ? document.getElementById('fFechaEntrega').value : oc.fechaEntrega,
+            condPago:     document.getElementById('fCondPago') ? document.getElementById('fCondPago').value : oc.condPago,
+            observaciones:document.getElementById('fObs') ? document.getElementById('fObs').value : oc.observaciones
+        };
+        ValtraxDB.updateOrdenCompra(oc.id, cambios);
+        mostrarToast('Cambios guardados correctamente', 'success');
+    };
+
+    window.aprobarOC = function() {
+        var oc = ValtraxDB.getOrdenesCompra().find(function(o){ return o.folio === folioParam; });
+        if (!oc) return;
+        if (!confirm('Aprobar la OC ' + folioParam + '?\nEl pedido vinculado pasara a "En Compra".')) return;
+        ValtraxDB.updateOrdenCompra(oc.id, { estado: 'Aprobada' });
+        var ped = ValtraxDB.getPedidos().find(function(p){ return p.folio === oc.pedidoFolio || p.id === oc.pedidoId; });
+        if (ped) ValtraxDB.updatePedido(ped.id, { estado: 'En Compra' });
+        mostrarToast('OC Aprobada. Pedido actualizado a "En Compra".', 'success');
+        setTimeout(function(){ location.reload(); }, 900);
+    };
+
+    window.comprarOC = function() {
+        var oc = ValtraxDB.getOrdenesCompra().find(function(o){ return o.folio === folioParam; });
+        if (!oc) return;
+        if (!confirm('Marcar OC ' + folioParam + ' como Comprada?\nEl pedido pasara a "En Preparacion".')) return;
+        ValtraxDB.updateOrdenCompra(oc.id, { estado: 'Comprada' });
+        var ped = ValtraxDB.getPedidos().find(function(p){ return p.folio === oc.pedidoFolio || p.id === oc.pedidoId; });
+        if (ped) ValtraxDB.updatePedido(ped.id, { estado: 'En Preparacion' });
+        mostrarToast('OC marcada como Comprada. Pedido en "En Preparacion".', 'success');
+        setTimeout(function(){ location.reload(); }, 900);
+    };
+
+    function mostrarToast(msg, tipo) {
+        var c = document.createElement('div');
+        c.style.cssText = 'position:fixed;top:20px;right:20px;z-index:99999;min-width:280px;padding:14px 18px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.15);transition:opacity 0.4s;';
+        c.style.background = tipo === 'success' ? '#f0fdf4' : '#fef2f2';
+        c.style.color = tipo === 'success' ? '#16a34a' : '#dc2626';
+        c.style.border = tipo === 'success' ? '1px solid #bbf7d0' : '1px solid #fecaca';
+        c.innerHTML = '<i class="feather-' + (tipo==='success'?'check-circle':'alert-circle') + ' me-2"></i>' + msg;
+        document.body.appendChild(c);
+        setTimeout(function(){ c.style.opacity = '0'; setTimeout(function(){ c.remove(); }, 400); }, 2500);
+    }
+
+    cargarOC();
+    </script>
+
+    <script src="assets/vendors/js/vendors.min.js"></script>
+    <script src="assets/js/common-init.min.js"></script>
+    <script src="assets/js/theme-customizer-init.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Glassmorphism Sidebar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
+
+  <style>
+    /* ─── CSS Variables ─────────────────────────────────────── */
+    :root {
+      --bg-page:         #0a0a14;
+      --glass-bg:        rgba(15, 15, 25, 0.60);
+      --glass-border:    rgba(255, 255, 255, 0.08);
+      --glass-blur:      20px;
+      --glass-shadow:    0 8px 40px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(255,255,255,0.04) inset;
+
+      --accent:          #FF5722;
+      --accent-glow:     rgba(255, 87, 34, 0.30);
+      --accent-light:    #FF7043;
+
+      --text-primary:    rgba(255, 255, 255, 0.92);
+      --text-secondary:  rgba(255, 255, 255, 0.45);
+      --text-muted:      rgba(255, 255, 255, 0.25);
+
+      --item-hover:      rgba(255, 255, 255, 0.055);
+      --item-active-bg:  rgba(255, 87, 34, 0.12);
+      --item-active-border: var(--accent);
+
+      --divider:         rgba(255, 255, 255, 0.06);
+
+      --sidebar-expanded: 280px;
+      --sidebar-collapsed: 64px;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+
+      --transition: all 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+      --font: 'DM Sans', sans-serif;
+    }
+
+    /* ─── Reset & Base ──────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font);
+      background: var(--bg-page);
+      overflow: hidden;
+    }
+
+    /* ─── Page Layout ───────────────────────────────────────── */
+    .app {
+      display: flex;
+      height: 100vh;
+      background:
+        radial-gradient(ellipse 80% 60% at 10% 0%, rgba(255,87,34,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 90% 100%, rgba(99,102,241,0.08) 0%, transparent 60%),
+        var(--bg-page);
+    }
+
+    /* ─── SIDEBAR ───────────────────────────────────────────── */
+    .sidebar {
+      position: relative;
+      width: var(--sidebar-expanded);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding: 20px 12px 16px;
+
+      background: var(--glass-bg);
+      backdrop-filter: blur(var(--glass-blur)) saturate(1.6);
+      -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.6);
+      border-right: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      overflow: hidden;
+      overflow-y: auto;
+
+      transition: var(--transition);
+      scrollbar-width: none;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+    .sidebar::-webkit-scrollbar { display: none; }
+    .sidebar.collapsed { width: var(--sidebar-collapsed); padding: 20px 8px 16px; }
+
+    /* ─── Toggle Button ─────────────────────────────────────── */
+    .toggle-btn {
+      position: absolute;
+      top: 20px;
+      right: 12px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid var(--glass-border);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      font-size: 14px;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    .toggle-btn:hover { background: rgba(255,255,255,0.12); color: var(--text-primary); }
+    .toggle-btn i { transition: transform 0.32s cubic-bezier(0.4,0,0.2,1); }
+    .sidebar.collapsed .toggle-btn { right: 50%; transform: translateX(50%); top: 20px; }
+    .sidebar.collapsed .toggle-btn i { transform: rotate(180deg); }
+
+    /* ─── User Avatar Block ─────────────────────────────────── */
+    .user-block {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 6px 18px;
+      border-bottom: 1px solid var(--divider);
+      margin-bottom: 8px;
+      margin-top: 32px;
+      overflow: hidden;
+    }
+    .avatar-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FF5722, #FF9800);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+      color: #fff;
+      letter-spacing: 0.5px;
+      border: 2px solid rgba(255,255,255,0.12);
+    }
+    .avatar-status {
+      position: absolute;
+      bottom: 1px; right: 1px;
+      width: 9px; height: 9px;
+      background: #4ade80;
+      border-radius: 50%;
+      border: 1.5px solid var(--bg-page);
+    }
+    .user-info {
+      overflow: hidden;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .user-greeting {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 400;
+      line-height: 1.2;
+    }
+    .user-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+    .sidebar.collapsed .user-info { opacity: 0; width: 0; pointer-events: none; }
+    .sidebar.collapsed .user-block { justify-content: center; padding-left: 0; padding-right: 0; }
+
+    /* ─── Section ───────────────────────────────────────────── */
+    .section { margin-bottom: 4px; }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 8px 4px;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    .section-label span {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      white-space: nowrap;
+      transition: var(--transition);
+    }
+    .section-label .label-action {
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    .section-label .label-action:hover { color: var(--accent); }
+    .sidebar.collapsed .section-label { padding: 8px 0 2px; justify-content: center; }
+    .sidebar.collapsed .section-label span { opacity: 0; width: 0; overflow: hidden; }
+
+    /* ─── Nav Item ──────────────────────────────────────────── */
+    .nav-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 10px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: var(--transition);
+      white-space: nowrap;
+      overflow: hidden;
+      border-left: 2px solid transparent;
+      user-select: none;
+    }
+    .nav-item:hover {
+      background: var(--item-hover);
+      color: var(--text-primary);
+    }
+    .nav-item.active {
+      background: var(--item-active-bg);
+      color: var(--text-primary);
+      border-left-color: var(--item-active-border);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+    .nav-item .nav-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      width: 22px;
+      text-align: center;
+      transition: var(--transition);
+    }
+    .nav-item.active .nav-icon { color: var(--accent); }
+    .nav-item .nav-label {
+      flex: 1;
+      transition: opacity 0.22s ease, transform 0.22s ease;
+      transform-origin: left;
+    }
+    .sidebar.collapsed .nav-item {
+      justify-content: center;
+      padding: 10px 0;
+      border-left-color: transparent !important;
+    }
+    .sidebar.collapsed .nav-item.active {
+      border-left-color: transparent !important;
+      background: var(--item-active-bg);
+    }
+    .sidebar.collapsed .nav-label { opacity: 0; width: 0; transform: scaleX(0); }
+    .sidebar.collapsed .nav-item { gap: 0; }
+
+    /* ─── Badge ─────────────────────────────────────────────── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      background: var(--accent);
+      color: #fff;
+      letter-spacing: 0.02em;
+      flex-shrink: 0;
+      animation: pulse-badge 2.4s ease-in-out infinite;
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+    @keyframes pulse-badge {
+      0%, 100% { box-shadow: 0 0 8px var(--accent-glow); }
+      50%       { box-shadow: 0 0 18px rgba(255,87,34,0.55); }
+    }
+    /* Badge always visible in collapsed state */
+    .sidebar.collapsed .badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      min-width: 16px;
+      height: 16px;
+      font-size: 9px;
+      padding: 0 4px;
+    }
+    .sidebar.collapsed .nav-label { display: none; }
+
+    /* ─── Team Avatars ──────────────────────────────────────── */
+    .team-avatars {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .team-avatar {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(15,15,25,0.8);
+      margin-right: -6px;
+      font-size: 8px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .sidebar.collapsed .team-avatars { display: none; }
+
+    /* ─── Channel Dot ───────────────────────────────────────── */
+    .channel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ─── Settings Quick Icons ──────────────────────────────── */
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 8px 6px;
+      border-radius: var(--radius-md);
+      gap: 4px;
+      transition: var(--transition);
+    }
+    .settings-row:hover { background: var(--item-hover); }
+    .settings-icon {
+      width: 32px; height: 32px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      font-size: 14px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .settings-icon:hover { background: var(--item-active-bg); color: var(--accent); border-color: var(--accent-glow); }
+    .sidebar.collapsed .settings-row { display: none; }
+
+    /* ─── Divider ───────────────────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: var(--divider);
+      margin: 8px 4px;
+    }
+
+    /* ─── Footer ────────────────────────────────────────────── */
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid var(--divider);
+      text-align: center;
+      overflow: hidden;
+    }
+    .sidebar-footer span {
+      font-size: 10px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      transition: var(--transition);
+    }
+    .sidebar.collapsed .sidebar-footer span { opacity: 0; }
+
+    /* ─── Tooltip ───────────────────────────────────────────── */
+    [data-tip] { position: relative; }
+    [data-tip]::after {
+      content: attr(data-tip);
+      position: absolute;
+      left: calc(100% + 12px);
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(20,20,35,0.95);
+      backdrop-filter: blur(10px);
+      color: var(--text-primary);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--glass-border);
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.18s ease;
+      z-index: 999;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+    [data-tip]::before {
+      content: '';
+      position: absolute;
+      left: calc(100% + 8px);
+      top: 50%;
+      transform: translateY(-50%);
+      border: 5px solid transparent;
+      border-right-color: rgba(20,20,35,0.95);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.18s ease;
+      z-index: 999;
+    }
+    .sidebar.collapsed [data-tip]:hover::after,
+    .sidebar.collapsed [data-tip]:hover::before { opacity: 1; }
+
+    /* ─── Main Content Placeholder ──────────────────────────── */
+    .main-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+      color: var(--text-secondary);
+      font-family: var(--font);
+    }
+    .main-content h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .main-content p { font-size: 14px; }
+
+    /* ─── Label fade-in when expanding ─────────────────────── */
+    .sidebar:not(.collapsed) .nav-label {
+      animation: fadeInLabel 0.28s ease both;
+    }
+    @keyframes fadeInLabel {
+      from { opacity: 0; transform: translateX(-6px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ══════════════════════════════════════════ SIDEBAR ══ -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- Toggle -->
+    <button class="toggle-btn" id="toggleBtn" aria-label="Toggle sidebar">
+      <i class="ri-arrow-left-s-line" id="toggleIcon"></i>
+    </button>
+
+    <!-- User Block -->
+    <div class="user-block">
+      <div class="avatar-wrap">
+        <div class="avatar">AK</div>
+        <div class="avatar-status"></div>
+      </div>
+      <div class="user-info">
+        <div class="user-greeting">Good morning 👋</div>
+        <div class="user-name">Alex Kramer</div>
+      </div>
+    </div>
+
+    <!-- ── WORKSPACE ── -->
+    <div class="section">
+      <div class="section-label"><span>Workspace</span></div>
+
+      <div class="nav-item active" data-tip="My Projects" onclick="setActive(this)">
+        <i class="ri-layout-grid-2-line nav-icon"></i>
+        <span class="nav-label">My Projects</span>
+      </div>
+
+      <div class="nav-item" data-tip="My Tasks" onclick="setActive(this)">
+        <i class="ri-checkbox-multiple-line nav-icon"></i>
+        <span class="nav-label">My Tasks</span>
+      </div>
+
+      <div class="nav-item" data-tip="Team" onclick="setActive(this)">
+        <i class="ri-group-2-line nav-icon"></i>
+        <span class="nav-label">Team</span>
+        <div class="team-avatars">
+          <div class="team-avatar" style="background:#6366f1;">J</div>
+          <div class="team-avatar" style="background:#ec4899;">S</div>
+          <div class="team-avatar" style="background:#14b8a6;">M</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ── INBOX ── -->
+    <div class="section">
+      <div class="section-label"><span>Inbox</span></div>
+
+      <div class="nav-item" data-tip="Mail" onclick="setActive(this)">
+        <i class="ri-mail-line nav-icon"></i>
+        <span class="nav-label">Mail</span>
+        <span class="badge">12</span>
+      </div>
+
+      <div class="nav-item" data-tip="Message" onclick="setActive(this)">
+        <i class="ri-message-3-line nav-icon"></i>
+        <span class="nav-label">Message</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ── NOTIFICATION ── -->
+    <div class="section">
+      <div class="section-label"><span>Notification</span></div>
+
+      <div class="nav-item" data-tip="Notifications" onclick="setActive(this)">
+        <i class="ri-notification-3-line nav-icon"></i>
+        <span class="nav-label">Notifications</span>
+        <span class="badge">8</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ── CHANNELS ── -->
+    <div class="section">
+      <div class="section-label">
+        <span>Channels</span>
+        <i class="ri-edit-2-line label-action"></i>
+      </div>
+
+      <div class="nav-item" data-tip="Project Management" onclick="setActive(this)">
+        <div class="channel-dot" style="background:#6366f1;"></div>
+        <span class="nav-label">Project Management</span>
+      </div>
+
+      <div class="nav-item" data-tip="Dev / Engineering" onclick="setActive(this)">
+        <div class="channel-dot" style="background:#22d3ee;"></div>
+        <span class="nav-label">Dev / Engineering</span>
+      </div>
+
+      <div class="nav-item" data-tip="UX / UI Design" onclick="setActive(this)">
+        <div class="channel-dot" style="background:#f43f5e;"></div>
+        <span class="nav-label">UX / UI Design</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ── SETTINGS ── -->
+    <div class="section">
+      <div class="section-label">
+        <span>Settings</span>
+        <i class="ri-edit-2-line label-action"></i>
+      </div>
+
+      <div class="settings-row">
+        <div class="settings-icon" title="General"><i class="ri-settings-3-line"></i></div>
+        <div class="settings-icon" title="Profile"><i class="ri-user-settings-line"></i></div>
+        <div class="settings-icon" title="Security"><i class="ri-shield-keyhole-line"></i></div>
+        <div class="settings-icon" title="Integrations"><i class="ri-plug-line"></i></div>
+        <div class="settings-icon" title="Billing"><i class="ri-bank-card-line"></i></div>
+        <div class="settings-icon" title="Appearance"><i class="ri-palette-line"></i></div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="sidebar-footer">
+      <span>© Quantum Creative</span>
+    </div>
+
+  </aside>
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <h1>Project Dashboard</h1>
+    <p>Select an item from the sidebar to get started.</p>
+  </main>
+
+</div>
+
+<script>
+  const sidebar   = document.getElementById('sidebar');
+  const toggleBtn = document.getElementById('toggleBtn');
+
+  toggleBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('collapsed');
+  });
+
+  function setActive(el) {
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+  }
+</script>
+</body>
+</html>
