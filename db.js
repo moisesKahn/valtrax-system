@@ -1,15 +1,15 @@
 const mysql = require('mysql2/promise');
 
-// Railway inyecta DATABASE_URL o las variables individuales
+// Railway puede inyectar MYSQL_DATABASE (con guión bajo) o MYSQLDATABASE (sin guión bajo)
 const pool = mysql.createPool(
-    process.env.DATABASE_URL
-        ? { uri: process.env.DATABASE_URL, waitForConnections: true, connectionLimit: 10 }
+    process.env.DATABASE_URL || process.env.MYSQL_URL
+        ? { uri: process.env.DATABASE_URL || process.env.MYSQL_URL, waitForConnections: true, connectionLimit: 10 }
         : {
             host:     process.env.MYSQLHOST     || 'localhost',
-            port:     process.env.MYSQLPORT     || 3306,
+            port:     parseInt(process.env.MYSQLPORT || '3306'),
             user:     process.env.MYSQLUSER     || 'root',
             password: process.env.MYSQLPASSWORD || '',
-            database: process.env.MYSQLDATABASE || 'valtrax',
+            database: process.env.MYSQL_DATABASE || process.env.MYSQLDATABASE || 'railway',
             waitForConnections: true,
             connectionLimit: 10,
           }
