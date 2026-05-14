@@ -888,7 +888,7 @@ El campo "precio" debe ser un número entero en CLP sin puntos ni símbolos. "su
         }
 
         fetchML(proxyUrl)
-            .catch(()=> fetchML(directUrl))
+            .catch(err=>{ console.warn('[VALTRAX] Proxy ML falló, usando API directa:', err.message); return fetchML(directUrl); })
             .then(data=>{
                 document.getElementById('bpLoading').style.display='none';
                 const items = (data.results||[]).filter(i=>i.price>0);

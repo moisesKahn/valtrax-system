@@ -269,8 +269,9 @@ router.get('/ml-search', async (req, res) => {
     let url = `https://api.mercadolibre.com/sites/MLC/search?q=${encodeURIComponent(q)}&limit=${limit}`;
     if (condition) url += `&condition=${condition}`;
 
+    const ML_TIMEOUT_MS = 10000;
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
+    const timeout = setTimeout(() => controller.abort(), ML_TIMEOUT_MS);
     try {
         const response = await fetch(url, {
             headers: {
@@ -279,14 +280,14 @@ router.get('/ml-search', async (req, res) => {
             },
             signal: controller.signal
         });
-        clearTimeout(timeout);
         if (!response.ok) throw new Error('HTTP ' + response.status);
         const data = await response.json();
         res.json(data);
     } catch (e) {
-        clearTimeout(timeout);
         const msg = e.name === 'AbortError' ? 'Timeout al conectar con MercadoLibre' : e.message;
         res.status(502).json({ error: msg, fallback: true });
+    } finally {
+        clearTimeout(timeout);
     }
 });
 
