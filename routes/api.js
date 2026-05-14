@@ -263,21 +263,30 @@ router.post('/sync', async (req, res) => {
    GET /api/ml-search?q=...&limit=...&condition=...
    ════════════════════════════════════════════════════════════ */
 router.get('/ml-search', async (req, res) => {
+    const { q, limit = '20', condition } = req.query;
+    if (!q) return res.status(400).json({ error: 'Falta parámetro q' });
+
+    let url = `https://api.mercadolibre.com/sites/MLC/search?q=${encodeURIComponent(q)}&limit=${limit}`;
+    if (condition) url += `&condition=${condition}`;
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
     try {
-        const { q, limit = '20', condition } = req.query;
-        if (!q) return res.status(400).json({ error: 'Falta parámetro q' });
-
-        let url = `https://api.mercadolibre.com/sites/MLC/search?q=${encodeURIComponent(q)}&limit=${limit}`;
-        if (condition) url += `&condition=${condition}`;
-
         const response = await fetch(url, {
-            headers: { 'User-Agent': 'VALTRAX-CRM/1.0' }
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (compatible; VALTRAX-CRM/1.0)',
+                'Accept': 'application/json'
+            },
+            signal: controller.signal
         });
+        clearTimeout(timeout);
         if (!response.ok) throw new Error('HTTP ' + response.status);
         const data = await response.json();
         res.json(data);
     } catch (e) {
-        res.status(502).json({ error: e.message });
+        clearTimeout(timeout);
+        const msg = e.name === 'AbortError' ? 'Timeout al conectar con MercadoLibre' : e.message;
+        res.status(502).json({ error: msg, fallback: true });
     }
 });
 

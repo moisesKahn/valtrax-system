@@ -874,24 +874,21 @@ El campo "precio" debe ser un número entero en CLP sin puntos ni símbolos. "su
         const cond  = document.getElementById('bpCondicion').value;
         const limit = document.getElementById('bpLimite').value;
 
-        // Usar proxy del servidor para evitar bloqueo CORS/403 de MercadoLibre
-        const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol !== 'file:';
-        let url;
-        if(isLocal){
-            url = `/api/ml-search?q=${encodeURIComponent(q)}&limit=${limit}`;
-            if(cond) url += `&condition=${cond}`;
-        } else {
-            url = `https://api.mercadolibre.com/sites/MLC/search?q=${encodeURIComponent(q)}&limit=${limit}`;
-            if(cond) url += `&condition=${cond}`;
-        }
+        // Intentar primero por proxy del servidor; si falla, fallback directo al API de MercadoLibre
+        const proxyUrl  = `/api/ml-search?q=${encodeURIComponent(q)}&limit=${limit}${cond?'&condition='+cond:''}`;
+        const directUrl = `https://api.mercadolibre.com/sites/MLC/search?q=${encodeURIComponent(q)}&limit=${limit}${cond?'&condition='+cond:''}`;
 
         ['bpInicio','bpResultados','bpResumen','bpError','bpVacio','bpDistWrap'].forEach(id=>{
             document.getElementById(id).style.display='none';
         });
         document.getElementById('bpLoading').style.display='';
 
-        fetch(url)
-            .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+        function fetchML(url){
+            return fetch(url).then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); });
+        }
+
+        fetchML(proxyUrl)
+            .catch(()=> fetchML(directUrl))
             .then(data=>{
                 document.getElementById('bpLoading').style.display='none';
                 const items = (data.results||[]).filter(i=>i.price>0);
