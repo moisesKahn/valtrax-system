@@ -637,9 +637,9 @@ El campo "precio" debe ser un número entero en CLP sin puntos ni símbolos. "su
                     'anthropic-dangerous-direct-browser-access': 'true'
                 },
                 body: JSON.stringify({
-                    model: 'claude-opus-4-5',
-                    max_tokens: 2048,
-                    tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 5 }],
+                    model: 'claude-haiku-4-5',
+                    max_tokens: 600,
+                    tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 2 }],
                     messages: [{ role: 'user', content: prompt }]
                 })
             });
