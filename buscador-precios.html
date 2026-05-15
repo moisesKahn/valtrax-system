@@ -246,7 +246,7 @@
                     </ul>
                 </div>
                 <div class="page-header-right ms-auto d-flex align-items-center gap-2">
-                    <span class="badge bg-success-subtle text-success fs-11"><i class="feather-wifi me-1"></i>MercadoLibre · tiempo real</span>
+                    <span class="badge bg-primary-subtle text-primary fs-11"><i class="feather-shopping-bag me-1"></i>10+ tiendas Chile</span>
                     <span class="badge bg-secondary-subtle text-secondary fs-11"><i class="feather-clipboard me-1"></i>Cotización manual</span>
                 </div>
             </div>
@@ -556,7 +556,7 @@
                 <p class="fs-11 text-muted fw-medium text-uppercase mb-0 copyright">
                     <span>© Copyright </span><a href="javascript:void(0);" class="ms-1"><span class="fw-bold">VALTRAX</span></a>
                 </p>
-                <p class="fs-11 text-muted fw-medium text-uppercase mb-0">Precios referenciales · MercadoLibre Chile + cotización manual</p>
+                <p class="fs-11 text-muted fw-medium text-uppercase mb-0">Precios referenciales · MercadoLibre + Google Shopping + tiendas Chile + cotización manual</p>
             </footer>
         </div>
     </main>
@@ -730,9 +730,9 @@ El campo "precio" debe ser un número entero en CLP sin puntos ni símbolos. "su
             setTimeout(()=>{ btn.innerHTML='<i class="feather-copy me-1"></i>Copiar prompt'; btn.classList.replace('btn-success','btn-outline-secondary'); },2000);
         });
     };
-    function mostrarToast(msg, color){
+    function mostrarToast(msg, color, txtColor){
         const t = document.createElement('div');
-        t.style.cssText=`position:fixed;bottom:30px;right:30px;background:${color};color:white;padding:12px 20px;border-radius:10px;z-index:99999;font-size:13px;box-shadow:0 4px 20px #0003;`;
+        t.style.cssText=`position:fixed;bottom:30px;right:30px;background:${color};color:${txtColor||'white'};padding:12px 20px;border-radius:10px;z-index:99999;font-size:13px;box-shadow:0 4px 20px #0003;font-weight:600;`;
         t.textContent = msg;
         document.body.appendChild(t);
         setTimeout(()=>t.remove(), 3500);
@@ -760,6 +760,7 @@ El campo "precio" debe ser un número entero en CLP sin puntos ni símbolos. "su
     });
 
     const TIENDAS = [
+        { nombre:'MercadoLibre', color:'#ffe600', logo:'🟡', txtColor:'#333', url: q=>`https://listado.mercadolibre.cl/${encodeURIComponent(q).replace(/%20/g,'-')}_NoIndex_True` },
         { nombre:'Sodimac',   color:'#e8392a', logo:'🔧', url: q=>`https://www.sodimac.cl/sodimac-cl/search?No=0&Nr=AND%28&Ntt=${encodeURIComponent(q)}` },
         { nombre:'Imperial',  color:'#ff6600', logo:'🏭', url: q=>`https://www.imperial.cl/search?q=${encodeURIComponent(q)}` },
         { nombre:'Falabella', color:'#2c7bb5', logo:'🛒', url: q=>`https://www.falabella.com/falabella-cl/search?Ntt=${encodeURIComponent(q)}` },
@@ -772,15 +773,19 @@ El campo "precio" debe ser un número entero en CLP sin puntos ni símbolos. "su
 
     function renderTiendas(){
         const q = document.getElementById('bpQuery').value.trim();
-        document.getElementById('tiendasGrid').innerHTML = TIENDAS.map(t=>`
-            <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        document.getElementById('tiendasGrid').innerHTML = TIENDAS.map(t=>{
+            const bg = t.txtColor ? t.color : t.color+'15';
+            const clr = t.txtColor || t.color;
+            const border = t.txtColor ? t.color : t.color+'40';
+            return `<div class="col-6 col-sm-4 col-md-3 col-lg-2">
                 <a href="${t.url(q||'producto')}" target="_blank" rel="noopener"
                    class="btn w-100 btn-sm d-flex align-items-center gap-2 justify-content-center fw-semibold"
-                   style="background:${t.color}15;border:1.5px solid ${t.color}40;color:${t.color};border-radius:10px;padding:8px 6px;font-size:12px;"
+                   style="background:${bg};border:1.5px solid ${border};color:${clr};border-radius:10px;padding:8px 6px;font-size:12px;"
                    title="Buscar en ${t.nombre}">
                     <span style="font-size:16px;">${t.logo}</span> ${t.nombre}
                 </a>
-            </div>`).join('');
+            </div>`;
+        }).join('');
     }
     renderTiendas();
     // Actualizar links cuando cambia el query
@@ -871,39 +876,16 @@ El campo "precio" debe ser un número entero en CLP sin puntos ni símbolos. "su
         localStorage.setItem('vx_bp_recientes', JSON.stringify(_bpRecientes));
         mostrarRecientes();
 
-        const cond  = document.getElementById('bpCondicion').value;
-        const limit = document.getElementById('bpLimite').value;
+        // Abrir MercadoLibre directamente (la API pública fue bloqueada por ML)
+        const mlUrl = `https://listado.mercadolibre.cl/${encodeURIComponent(q).replace(/%20/g,'-')}_NoIndex_True`;
+        window.open(mlUrl, '_blank', 'noopener');
 
-        // Usar proxy del servidor para evitar bloqueo CORS/403 de MercadoLibre
-        const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol !== 'file:';
-        let url;
-        if(isLocal){
-            url = `/api/ml-search?q=${encodeURIComponent(q)}&limit=${limit}`;
-            if(cond) url += `&condition=${cond}`;
-        } else {
-            url = `https://api.mercadolibre.com/sites/MLC/search?q=${encodeURIComponent(q)}&limit=${limit}`;
-            if(cond) url += `&condition=${cond}`;
-        }
-
-        ['bpInicio','bpResultados','bpResumen','bpError','bpVacio','bpDistWrap'].forEach(id=>{
+        // Mostrar estado informativo
+        ['bpLoading','bpResultados','bpResumen','bpError','bpVacio','bpDistWrap'].forEach(id=>{
             document.getElementById(id).style.display='none';
         });
-        document.getElementById('bpLoading').style.display='';
-
-        fetch(url)
-            .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-            .then(data=>{
-                document.getElementById('bpLoading').style.display='none';
-                const items = (data.results||[]).filter(i=>i.price>0);
-                _bpResultados = items;
-                if(!items.length){ document.getElementById('bpVacio').style.display=''; return; }
-                procesarResultados(items, q);
-            })
-            .catch(err=>{
-                document.getElementById('bpLoading').style.display='none';
-                document.getElementById('bpError').style.display='';
-                document.getElementById('bpErrorMsg').textContent = 'No se pudo conectar con MercadoLibre. Verifica tu conexión a internet. ('+err.message+')';
-            });
+        document.getElementById('bpInicio').style.display='';
+        mostrarToast('🛍️ Abriendo MercadoLibre Chile — anota los precios abajo', '#ffe600', '#333');
     };
 
     function procesarResultados(items, query){
