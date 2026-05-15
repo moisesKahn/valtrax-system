@@ -262,23 +262,41 @@ router.post('/sync', async (req, res) => {
    PROXY MERCADOLIBRE — evita bloqueo CORS/403 desde browser
    GET /api/ml-search?q=...&limit=...&condition=...
    ════════════════════════════════════════════════════════════ */
-router.get('/ml-search', async (req, res) => {
-    try {
-        const { q, limit = '20', condition } = req.query;
-        if (!q) return res.status(400).json({ error: 'Falta parámetro q' });
+router.get('/ml-search', (req, res) => {
+    const { q, limit = '20', condition } = req.query;
+    if (!q) return res.status(400).json({ error: 'Falta parámetro q' });
 
-        let url = `https://api.mercadolibre.com/sites/MLC/search?q=${encodeURIComponent(q)}&limit=${limit}`;
-        if (condition) url += `&condition=${condition}`;
+    let path = `/sites/MLC/search?q=${encodeURIComponent(q)}&limit=${limit}`;
+    if (condition) path += `&condition=${condition}`;
 
-        const response = await fetch(url, {
-            headers: { 'User-Agent': 'VALTRAX-CRM/1.0' }
+    const https = require('https');
+    const options = {
+        hostname: 'api.mercadolibre.com',
+        path,
+        method: 'GET',
+        headers: {
+            'User-Agent': 'Mozilla/5.0 (compatible; VALTRAX/1.0)',
+            'Accept': 'application/json'
+        }
+    };
+
+    const request = https.request(options, (mlRes) => {
+        let body = '';
+        mlRes.on('data', chunk => body += chunk);
+        mlRes.on('end', () => {
+            if (mlRes.statusCode !== 200) {
+                return res.status(502).json({ error: 'MercadoLibre HTTP ' + mlRes.statusCode });
+            }
+            try {
+                res.json(JSON.parse(body));
+            } catch (e) {
+                res.status(502).json({ error: 'JSON inválido: ' + e.message });
+            }
         });
-        if (!response.ok) throw new Error('HTTP ' + response.status);
-        const data = await response.json();
-        res.json(data);
-    } catch (e) {
-        res.status(502).json({ error: e.message });
-    }
+    });
+
+    request.on('error', e => res.status(502).json({ error: e.message }));
+    request.end();
 });
 
 module.exports = router;
