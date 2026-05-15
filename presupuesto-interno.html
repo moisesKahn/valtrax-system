@@ -730,18 +730,27 @@ El campo "precio" es entero CLP sin puntos. Ordena de menor a mayor precio. Si n
                 },
                 body: JSON.stringify({
                     model:'claude-haiku-4-5',
-                    max_tokens:800,
+                    max_tokens:900,
+                    system: 'Eres un asistente que responde ÚNICAMENTE con JSON válido, sin texto adicional, sin explicaciones, sin markdown. Solo el objeto JSON puro.',
                     tools:[{type:'web_search_20250305',name:'web_search',max_uses:3}],
                     messages:[{role:'user',content:prompt}]
                 })
             });
             if(!res.ok){ var e=await res.json().catch(()=>({})); throw new Error(e.error?.message||'HTTP '+res.status); }
             var data = await res.json();
-            var textBlock = data.content?.find(b=>b.type==='text');
-            if(!textBlock) throw new Error('Sin respuesta de texto');
-            var jsonStr = textBlock.text.trim();
+            // Concatenar todos los bloques de texto (puede haber varios después de tool_result)
+            var allText = (data.content||[])
+                .filter(b=>b.type==='text')
+                .map(b=>b.text)
+                .join('')
+                .trim();
+            if(!allText) throw new Error('Sin respuesta de texto del modelo');
+            // Extraer JSON: primero bloque ```json```, luego primer { ... }
+            var jsonStr = allText;
             var m = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/); if(m) jsonStr=m[1].trim();
-            var obj = jsonStr.match(/\{[\s\S]*\}/); if(obj) jsonStr=obj[0];
+            var obj = jsonStr.match(/\{[\s\S]*\}/); 
+            if(!obj) throw new Error('La IA no devolvió JSON. Respuesta: '+allText.slice(0,120));
+            jsonStr = obj[0];
             var parsed = JSON.parse(jsonStr);
             var opciones = (parsed.opciones||[])
                 .filter(o=>o.precio>0 && o.url && o.url.startsWith('http'))
@@ -850,13 +859,14 @@ Precio entero CLP. Ordena menor a mayor.`;
             var res=await fetch('https://api.anthropic.com/v1/messages',{
                 method:'POST',
                 headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-                body:JSON.stringify({model:'claude-haiku-4-5',max_tokens:800,tools:[{type:'web_search_20250305',name:'web_search',max_uses:3}],messages:[{role:'user',content:prompt}]})
+                body:JSON.stringify({model:'claude-haiku-4-5',max_tokens:900,system:'Responde ÚNICAMENTE con JSON válido, sin texto adicional, sin markdown, sin explicaciones.',tools:[{type:'web_search_20250305',name:'web_search',max_uses:3}],messages:[{role:'user',content:prompt}]})
             });
             if(!res.ok) return;
             var data=await res.json();
-            var tb=data.content?.find(b=>b.type==='text'); if(!tb) return;
-            var js=tb.text.trim(); var m=js.match(/```(?:json)?\s*([\s\S]*?)```/); if(m) js=m[1].trim();
-            var obj=js.match(/\{[\s\S]*\}/); if(obj) js=obj[0];
+            var allText=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();
+            if(!allText) return;
+            var js=allText; var m=js.match(/```(?:json)?\s*([\s\S]*?)```/); if(m) js=m[1].trim();
+            var obj=js.match(/\{[\s\S]*\}/); if(!obj) return; js=obj[0];
             var parsed=JSON.parse(js);
             var opciones=(parsed.opciones||[]).filter(o=>o.precio>0&&o.url&&o.url.startsWith('http')).sort((a,b)=>a.precio-b.precio).slice(0,10);
             if(!opciones.length) return;
