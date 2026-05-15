@@ -145,7 +145,7 @@ const ValtraxDB = (function(){
       if(c.folio) ValtraxAPI.put('/cotizaciones/' + c.folio, c).catch(()=>{});
     } else {
       c.id = Date.now();
-      const n = list.length + 1;
+      const n = list.length + 100;
       c.folio = c.folio || ('COT' + String(n).padStart(5,'0'));
       c.creadoEn = new Date().toISOString().slice(0,10);
       list.push(c);

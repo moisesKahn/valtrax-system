@@ -86,6 +86,7 @@
                         <ul class="nxl-submenu">
                             <li class="nxl-item"><a class="nxl-link" href="cotizaciones.html">Listado</a></li>
                             <li class="nxl-item"><a class="nxl-link" href="cotizaciones-crear.html">Nueva Cotización</a></li>
+                            <li class="nxl-item"><a class="nxl-link" href="presupuesto-interno.html">Presupuesto Interno</a></li>
                         </ul>
                     </li>
 
@@ -697,17 +698,28 @@ El campo "precio" debe ser un número entero en CLP sin puntos ni símbolos. "su
             const urlBtn = p.url && p.url.startsWith('http')
                 ? `<a href="${p.url}" target="_blank" rel="noopener" class="btn btn-xs btn-outline-primary" style="padding:2px 6px;font-size:11px;"><i class="feather-external-link"></i></a>`
                 : '<span class="text-muted fs-11">—</span>';
+            const tienda = (p.tienda||'').replace(/"/g,'&quot;');
+            const desc   = (p.descripcion||query).replace(/"/g,'&quot;');
             return `<tr>
                 <td class="fw-semibold fs-13">${p.tienda||'—'}</td>
                 <td class="fs-12 text-muted">${p.descripcion||query}</td>
                 <td class="fw-bold text-primary">${p.precio ? fmtCLP(p.precio) : '—'}</td>
                 <td><span class="badge ${p.condicion==='nuevo'?'bg-success-subtle text-success':'bg-secondary-subtle text-secondary'}">${p.condicion||'nuevo'}</span></td>
                 <td>${urlBtn}</td>
-                <td><button class="btn btn-xs text-success" style="padding:2px 6px;font-size:14px;background:none;border:none;" title="Agregar a cotización manual"
-                    onclick="agregarFilaCot('${(p.tienda||'').replace(/'/g,'')}','${(p.descripcion||query).replace(/'/g,'')}');setTimeout(()=>{const filas=document.querySelectorAll('#cotManualBody .cot-precio');if(filas.length){filas[filas.length-1].value='${p.precio||0}';recalcCotManual();}},50)">
-                    ➕</button></td>
+                <td><button class="btn btn-xs text-success claude-add-btn" style="padding:2px 6px;font-size:14px;background:none;border:none;" title="Agregar a cotización manual"
+                    data-tienda="${tienda}" data-desc="${desc}" data-precio="${p.precio||0}">➕</button></td>
             </tr>`;
         }).join('');
+        // Delegación de eventos para botones ➕
+        document.getElementById('claudeTablaBody').querySelectorAll('.claude-add-btn').forEach(btn=>{
+            btn.addEventListener('click', function(){
+                agregarFilaCot(this.dataset.tienda, this.dataset.desc);
+                setTimeout(()=>{
+                    const filas = document.querySelectorAll('#cotManualBody .cot-precio');
+                    if(filas.length) { filas[filas.length-1].value = this.dataset.precio; recalcCotManual(); }
+                }, 50);
+            });
+        });
         document.getElementById('claudeResultados').style.display = '';
     }
 
