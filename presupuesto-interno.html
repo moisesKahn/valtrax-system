@@ -699,25 +699,17 @@
         if(btn){ btn.disabled=true; btn.innerHTML='<span class="spin-sm"></span>'; }
 
         var fecha = new Date().toLocaleDateString('es-CL');
-        var prompt = `Busca en tiendas chilenas el precio más barato de: "${it.desc}" (${it.cant} ${it.unidad}).
-Fecha: ${fecha}. País: Chile.
+        var prompt = `Busca en tiendas chilenas el precio de: "${it.desc}" (${it.cant} ${it.unidad}). Fecha: ${fecha}.
 
-Encuentra las 10 opciones MÁS BARATAS disponibles hoy en Chile.
-Para cada opción necesito la URL EXACTA del producto específico (no la URL de búsqueda ni categoría, sino la página individual del producto).
+Responde ÚNICAMENTE con este JSON sin texto antes ni después:
+{"opciones":[{"tienda":"Falabella","producto":"nombre producto","precio":14990,"url":"https://www.falabella.com/...","condicion":"nuevo"}]}
 
-Responde SOLO con JSON válido, sin texto adicional:
-{
-  "opciones": [
-    {
-      "tienda": "Nombre tienda",
-      "producto": "Nombre exacto del producto",
-      "precio": 12990,
-      "url": "https://www.tienda.cl/producto-especifico-123",
-      "condicion": "nuevo"
-    }
-  ]
-}
-El campo "precio" es entero CLP sin puntos. Ordena de menor a mayor precio. Si no encuentras URL exacta del producto omite esa opción.`;
+REGLAS ESTRICTAS:
+- "precio" = número entero CLP sin puntos ni símbolos (ej: 14990).
+- "url" = URL de la tienda que empiece con https:// (puede ser búsqueda o producto específico).
+- Incluye al menos 3 opciones de distintas tiendas chilenas (Falabella, Sodimac, Ripley, Paris, Easy, MercadoLibre Chile, etc.).
+- Ordena de menor a mayor precio.
+- NO agregues texto fuera del JSON.`;
 
         try {
             var res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -752,11 +744,22 @@ El campo "precio" es entero CLP sin puntos. Ordena de menor a mayor precio. Si n
             if(!obj) throw new Error('La IA no devolvió JSON. Respuesta: '+allText.slice(0,120));
             jsonStr = obj[0];
             var parsed = JSON.parse(jsonStr);
-            var opciones = (parsed.opciones||[])
-                .filter(o=>o.precio>0 && o.url && o.url.startsWith('http'))
-                .sort((a,b)=>a.precio-b.precio)
-                .slice(0,10);
-            if(!opciones.length) throw new Error('No se encontraron opciones con URL de producto específico.');
+            var opciones = (parsed.opciones||[]).map(o=>({
+                tienda:   o.tienda   || 'Tienda',
+                producto: o.producto || o.nombre || o.descripcion || it.desc,
+                precio:   parseFloat(String(o.precio).replace(/[^0-9.]/g,'')) || 0,
+                url:      o.url ? (o.url.startsWith('http') ? o.url
+                              : 'https://'+o.url.replace(/^\/+/,'')) : '',
+                condicion: o.condicion || 'nuevo'
+            }))
+            .filter(o => o.precio > 0)
+            .map(o => ({
+                ...o,
+                url: o.url || `https://www.google.com/search?q=${encodeURIComponent(o.tienda+' '+o.producto+' Chile')}`
+            }))
+            .sort((a,b)=>a.precio-b.precio)
+            .slice(0,10);
+            if(!opciones.length) throw new Error('La IA no encontró precios para este producto. Intenta reformular el nombre.');
 
             // Guardar en caché
             if(!_ppto[id]) _ppto[id]={precio:0,url:'',margen:30,opciones:null};
@@ -868,7 +871,14 @@ Precio entero CLP. Ordena menor a mayor.`;
             var js=allText; var m=js.match(/```(?:json)?\s*([\s\S]*?)```/); if(m) js=m[1].trim();
             var obj=js.match(/\{[\s\S]*\}/); if(!obj) return; js=obj[0];
             var parsed=JSON.parse(js);
-            var opciones=(parsed.opciones||[]).filter(o=>o.precio>0&&o.url&&o.url.startsWith('http')).sort((a,b)=>a.precio-b.precio).slice(0,10);
+            var opciones=(parsed.opciones||[]).map(o=>({
+                tienda: o.tienda||'Tienda', producto: o.producto||o.nombre||it.desc,
+                precio: parseFloat(String(o.precio).replace(/[^0-9.]/g,''))||0,
+                url: o.url?(o.url.startsWith('http')?o.url:'https://'+o.url.replace(/^\/+/,'')):'' ,
+                condicion: o.condicion||'nuevo'
+            })).filter(o=>o.precio>0)
+            .map(o=>({...o, url: o.url||`https://www.google.com/search?q=${encodeURIComponent(o.tienda+' '+o.producto+' Chile')}`}))
+            .sort((a,b)=>a.precio-b.precio).slice(0,10);
             if(!opciones.length) return;
             if(!_ppto[id]) _ppto[id]={precio:0,url:'',margen:parseInt(document.getElementById('margenGlobal').value)||30,opciones:null};
             _ppto[id].opciones=opciones;
