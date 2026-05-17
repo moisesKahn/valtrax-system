@@ -685,12 +685,31 @@
         <div id="modalEmitirCot" style="display:none;position:fixed;inset:0;z-index:14000;background:rgba(5,12,28,0.78);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);align-items:center;justify-content:center;">
             <div style="width:92%;max-width:1080px;height:88vh;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:22px;box-shadow:0 32px 80px rgba(0,0,0,0.55);display:flex;overflow:hidden;">
 
-                <!-- Izquierda: preview PDF -->
-                <div style="flex:1;background:#2e2e2e;display:flex;flex-direction:column;border-radius:22px 0 0 22px;overflow:hidden;">
-                    <div style="background:#232323;padding:10px 16px;display:flex;align-items:center;gap:8px;">
-                        <span style="color:#888;font-size:12px;font-family:sans-serif;"><i class="feather-file-text" style="margin-right:6px;"></i>Vista previa — Cotización</span>
+                <!-- Izquierda: estado PDF -->
+                <div style="flex:1;background:#1e2a3a;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:22px 0 0 22px;padding:40px;">
+                    <div id="pdfEstado" style="text-align:center;">
+                        <!-- spinner mientras genera -->
+                        <div id="pdfSpinner" style="margin-bottom:20px;">
+                            <div style="width:48px;height:48px;border:3px solid rgba(255,255,255,0.1);border-top-color:rgba(255,255,255,0.6);border-radius:50%;animation:vxSpin .8s linear infinite;margin:0 auto 16px;"></div>
+                            <p style="color:rgba(255,255,255,0.5);font-size:13px;margin:0;">Generando PDF...</p>
+                        </div>
+                        <!-- éxito -->
+                        <div id="pdfListo" style="display:none;">
+                            <div style="width:72px;height:72px;background:rgba(22,163,74,0.15);border:2px solid rgba(22,163,74,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+                                <i class="feather-check" style="font-size:32px;color:#4ade80;"></i>
+                            </div>
+                            <p style="color:#fff;font-size:16px;font-weight:700;margin:0 0 6px;">PDF generado</p>
+                            <p style="color:rgba(255,255,255,0.4);font-size:12px;margin:0;">Listo para descargar o imprimir</p>
+                        </div>
+                        <!-- error -->
+                        <div id="pdfError" style="display:none;">
+                            <div style="width:72px;height:72px;background:rgba(239,68,68,0.15);border:2px solid rgba(239,68,68,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+                                <i class="feather-x" style="font-size:32px;color:#f87171;"></i>
+                            </div>
+                            <p style="color:#f87171;font-size:14px;font-weight:600;margin:0 0 8px;">Error al generar PDF</p>
+                            <p id="pdfErrorMsg" style="color:rgba(255,255,255,0.4);font-size:11px;margin:0;max-width:300px;"></p>
+                        </div>
                     </div>
-                    <iframe id="pdfPreviewIframe" style="flex:1;width:100%;border:none;" allowfullscreen></iframe>
                 </div>
 
                 <!-- Derecha: acciones glass -->
@@ -1783,35 +1802,34 @@
     // ══════════════════════════════════════════════════════════════
     // EMITIR COTIZACIÓN — Generador PDF con membrete VALTRAX
     // ══════════════════════════════════════════════════════════════
+    var _pdfDoc     = null;  // instancia jsPDF para doc.save() y print
     var _pdfBlob    = null;
     var _pdfBlobURL = null;
 
     function cerrarModalEmitir() {
         document.getElementById('modalEmitirCot').style.display = 'none';
-        var ifrm = document.getElementById('pdfPreviewIframe');
-        if (ifrm) ifrm.src = 'about:blank';
+        _pdfDoc = null;
+        _pdfBlob = null;
         if (_pdfBlobURL) { URL.revokeObjectURL(_pdfBlobURL); _pdfBlobURL = null; }
     }
 
     function descargarPDF() {
-        if (!_pdfBlob) return;
+        if (!_pdfDoc) return;
         var folio = (document.getElementById('cotFolio').value || 'cotizacion').replace(/[^a-zA-Z0-9\-]/g,'');
-        var url = URL.createObjectURL(_pdfBlob);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = 'Cotizacion-' + folio + '.pdf';
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(function() { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+        _pdfDoc.save('Cotizacion-' + folio + '.pdf');
     }
 
     function imprimirPDF() {
-        var iframe = document.getElementById('pdfPreviewIframe');
-        if (iframe && iframe.contentWindow) {
-            iframe.focus();
-            iframe.contentWindow.print();
+        if (!_pdfDoc) return;
+        // Abrir en nueva pestaña para imprimir (cross-browser, no navega fuera)
+        var blobUrl = URL.createObjectURL(_pdfDoc.output('blob'));
+        var w = window.open(blobUrl, '_blank');
+        if (w) {
+            w.onload = function() {
+                setTimeout(function() { w.print(); }, 400);
+            };
         }
+        setTimeout(function() { URL.revokeObjectURL(blobUrl); }, 10000);
     }
 
     // Convierte el SVG del logo a PNG dataURL para usar en jsPDF
@@ -1845,9 +1863,11 @@
 
         // Mostrar modal con spinner
         var modal = document.getElementById('modalEmitirCot');
-        var ifrm  = document.getElementById('pdfPreviewIframe');
         modal.style.display = 'flex';
-        ifrm.srcdoc = '<html><body style="margin:0;display:flex;align-items:center;justify-content:center;height:100vh;background:#3d3d3d;color:#aaa;font-family:sans-serif;font-size:13px;letter-spacing:.05em;">Generando PDF...</body></html>';
+        // Mostrar spinner
+        document.getElementById('pdfSpinner').style.display = 'block';
+        document.getElementById('pdfListo').style.display   = 'none';
+        document.getElementById('pdfError').style.display   = 'none';
 
         var folio   = document.getElementById('cotFolio').value   || generarFolio();
         var cliente = document.getElementById('cotCliente').textContent || '—';
@@ -2105,15 +2125,19 @@
             }
 
             // ── Exportar como blob ────────────────────────────────
+            // ── Guardar referencia al doc para descarga/impresión ──
+            _pdfDoc  = doc;
             _pdfBlob = doc.output('blob');
-            // Usar base64 dataURL para el iframe (evita bloqueo de blob: en algunos browsers)
-            var b64 = doc.output('datauristring');
-            ifrm.src = b64;
+            // Mostrar estado: listo
+            document.getElementById('pdfSpinner').style.display = 'none';
+            document.getElementById('pdfListo').style.display   = 'block';
 
         } catch(err) {
             console.error('Error generando PDF:', err);
             var errMsg = (err && err.message) ? err.message : String(err);
-            document.getElementById('pdfPreviewIframe').srcdoc = '<html><body style="padding:30px;font-family:sans-serif;color:#dc2626;background:#fff;"><b>Error al generar PDF:</b><br>' + errMsg + '</body></html>';
+            document.getElementById('pdfSpinner').style.display = 'none';
+            document.getElementById('pdfError').style.display   = 'block';
+            document.getElementById('pdfErrorMsg').textContent  = errMsg;
         }
     }
     // ══════════════════════════════════════════════════════════════
