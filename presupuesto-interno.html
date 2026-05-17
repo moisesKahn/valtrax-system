@@ -535,7 +535,17 @@
 
                 <!-- Totales + comisión -->
                 <div class="pi-sec mt-1">
-                    <div class="row justify-content-end">
+                    <div class="row g-3">
+                        <!-- Resumen ítems seleccionados -->
+                        <div class="col-md-7 col-lg-8">
+                            <div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:14px 16px;">
+                                <div style="font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Resumen de ítems</div>
+                                <div id="resumenItems">
+                                    <div style="color:#94a3b8;font-size:13px;text-align:center;padding:12px 0;"><i class="feather-info me-1"></i>Selecciona una opción por ítem para ver el resumen</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Totales -->
                         <div class="col-md-5 col-lg-4">
                             <div class="tot-box">
                                 <div class="tot-row"><span>Costo total proveedores:</span><span id="totCosto" class="fw-600">$ 0</span></div>
@@ -1520,6 +1530,7 @@
     function recalcTotales(){
         var mg=parseInt(document.getElementById('margenGlobal').value)||30;
         var costo=0, ventaSin=0;
+        var filas=[];
         _items.forEach(it=>{
             var p=_ppto[it.id]; if(!p) return;
             var sel=p.opciones.find(o=>o.seleccionada); if(!sel) return;
@@ -1528,6 +1539,7 @@
             var margen=parseFloat(sel.margen)!==undefined?parseFloat(sel.margen):mg;
             var venta=precio>0?Math.round(precio*(1+margen/100)):0;
             costo+=precio*cant; ventaSin+=venta*cant;
+            filas.push({nombre:it.desc||it.nombre||'Ítem',cant:cant,lugar:sel.lugar||'—',precio:precio,venta:venta,margen:margen});
         });
         var com=parseFloat(document.getElementById('selComision').value)||4;
         var ventaFinal=Math.round(ventaSin*(1+com/100));
@@ -1535,6 +1547,35 @@
         document.getElementById('totVentaSin').textContent=fmtCLP(ventaSin);
         document.getElementById('totVentaFinal').textContent=fmtCLP(ventaFinal);
         window._ventaFinal=ventaFinal; window._comPct=com;
+        // Renderizar resumen ítems
+        var el=document.getElementById('resumenItems');
+        if(!el) return;
+        if(!filas.length){
+            el.innerHTML='<div style="color:#94a3b8;font-size:13px;text-align:center;padding:12px 0;"><i class="feather-info me-1"></i>Selecciona una opción por ítem para ver el resumen</div>';
+            return;
+        }
+        var html='<table style="width:100%;border-collapse:collapse;font-size:12px;">';
+        html+='<thead><tr style="background:#f1f5f9;">';
+        html+='<th style="padding:6px 8px;text-align:left;font-weight:600;color:#475569;">Ítem</th>';
+        html+='<th style="padding:6px 8px;text-align:center;font-weight:600;color:#475569;">Cant.</th>';
+        html+='<th style="padding:6px 8px;text-align:left;font-weight:600;color:#475569;">Proveedor</th>';
+        html+='<th style="padding:6px 8px;text-align:right;font-weight:600;color:#475569;">Costo unit.</th>';
+        html+='<th style="padding:6px 8px;text-align:right;font-weight:600;color:#475569;">Margen</th>';
+        html+='<th style="padding:6px 8px;text-align:right;font-weight:600;color:#475569;">Venta unit.</th>';
+        html+='</tr></thead><tbody>';
+        filas.forEach((f,i)=>{
+            var bg=i%2===0?'#fff':'#f8fafc';
+            html+=`<tr style="background:${bg};border-bottom:1px solid #e2e8f0;">`;
+            html+=`<td style="padding:6px 8px;color:#1e293b;font-weight:500;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(f.nombre)}">${esc(f.nombre)}</td>`;
+            html+=`<td style="padding:6px 8px;text-align:center;color:#475569;">${f.cant}</td>`;
+            html+=`<td style="padding:6px 8px;color:#475569;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(f.lugar)}">${esc(f.lugar)}</td>`;
+            html+=`<td style="padding:6px 8px;text-align:right;color:#1e293b;">${fmtCLP(f.precio)}</td>`;
+            html+=`<td style="padding:6px 8px;text-align:right;color:#059669;font-weight:600;">${f.margen}%</td>`;
+            html+=`<td style="padding:6px 8px;text-align:right;color:#2563eb;font-weight:600;">${fmtCLP(f.venta)}</td>`;
+            html+='</tr>';
+        });
+        html+='</tbody></table>';
+        el.innerHTML=html;
     }
 
     function verificarEmitir(){
