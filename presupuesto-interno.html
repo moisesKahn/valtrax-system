@@ -311,9 +311,9 @@
                                 <label>Cliente <span class="req">*</span></label>
                                 <input type="text" id="solCliente" placeholder="Buscar cliente..."
                                     autocomplete="off" style="padding-right:32px;"
-                                    oninput="solAcFiltrar(this.value)"
+                                    oninput="solAcFiltrar(this.value);solClienteLimpiarId();"
                                     onfocus="if(this.value.trim())solAcFiltrar(this.value)"
-                                    onblur="setTimeout(solAcOcultar,200)">
+                                    onblur="setTimeout(function(){solAcOcultar();solClienteValidar();},200)">
                                 <input type="hidden" id="solClienteId">
                                 <div id="solDrop" class="ac-drop" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:9999;
                                     background:#fff;border:1.5px solid #cbd5e1;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);
@@ -937,8 +937,12 @@
                 ValtraxDB.saveEntidad({ nombre, tipo, rut, tel, correo, estado:'Activo', ciudad:'', giro:tipo, contacto:nombre, cargo:'', pago:'Contado', moneda:'CLP', credito:0, descuento:0, obs:'' });
             }
             // 3. Seleccionar en el campo cliente
-            document.getElementById('solCliente').value = nombre;
+            var inpCl = document.getElementById('solCliente');
+            inpCl.value = nombre;
             if(clienteId) document.getElementById('solClienteId').value = clienteId;
+            inpCl.style.borderColor = '#22c55e';
+            inpCl.style.background  = 'rgba(34,197,94,0.06)';
+            inpCl.title = '';
             cerrarModalNuevoClienteSol();
             toast('✔ Cliente "'+nombre+'" creado y seleccionado','#059669');
         } catch(err){
@@ -967,9 +971,37 @@
         drop.style.display='block';
     }
     function solAcOcultar(){ document.getElementById('solDrop').style.display='none'; }
+    function solClienteLimpiarId(){
+        // Al escribir manualmente se invalida la selección
+        document.getElementById('solClienteId').value = '';
+        var inp = document.getElementById('solCliente');
+        inp.style.borderColor = '';
+        inp.style.background  = '';
+    }
+    function solClienteValidar(){
+        var inp  = document.getElementById('solCliente');
+        var id   = document.getElementById('solClienteId').value;
+        var txt  = inp.value.trim();
+        if (!txt) { inp.style.borderColor=''; inp.style.background=''; return; }
+        if (!id) {
+            // Texto escrito pero sin selección de la lista
+            inp.style.borderColor = '#ef4444';
+            inp.style.background  = 'rgba(239,68,68,0.07)';
+            inp.title = 'Debes seleccionar un cliente de la lista o crearlo';
+        } else {
+            inp.style.borderColor = '#22c55e';
+            inp.style.background  = 'rgba(34,197,94,0.06)';
+            inp.title = '';
+        }
+    }
     function solAcSel(n,id,faena){
         document.getElementById('solCliente').value=n;
         document.getElementById('solClienteId').value=id;
+        // Marcar verde: cliente válido de la lista
+        var inp = document.getElementById('solCliente');
+        inp.style.borderColor = '#22c55e';
+        inp.style.background  = 'rgba(34,197,94,0.06)';
+        inp.title = '';
         if(faena && !document.getElementById('solFaena').value) document.getElementById('solFaena').value=faena;
         solAcOcultar();
     }
@@ -1073,6 +1105,15 @@
     async function guardarSolicitud(){
         var cliente=document.getElementById('solCliente').value.trim();
         if(!cliente){ toast('Ingresa el nombre del cliente','#dc2626'); return; }
+        var clienteId=document.getElementById('solClienteId').value.trim();
+        if(!clienteId){
+            var inp=document.getElementById('solCliente');
+            inp.style.borderColor='#ef4444';
+            inp.style.background='rgba(239,68,68,0.07)';
+            toast('Selecciona un cliente de la lista o créalo primero','#dc2626');
+            inp.focus();
+            return;
+        }
         _items.forEach(it=>{ var inp=document.getElementById('desc_'+it.id); if(inp) it.desc=inp.value.trim(); });
         var itemsValidos=_items.filter(it=>it.desc.trim());
         if(!itemsValidos.length){ toast('Ingresa la descripción de al menos un ítem','#dc2626'); return; }
@@ -1679,6 +1720,8 @@
         if(_items.length&&!confirm('¿Crear nueva solicitud?\nSe perderán los cambios no guardados.'))return;
         _pID=null;_folio=null;_estado='solicitud';_items=[itemVacio(),itemVacio(),itemVacio(),itemVacio()];_ppto={};
         ['solCliente','solClienteId','solFaena','solObs','solFechaSol'].forEach(id=>document.getElementById(id).value='');
+        var inpCl=document.getElementById('solCliente');
+        inpCl.style.borderColor=''; inpCl.style.background=''; inpCl.title='';
         document.getElementById('solFecha').value=new Date().toISOString().slice(0,10);
         document.getElementById('solVigencia').value='30';
         document.getElementById('solMoneda').value='CLP';
@@ -1711,6 +1754,7 @@
         var c=obj.cabecera||{};
         document.getElementById('solCliente').value=c.cliente||'';
         document.getElementById('solClienteId').value=c.clienteId||'';
+        if(c.cliente){ var ic=document.getElementById('solCliente'); ic.style.borderColor='#22c55e'; ic.style.background='rgba(34,197,94,0.06)'; }
         document.getElementById('solFecha').value=c.fecha||new Date().toISOString().slice(0,10);
         document.getElementById('solFechaSol').value=c.fechaSol||'';
         document.getElementById('solVigencia').value=c.vigencia||'30';
