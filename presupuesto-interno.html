@@ -259,47 +259,119 @@
 
                 <!-- Cabecera -->
                 <div class="pi-sec">
-                    <div class="pi-sec-title">Cabecera de Cotización</div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="pi-sec-title mb-0">Cabecera de Cotización</div>
+                        <button type="button" class="btn btn-sm btn-outline-primary fs-12" onclick="abrirModalNuevoClienteSol()">
+                            <i class="feather-user-plus me-1"></i>Nuevo Cliente
+                        </button>
+                    </div>
                     <div class="row g-3">
+                        <!-- Fila 1 -->
                         <div class="col-md-6">
                             <div class="cot-field" style="position:relative;">
                                 <label>Cliente <span class="req">*</span></label>
-                                <input type="text" id="solCliente" placeholder="Nombre del cliente..."
-                                    autocomplete="off"
-                                    oninput="acFiltrar(this.value)"
-                                    onfocus="acFiltrar(this.value)"
-                                    onblur="setTimeout(acOcultar,200)">
+                                <input type="text" id="solCliente" placeholder="Buscar cliente..."
+                                    autocomplete="off" style="padding-right:32px;"
+                                    oninput="solAcFiltrar(this.value)"
+                                    onfocus="solAcFiltrar(this.value)"
+                                    onblur="setTimeout(solAcOcultar,180)">
                                 <input type="hidden" id="solClienteId">
-                                <div id="solDrop" class="ac-drop" style="display:none;"></div>
+                                <div id="solDrop" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:9999;
+                                    background:#fff;border:1.5px solid #cbd5e1;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);
+                                    max-height:220px;overflow-y:auto;margin-top:2px;"></div>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="cot-field">
-                                <label>Fecha</label>
+                                <label>Fecha Cotización <span class="req">*</span></label>
                                 <input type="date" id="solFecha">
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="cot-field">
-                                <label>Vigencia</label>
-                                <select id="solVigencia">
-                                    <option>15 días</option>
-                                    <option selected>30 días</option>
-                                    <option>45 días</option>
-                                    <option>60 días</option>
+                                <label>Fecha de Solicitud</label>
+                                <input type="date" id="solFechaSol">
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="cot-field">
+                                <label>Vigencia (días)</label>
+                                <input type="number" id="solVigencia" value="30" min="1">
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="cot-field">
+                                <label>Responsable</label>
+                                <input type="text" id="solResponsable" readonly style="background:#f8fafc;color:#64748b;">
+                            </div>
+                        </div>
+                        <!-- Fila 2 -->
+                        <div class="col-md-2">
+                            <div class="cot-field">
+                                <label>Moneda</label>
+                                <select id="solMoneda">
+                                    <option value="CLP" selected>CLP</option>
+                                    <option value="USD">USD</option>
+                                    <option value="UF">UF</option>
+                                    <option value="EUR">EUR</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="cot-field">
-                                <label>Faena / Lugar de entrega</label>
-                                <input type="text" id="solFaena" placeholder="Nombre de la faena o lugar de entrega...">
+                                <label>Forma de Pago</label>
+                                <select id="solPago">
+                                    <option>50% Inicio - 50% Contra entrega</option>
+                                    <option>100% Anticipo</option>
+                                    <option>30 días factura</option>
+                                    <option>60 días factura</option>
+                                    <option>Crédito 30/60/90 días</option>
+                                </select>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
+                            <div class="cot-field">
+                                <label>Garantía</label>
+                                <select id="solGarantia">
+                                    <option>No incluye</option>
+                                    <option>6 meses contra defecto de fabricación</option>
+                                    <option>12 meses</option>
+                                    <option>24 meses</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
                             <div class="cot-field">
                                 <label>OC Cliente</label>
-                                <input type="text" id="solOC" placeholder="Nº orden de compra (opcional)">
+                                <input type="text" id="solOC" placeholder="Nº OC (opcional)">
+                            </div>
+                        </div>
+                        <!-- Fila 3 -->
+                        <div class="col-md-5">
+                            <div class="cot-field">
+                                <label>Lugar de Entrega</label>
+                                <input type="text" id="solFaena" list="solListaFaenas" placeholder="Para retiro en bodega" autocomplete="off">
+                                <datalist id="solListaFaenas">
+                                    <option value="Para retiro en bodega VALTRAX Antofagasta">
+                                    <option value="Faena Escondida — Acceso principal">
+                                    <option value="Chuquicamata — Portería Norte">
+                                    <option value="Collahuasi — Bodega central">
+                                    <option value="Candelaria — Almacén 3">
+                                    <option value="Salar de Atacama — Planta">
+                                    <option value="Los Pelambres — Recepción">
+                                </datalist>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="cot-field">
+                                <label>Tiempo de Entrega</label>
+                                <select id="solTiempo">
+                                    <option>Inmediato (stock disponible)</option>
+                                    <option selected>15 días hábiles</option>
+                                    <option>30 días hábiles</option>
+                                    <option>45 días hábiles</option>
+                                    <option>A coordinar con cliente</option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -308,10 +380,11 @@
                                 <input type="text" id="solRef" placeholder="Referencia opcional...">
                             </div>
                         </div>
+                        <!-- Fila 4 -->
                         <div class="col-12">
                             <div class="cot-field">
-                                <label>Observaciones</label>
-                                <textarea id="solObs" rows="2" placeholder="Condiciones especiales, notas generales..."></textarea>
+                                <label>Observación General</label>
+                                <textarea id="solObs" rows="2" placeholder="Observaciones generales, condiciones especiales..."></textarea>
                             </div>
                         </div>
                     </div>
@@ -571,6 +644,58 @@
           </div><!-- /card -->
         </div><!-- /main-content -->
 
+        <!-- ── MODAL NUEVO CLIENTE ── -->
+        <div id="modalNuevoClienteSol" style="display:none;position:fixed;inset:0;z-index:13000;background:rgba(15,23,42,0.5);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+            <div style="background:#fff;border-radius:16px;padding:28px;min-width:340px;max-width:440px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.18);font-family:'DM Sans',sans-serif;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+                    <h6 style="margin:0;font-weight:700;color:#1e293b;font-size:15px;"><i class="feather-user-plus" style="color:#2563eb;margin-right:8px;"></i>Nueva Entidad</h6>
+                    <button onclick="cerrarModalNuevoClienteSol()" style="background:none;border:none;font-size:22px;line-height:1;cursor:pointer;color:#94a3b8;">×</button>
+                </div>
+                <form id="formNuevoClienteSol" onsubmit="guardarNuevoClienteSol(event)">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="cot-field">
+                                <label>Tipo de Entidad <span class="req">*</span></label>
+                                <select id="snc_tipo" required style="width:100%;border:1.5px solid #d1d5db;border-radius:10px;padding:10px 13px;font-size:13px;font-family:'DM Sans',sans-serif;">
+                                    <option value="">Seleccionar...</option>
+                                    <option>Cliente Natural</option><option>Cliente Juridico</option>
+                                    <option>Proveedor</option><option>Contacto Tecnico</option><option>Tercero</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="cot-field">
+                                <label>Nombre / Razón Social <span class="req">*</span></label>
+                                <input type="text" id="snc_nombre" required placeholder="Ej: Collahuasi SpA" style="width:100%;border:1.5px solid #d1d5db;border-radius:10px;padding:10px 13px;font-size:13px;font-family:'DM Sans',sans-serif;">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="cot-field">
+                                <label>RUT <span class="req">*</span></label>
+                                <input type="text" id="snc_rut" required placeholder="76.234.567-8" maxlength="12" style="width:100%;border:1.5px solid #d1d5db;border-radius:10px;padding:10px 13px;font-size:13px;font-family:'DM Sans',sans-serif;">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="cot-field">
+                                <label>Teléfono</label>
+                                <input type="tel" id="snc_tel" value="+56" style="width:100%;border:1.5px solid #d1d5db;border-radius:10px;padding:10px 13px;font-size:13px;font-family:'DM Sans',sans-serif;">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="cot-field">
+                                <label>Correo</label>
+                                <input type="email" id="snc_correo" placeholder="contacto@empresa.cl" style="width:100%;border:1.5px solid #d1d5db;border-radius:10px;padding:10px 13px;font-size:13px;font-family:'DM Sans',sans-serif;">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;">
+                        <button type="button" onclick="cerrarModalNuevoClienteSol()" style="border:1.5px solid #e2e8f0;background:#fff;border-radius:8px;padding:9px 18px;font-size:13px;cursor:pointer;color:#64748b;">Cancelar</button>
+                        <button type="submit" style="background:#2563eb;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;"><i class="feather-save" style="margin-right:6px;"></i>Guardar y seleccionar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <footer class="footer">
             <p class="fs-11 text-muted fw-medium text-uppercase mb-0 copyright"><span>© Copyright </span><a href="javascript:void(0);" class="ms-1"><span class="fw-bold">VALTRAX</span></a></p>
             <p class="fs-11 text-muted fw-medium text-uppercase mb-0">Presupuesto Interno · Sistema de Cotización VALTRAX</p>
@@ -803,8 +928,14 @@
                 cliente,
                 clienteId:document.getElementById('solClienteId').value||'',
                 fecha:document.getElementById('solFecha').value,
+                fechaSol:document.getElementById('solFechaSol').value,
                 vigencia:document.getElementById('solVigencia').value,
+                responsable:document.getElementById('solResponsable').value,
+                moneda:document.getElementById('solMoneda').value,
+                pago:document.getElementById('solPago').value,
+                garantia:document.getElementById('solGarantia').value,
                 faena:document.getElementById('solFaena').value.trim(),
+                tiempo:document.getElementById('solTiempo').value,
                 oc:document.getElementById('solOC').value.trim(),
                 ref:document.getElementById('solRef').value.trim(),
                 obs:document.getElementById('solObs').value.trim()
@@ -1279,15 +1410,18 @@ precio=entero CLP, mínimo 3 opciones, orden menor a mayor.`;
     function nuevaSolicitud(){
         if(_items.length&&!confirm('¿Crear nueva solicitud?\nSe perderán los cambios no guardados.'))return;
         _pID=null;_estado='solicitud';_items=[];_ppto={};
-        ['solCliente','solClienteId','solFaena','solOC','solRef','solObs'].forEach(id=>document.getElementById(id).value='');
+        ['solCliente','solClienteId','solFaena','solOC','solRef','solObs','solFechaSol'].forEach(id=>document.getElementById(id).value='');
         document.getElementById('solFecha').value=new Date().toISOString().slice(0,10);
-        document.getElementById('solVigencia').value='30 días';
+        document.getElementById('solVigencia').value='30';
+        document.getElementById('solMoneda').value='CLP';
+        document.getElementById('solResponsable').value=localStorage.getItem('vx_usuario')||'';
         renderItems();setEstado('solicitud');irTab(1);
     }
 
     // ── Init ────────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded',function(){
         document.getElementById('solFecha').value=new Date().toISOString().slice(0,10);
+        document.getElementById('solResponsable').value=localStorage.getItem('vx_usuario')||'VALTRAX';
         var k=localStorage.getItem('vx_claude_key');if(k)document.getElementById('claudeKey').value=k;
         // Cargar registro si viene de listado
         var pid=sessionStorage.getItem('vx_ppto_id');
@@ -1301,9 +1435,15 @@ precio=entero CLP, mínimo 3 opciones, orden menor a mayor.`;
         var c=obj.cabecera||{};
         document.getElementById('solCliente').value=c.cliente||'';
         document.getElementById('solClienteId').value=c.clienteId||'';
-        document.getElementById('solFaena').value=c.faena||'';
         document.getElementById('solFecha').value=c.fecha||new Date().toISOString().slice(0,10);
-        document.getElementById('solVigencia').value=c.vigencia||'30 días';
+        document.getElementById('solFechaSol').value=c.fechaSol||'';
+        document.getElementById('solVigencia').value=c.vigencia||'30';
+        document.getElementById('solResponsable').value=c.responsable||localStorage.getItem('vx_usuario')||'';
+        document.getElementById('solMoneda').value=c.moneda||'CLP';
+        document.getElementById('solPago').value=c.pago||'';
+        document.getElementById('solGarantia').value=c.garantia||'';
+        document.getElementById('solFaena').value=c.faena||'';
+        document.getElementById('solTiempo').value=c.tiempo||'';
         document.getElementById('solOC').value=c.oc||'';
         document.getElementById('solRef').value=c.ref||'';
         document.getElementById('solObs').value=c.obs||'';
