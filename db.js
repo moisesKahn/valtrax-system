@@ -143,12 +143,6 @@ async function initDB() {
             try { await conn.query(sql); } catch(_) { /* columna ya existe */ }
         }
 
-        console.log('✅ Tablas MySQL listas');
-    } finally {
-        conn.release();
-    }
-}
-
         await conn.query(`
             CREATE TABLE IF NOT EXISTS usuarios (
                 id          BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -170,5 +164,11 @@ async function initDB() {
                 );
             }
         } catch(_){}
+
+        console.log('✅ Tablas MySQL listas');
+    } finally {
+        conn.release();
+    }
+}
 
 module.exports = { pool, initDB };
