@@ -59,7 +59,7 @@
     .folio-link:hover{text-decoration:underline;}
     .vx-modal-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:1000;align-items:flex-start;justify-content:center;padding:24px 12px;overflow-y:auto;}
     .vx-modal-bg.open{display:flex;}
-    .vx-modal{background:#fff;border-radius:16px;padding:28px;width:900px;max-width:98vw;box-shadow:0 16px 48px rgba(0,0,0,.18);margin:auto;}
+    .vx-modal{background:#fff;border-radius:16px;padding:28px;width:1200px;max-width:98vw;box-shadow:0 16px 48px rgba(0,0,0,.18);margin:auto;}
     .detail-label{font-size:10px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;}
     .detail-val{font-size:13px;color:#1e293b;}
     .empty-state{text-align:center;padding:60px 20px;color:#94a3b8;}
@@ -529,7 +529,7 @@ function verDet(folio){
     </button>`;
     let btnAccion='';
     if(oc.estado==='Pendiente'||oc.estado==='Evaluada'){
-        btnAccion+=`<button class="btn-act btn-blue" onclick="aprobarOC('${esc(oc.folio)}')"><i class="feather-check" style="font-size:11px;"></i> Aprobar</button>`;
+        btnAccion+=`<button class="btn-act btn-blue" onclick="aprobarOC('${esc(oc.folio)}');cerrar()"><i class="feather-check" style="font-size:11px;"></i> Aprobar</button>`;
         btnAccion+=`<button class="btn-act btn-red" onclick="cambiar('${esc(oc.folio)}','Cancelada');cerrar()"><i class="feather-x" style="font-size:11px;"></i> Cancelar</button>`;
     }
     if(oc.estado==='Aprobada'){
@@ -601,7 +601,7 @@ async function guardarEdicion(folio, nItems){
             method:'PUT',headers:{'Content-Type':'application/json'},
             body:JSON.stringify({...oc,items,proveedor,total_costo:total})
         });
-        if(r.ok){const upd=await r.json();Object.assign(oc,upd);renderTabla();toast('Cambios guardados','#10b981');verDet(folio);}
+        if(r.ok){const upd=await r.json();Object.assign(oc,upd);renderTabla();toast('Cambios guardados','#10b981');cerrar();}
         else toast('Error al guardar','#ef4444');
     }catch(e){toast('Error: '+e.message,'#ef4444');}
 }
