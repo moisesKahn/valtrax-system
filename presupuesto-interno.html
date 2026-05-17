@@ -682,47 +682,45 @@
         </div><!-- /main-content -->
 
         <!-- ── MODAL EMITIR COTIZACIÓN ── -->
-        <div id="modalEmitirCot" style="display:none;position:fixed;inset:0;z-index:14000;background:rgba(10,20,40,0.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
-            <div style="width:92%;max-width:1080px;height:88vh;background:#fff;border-radius:20px;box-shadow:0 24px 80px rgba(0,0,0,.3);display:flex;overflow:hidden;">
+        <div id="modalEmitirCot" style="display:none;position:fixed;inset:0;z-index:14000;background:rgba(5,12,28,0.78);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);align-items:center;justify-content:center;">
+            <div style="width:92%;max-width:1080px;height:88vh;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:22px;box-shadow:0 32px 80px rgba(0,0,0,0.55);display:flex;overflow:hidden;">
 
                 <!-- Izquierda: preview PDF -->
-                <div style="flex:1;background:#3d3d3d;display:flex;flex-direction:column;border-radius:20px 0 0 20px;overflow:hidden;">
-                    <div style="background:#2a2a2a;padding:10px 16px;display:flex;align-items:center;gap:8px;">
-                        <span style="color:#aaa;font-size:12px;font-family:sans-serif;"><i class="feather-file-text" style="margin-right:6px;"></i>Vista previa — Cotización</span>
+                <div style="flex:1;background:#2e2e2e;display:flex;flex-direction:column;border-radius:22px 0 0 22px;overflow:hidden;">
+                    <div style="background:#232323;padding:10px 16px;display:flex;align-items:center;gap:8px;">
+                        <span style="color:#888;font-size:12px;font-family:sans-serif;"><i class="feather-file-text" style="margin-right:6px;"></i>Vista previa — Cotización</span>
                     </div>
                     <iframe id="pdfPreviewIframe" style="flex:1;width:100%;border:none;" allowfullscreen></iframe>
                 </div>
 
-                <!-- Derecha: acciones -->
-                <div style="flex:0 0 300px;width:300px;padding:32px 28px;display:flex;flex-direction:column;border-left:1px solid #e8edf3;background:#fff;">
+                <!-- Derecha: acciones glass -->
+                <div style="flex:0 0 300px;width:300px;padding:32px 28px;display:flex;flex-direction:column;border-left:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.07);">
                     <div style="display:flex;justify-content:flex-end;margin-bottom:4px;">
-                        <button onclick="cerrarModalEmitir()" style="background:none;border:none;cursor:pointer;color:#94a3b8;font-size:26px;line-height:1;">×</button>
+                        <button onclick="cerrarModalEmitir()" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.4);font-size:26px;line-height:1;transition:color .15s;" onmouseover="this.style.color='rgba(255,255,255,0.8)'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">&#215;</button>
                     </div>
-                    <img src="assets/images/valtrax-logo.svg" style="width:130px;margin-bottom:16px;" alt="Valtrax" />
-                    <div id="emitFolioLabel" style="font-size:16px;font-weight:700;color:#1e293b;margin-bottom:3px;">COTIZACIÓN</div>
-                    <div id="emitClienteLabel" style="font-size:12px;color:#64748b;margin-bottom:20px;"></div>
-                    <hr style="margin:0 0 20px;border-color:#e2e8f0;">
+                    <img src="assets/images/valtrax-logo.svg" style="width:130px;margin-bottom:16px;filter:brightness(0) invert(1);opacity:.85;" alt="Valtrax" />
+                    <div id="emitFolioLabel" style="font-size:16px;font-weight:700;color:#fff;margin-bottom:3px;">COTIZACIÓN</div>
+                    <div id="emitClienteLabel" style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:20px;"></div>
+                    <hr style="margin:0 0 20px;border-color:rgba(255,255,255,0.1);">
                     <div style="display:flex;flex-direction:column;gap:10px;">
-                        <button onclick="descargarPDF()" class="btn btn-success w-100">
+                        <button onclick="descargarPDF()" style="width:100%;padding:11px;background:rgba(22,163,74,0.75);border:1px solid rgba(22,163,74,0.5);border-radius:50px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;letter-spacing:.04em;">
                             <i class="feather-download me-2"></i>Descargar PDF
                         </button>
-                        <button onclick="imprimirPDF()" class="btn btn-outline-secondary w-100">
+                        <button onclick="imprimirPDF()" style="width:100%;padding:11px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:50px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.8);cursor:pointer;">
                             <i class="feather-printer me-2"></i>Imprimir
                         </button>
-                        <hr style="margin:4px 0;border-color:#e2e8f0;">
-                        <button onclick="nuevaSolicitud()" class="btn btn-outline-primary w-100">
+                        <hr style="margin:4px 0;border-color:rgba(255,255,255,0.1);">
+                        <button onclick="nuevaSolicitud()" style="width:100%;padding:11px;background:rgba(37,99,235,0.2);border:1px solid rgba(37,99,235,0.35);border-radius:50px;font-size:13px;font-weight:600;color:rgba(147,197,253,0.9);cursor:pointer;">
                             <i class="feather-plus-circle me-2"></i>Nueva Solicitud
                         </button>
                     </div>
-                    <div style="margin-top:auto;padding-top:24px;font-size:10.5px;color:#cbd5e1;text-align:center;line-height:1.6;">
-                        Documento generado por<br><strong style="color:#b0bec5;">VALTRAX Industrial SPA</strong>
+                    <div style="margin-top:auto;padding-top:24px;font-size:10.5px;color:rgba(255,255,255,0.2);text-align:center;line-height:1.6;">
+                        Documento generado por<br><strong style="color:rgba(255,255,255,0.3);">VALTRAX Industrial SPA</strong>
                     </div>
                 </div>
 
             </div>
-        </div>
-
-        <!-- ── MODAL NUEVO CLIENTE ── -->
+        </div>        <!-- ── MODAL NUEVO CLIENTE ── -->
         <div id="modalNuevoClienteSol" style="display:none;position:fixed;inset:0;z-index:13000;background:rgba(15,23,42,0.5);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
             <div style="background:#fff;border-radius:16px;padding:28px;min-width:340px;max-width:440px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.18);font-family:'DM Sans',sans-serif;">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
@@ -1754,10 +1752,14 @@
     function descargarPDF() {
         if (!_pdfBlob) return;
         var folio = (document.getElementById('cotFolio').value || 'cotizacion').replace(/[^a-zA-Z0-9\-]/g,'');
+        var url = URL.createObjectURL(_pdfBlob);
         var a = document.createElement('a');
-        a.href = URL.createObjectURL(_pdfBlob);
+        a.href = url;
         a.download = 'Cotizacion-' + folio + '.pdf';
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
     }
 
     function imprimirPDF() {
@@ -2059,9 +2061,10 @@
             }
 
             // ── Exportar como blob ────────────────────────────────
-            _pdfBlob    = doc.output('blob');
-            _pdfBlobURL = URL.createObjectURL(_pdfBlob);
-            ifrm.src    = _pdfBlobURL;
+            _pdfBlob = doc.output('blob');
+            // Usar base64 dataURL para el iframe (evita bloqueo de blob: en algunos browsers)
+            var b64 = doc.output('datauristring');
+            ifrm.src = b64;
 
         } catch(err) {
             console.error('Error generando PDF:', err);
