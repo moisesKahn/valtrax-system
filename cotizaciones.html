@@ -285,9 +285,18 @@
         <h5 style="margin:0 0 8px;font-weight:700;font-size:17px;text-align:center;">Pasar a Pedido</h5>
         <p style="margin:0 0 20px;font-size:13px;color:rgba(255,255,255,0.6);text-align:center;line-height:1.5;">Se generará un <strong style="color:#fff;">Pedido</strong> y una <strong style="color:#fff;">Orden de Compra</strong> automáticamente.<br>Esta acción bloqueará la edición de la cotización.</p>
         <div id="mglassErr" style="display:none;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:10px 14px;font-size:12px;color:#fca5a5;margin-bottom:16px;"></div>
-        <div style="display:flex;gap:10px;">
+        <!-- Botones de confirmación -->
+        <div id="mglassBtns" style="display:flex;gap:10px;">
           <button id="mglassCancel" style="flex:1;padding:11px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:50px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);cursor:pointer;">Cancelar</button>
           <button id="mglassOk" style="flex:1;padding:11px;background:rgba(22,163,74,0.8);border:1px solid rgba(22,163,74,0.5);border-radius:50px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;">Confirmar</button>
+        </div>
+        <!-- Resultado exitoso -->
+        <div id="mglassOkResult" style="display:none;">
+          <div style="background:rgba(22,163,74,0.12);border:1px solid rgba(22,163,74,0.3);border-radius:12px;padding:16px;margin-bottom:16px;font-size:12px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="color:rgba(255,255,255,0.5);">Pedido generado:</span><span id="mglass_ok_ped" style="color:#4ade80;font-weight:700;">—</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:rgba(255,255,255,0.5);">Orden de Compra:</span><span id="mglass_ok_oc" style="color:#4ade80;font-weight:700;">—</span></div>
+          </div>
+          <button id="mglassClose" style="width:100%;padding:11px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:50px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);cursor:pointer;">Cerrar</button>
         </div>
       </div>
     </div>
@@ -509,9 +518,19 @@
         _pptoAprobarId = id;
         document.getElementById('mglass').style.display = 'flex';
     };
-    document.getElementById('mglassOk').addEventListener('click', async function(){
+    document.getElementById('mglassClose').addEventListener('click', function(){
         document.getElementById('mglass').style.display = 'none';
+        _pptoAprobarId = null;
+        // Resetear modal para próximo uso
+        document.getElementById('mglassOkResult').style.display = 'none';
+        document.getElementById('mglassBtns').style.display = 'flex';
+        document.getElementById('mglassErr').style.display = 'none';
+        cargarLista();
+    });
+    document.getElementById('mglassOk').addEventListener('click', async function(){
         if(!_pptoAprobarId) return;
+        document.getElementById('mglassOk').disabled = true;
+        document.getElementById('mglassOk').textContent = 'Procesando…';
         var btn = this;
         btn.disabled = true;
         btn.textContent = 'Procesando...';
@@ -522,17 +541,25 @@
             // Mostrar éxito
             document.getElementById('mglass_ok_ped').textContent = data.folioPed||'—';
             document.getElementById('mglass_ok_oc').textContent  = data.folioOC||'—';
-            document.getElementById('mglassOkResult').style.display = 'flex';
+            document.getElementById('mglassBtns').style.display = 'none';
+            document.getElementById('mglassOkResult').style.display = 'block';
+            document.getElementById('mglass').style.display = 'flex';
             location.reload();
         } catch(e){
             document.getElementById('mglassErr').textContent = e.message;
             document.getElementById('mglassErr').style.display = 'block';
             document.getElementById('mglass').style.display = 'flex';
+            document.getElementById('mglassOk').disabled = false;
+            document.getElementById('mglassOk').textContent = 'Confirmar';
         } finally { btn.disabled = false; btn.textContent = 'Confirmar'; }
     });
     document.getElementById('mglassCancel').addEventListener('click', function(){
         document.getElementById('mglass').style.display = 'none';
         _pptoAprobarId = null;
+        // Resetear modal
+        document.getElementById('mglassOkResult').style.display = 'none';
+        document.getElementById('mglassBtns').style.display = 'flex';
+        document.getElementById('mglassErr').style.display = 'none';
     });    // Cargar presupuestos desde API y combinar
     document.getElementById('tablaCot').innerHTML =
         '<tr><td colspan="9" class="text-center text-muted py-4"><span class="spinner-border spinner-border-sm me-2"></span>Cargando...</td></tr>';
