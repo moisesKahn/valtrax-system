@@ -156,11 +156,12 @@ router.post('/pedidos', async (req, res) => {
 router.put('/pedidos/:folio', async (req, res) => {
     try {
         const d = req.body;
+        const fechaNorm = d.fecha ? String(d.fecha).slice(0, 10) : null;
         await pool.query(
             `UPDATE pedidos SET cliente=?,faena=?,responsable=?,estado=?,fecha=?,forma_pago=?,
              total_venta=?,total_costo=?,ganancia=?,abono=?,obs=?,items=?,datos_cliente=?,dir_entrega=? WHERE folio=?`,
             [d.cliente||null, d.faena||null, d.responsable||null, d.estado||'Pendiente',
-             d.fecha||null, d.forma_pago||null,
+             fechaNorm, d.forma_pago||null,
              d.total_venta||d.total||0, d.total_costo||0, d.ganancia||0,
              d.abono||0, d.obs||null, JSON.stringify(d.items||[]),
              d.datos_cliente ? JSON.stringify(d.datos_cliente) : null,
