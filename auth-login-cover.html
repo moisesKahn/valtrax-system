@@ -1,263 +1,347 @@
 <!DOCTYPE html>
-<html lang="zxx">
-
+<html lang="es">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="keyword" content="">
-    <meta name="author" content="theme_ocean">
-    <!--! The above 6 meta tags *must* come first in the head; any other head content must come *after* these tags !-->
-    <!--! BEGIN: Apps Title-->
-    <title>Duralux || Login Cover</title>
-    <!--! END:  Apps Title-->
-    <!--! BEGIN: Favicon-->
-    <link rel="shortcut icon" type="image/svg+xml" href="assets/images/valtrax-icono.svg" />
-    <!--! END: Favicon-->
-    <!--! BEGIN: Bootstrap CSS-->
-    <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
-    <!--! END: Bootstrap CSS-->
-    <!--! BEGIN: Vendors CSS-->
-    <link rel="stylesheet" type="text/css" href="assets/vendors/css/vendors.min.css">
-    <!--! END: Vendors CSS-->
-    <!--! BEGIN: Custom CSS-->
-    <link rel="stylesheet" type="text/css" href="assets/css/theme.min.css">
-    <!--! END: Custom CSS-->
-    <!--! BEGIN: Sidebar Glass Override-->
-    <link rel="stylesheet" type="text/css" href="assets/css/sidebar-glass.css" />
-    <link rel="stylesheet" type="text/css" href="assets/css/valtrax-dashboard.css" />
-    <!--! END: Sidebar Glass Override-->
-    <!--! HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries !-->
-    <!--! WARNING: Respond.js doesn"t work if you view the page via file: !-->
-    <!--[if lt IE 9]>
-			<script src="https:oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-			<script src="https:oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-		<![endif]-->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VALTRAX — Iniciar Sesión</title>
+  <link rel="icon" href="assets/images/valtrax-icono.svg" type="image/svg+xml" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      overflow: hidden;
+    }
+
+    /* ── Fondo animado azul oscuro ── */
+    .vx-bg {
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 90% 70% at 20% 30%, rgba(29,99,196,.45) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 70%, rgba(13,47,90,.6) 0%, transparent 55%),
+        linear-gradient(160deg, #020d1f 0%, #051428 40%, #0a1f3d 70%, #061020 100%);
+      z-index: 0;
+    }
+
+    /* partículas / noise */
+    .vx-bg::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+      background-size: 250px;
+      opacity: 1;
+    }
+
+    /* halo pulsante */
+    .vx-halo {
+      position: fixed;
+      width: 700px; height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(29,99,196,.18) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation: vxPulse 5s ease-in-out infinite alternate;
+      z-index: 0;
+      pointer-events: none;
+    }
+    @keyframes vxPulse {
+      from { transform: translate(-50%,-50%) scale(.9); opacity: .7; }
+      to   { transform: translate(-50%,-50%) scale(1.15); opacity: 1; }
+    }
+
+    /* líneas de cuadrícula decorativas */
+    .vx-grid {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(29,99,196,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(29,99,196,.05) 1px, transparent 1px);
+      background-size: 56px 56px;
+    }
+
+    /* ── Contenedor centrado ── */
+    .vx-center {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* ── Card glass ── */
+    .vx-card {
+      width: 100%;
+      max-width: 430px;
+      background: rgba(8, 22, 48, 0.55);
+      backdrop-filter: blur(28px) saturate(1.4);
+      -webkit-backdrop-filter: blur(28px) saturate(1.4);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 22px;
+      padding: 44px 40px 38px;
+      box-shadow:
+        0 8px 32px rgba(0,0,0,.45),
+        0 2px 0 rgba(255,255,255,.06) inset;
+      animation: vxCardIn .4s cubic-bezier(.4,0,.2,1) both;
+    }
+    @keyframes vxCardIn {
+      from { opacity:0; transform: translateY(20px) scale(.97); }
+      to   { opacity:1; transform: translateY(0)    scale(1);   }
+    }
+
+    /* Logo */
+    .vx-logo-wrap {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .vx-logo-wrap img {
+      width: 150px;
+      filter: brightness(0) invert(1);
+      opacity: .92;
+    }
+
+    /* Divisor */
+    .vx-divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,.1);
+      margin: 0 0 28px;
+    }
+
+    /* Título */
+    .vx-title {
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+      letter-spacing: -.01em;
+    }
+    .vx-sub {
+      text-align: center;
+      font-size: .82rem;
+      color: rgba(255,255,255,.45);
+      margin-bottom: 28px;
+    }
+
+    /* Inputs */
+    .vx-field { margin-bottom: 14px; position: relative; }
+    .vx-field input {
+      width: 100%;
+      padding: 13px 18px;
+      background: rgba(255,255,255,.07);
+      border: 1.5px solid rgba(255,255,255,.12);
+      border-radius: 50px;
+      font-size: .93rem;
+      color: #fff;
+      outline: none;
+      transition: border-color .18s, background .18s;
+      font-family: inherit;
+    }
+    .vx-field input::placeholder { color: rgba(255,255,255,.38); }
+    .vx-field input:focus {
+      border-color: rgba(29,99,196,.8);
+      background: rgba(29,99,196,.12);
+    }
+    .vx-field input.error {
+      border-color: rgba(239,68,68,.7);
+    }
+
+    /* Toggle ojo */
+    .vx-eye {
+      position: absolute; right: 16px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,.35); padding: 0; display: flex;
+    }
+    .vx-eye:hover { color: rgba(255,255,255,.75); }
+
+    /* Alerta */
+    .vx-alert {
+      display: none;
+      background: rgba(239,68,68,.15);
+      border: 1px solid rgba(239,68,68,.35);
+      border-radius: 10px;
+      padding: 9px 14px;
+      font-size: .82rem;
+      color: #fca5a5;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+
+    /* Botón LOGIN */
+    .vx-btn {
+      width: 100%;
+      padding: 13px;
+      margin-top: 6px;
+      background: linear-gradient(135deg, #1d4370 0%, #1d6fc4 100%);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-size: .97rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: opacity .18s, transform .12s, box-shadow .18s;
+      box-shadow: 0 4px 18px rgba(29,99,196,.45);
+    }
+    .vx-btn:hover {
+      opacity: .9;
+      box-shadow: 0 6px 28px rgba(29,99,196,.6);
+    }
+    .vx-btn:active { transform: scale(.97); }
+    .vx-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    /* Spinner */
+    @keyframes vxSpin { to { transform: rotate(360deg); } }
+    .vx-spinner {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: vxSpin .7s linear infinite;
+      vertical-align: middle;
+      margin-right: 7px;
+    }
+
+    /* Footer */
+    .vx-footer {
+      text-align: center;
+      margin-top: 26px;
+      font-size: .75rem;
+      color: rgba(255,255,255,.22);
+    }
+
+    /* Fade-out al redirigir */
+    body.vx-out .vx-card {
+      opacity: 0;
+      transform: translateY(-8px) scale(.98);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+  </style>
 </head>
-
 <body>
-    <!--! ================================================================ !-->
-    <!--! [Start] Main Content !-->
-    <!--! ================================================================ !-->
-    <main class="auth-cover-wrapper">
-        <div class="auth-cover-content-inner">
-            <div class="auth-cover-content-wrapper">
-                <div class="auth-img">
-                    <img src="assets/images/auth/auth-cover-login-bg.svg" alt="" class="img-fluid">
-                </div>
-            </div>
-        </div>
-        <div class="auth-cover-sidebar-inner">
-            <div class="auth-cover-card-wrapper">
-                <div class="auth-cover-card p-sm-5">
-                    <div class="wd-50 mb-5">
-                        <img src="assets/images/logo-abbr.png" alt="" class="img-fluid">
-                    </div>
-                    <h2 class="fs-20 fw-bolder mb-4">Login</h2>
-                    <h4 class="fs-13 fw-bold mb-2">Login to your account</h4>
-                    <p class="fs-12 fw-medium text-muted">Thank you for get back <strong>Nelel</strong> web applications, let's access our the best recommendation for you.</p>
-                    <form action="index.html" class="w-100 mt-4 pt-2">
-                        <div class="mb-4">
-                            <input type="email" class="form-control" placeholder="Email or Username" value="wrapcode.info@gmail.com" required>
-                        </div>
-                        <div class="mb-3">
-                            <input type="password" class="form-control" placeholder="Password" value="123456" required>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="rememberMe">
-                                    <label class="custom-control-label c-pointer" for="rememberMe">Remember Me</label>
-                                </div>
-                            </div>
-                            <div>
-                                <a href="auth-reset-cover.html" class="fs-11 text-primary">Forget password?</a>
-                            </div>
-                        </div>
-                        <div class="mt-5">
-                            <button type="submit" class="btn btn-lg btn-primary w-100">Login</button>
-                        </div>
-                    </form>
-                    <div class="w-100 mt-5 text-center mx-auto">
-                        <div class="mb-4 border-bottom position-relative"><span class="small py-1 px-3 text-uppercase text-muted bg-white position-absolute translate-middle">or</span></div>
-                        <div class="d-flex align-items-center justify-content-center gap-2">
-                            <a href="javascript:void(0);" class="btn btn-light-brand flex-fill" data-bs-toggle="tooltip" data-bs-trigger="hover" title="Login with Facebook">
-                                <i class="feather-facebook"></i>
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-light-brand flex-fill" data-bs-toggle="tooltip" data-bs-trigger="hover" title="Login with Twitter">
-                                <i class="feather-twitter"></i>
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-light-brand flex-fill" data-bs-toggle="tooltip" data-bs-trigger="hover" title="Login with Github">
-                                <i class="feather-github text"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="mt-5 text-muted">
-                        <span> Don't have an account?</span>
-                        <a href="auth-register-cover.html" class="fw-bold">Create an Account</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-    <!--! ================================================================ !-->
-    <!--! [End] Main Content !-->
-    <!--! ================================================================ !-->
-    <!--! ================================================================ !-->
-    <!--! BEGIN: Theme Customizer !-->
-    <!--! ================================================================ !-->
-    <div class="theme-customizer">
-        <div class="customizer-handle">
-            <a href="javascript:void(0);" class="cutomizer-open-trigger bg-primary">
-                <i class="feather-settings"></i>
-            </a>
-        </div>
-        <div class="customizer-sidebar-wrapper">
-            <div class="customizer-sidebar-header px-4 ht-80 border-bottom d-flex align-items-center justify-content-between">
-                <h5 class="mb-0">Theme Settings</h5>
-                <a href="javascript:void(0);" class="cutomizer-close-trigger d-flex">
-                    <i class="feather-x"></i>
-                </a>
-            </div>
-            <div class="customizer-sidebar-body position-relative p-4" data-scrollbar-target="#psScrollbarInit">
-                <!--! BEGIN: [Skins] !-->
-                <div class="position-relative px-3 pb-3 pt-4 mt-3 mb-5 border border-gray-2 theme-options-set">
-                    <label class="py-1 px-2 fs-8 fw-bold text-uppercase text-muted text-spacing-2 bg-white border border-gray-2 position-absolute rounded-2 options-label" style="top: -12px">Skins</label>
-                    <div class="row g-2 theme-options-items app-skin" id="appSkinList">
-                        <div class="col-6 text-center position-relative single-option light-button active">
-                            <input type="radio" class="btn-check" id="app-skin-light" name="app-skin" value="1" data-app-skin="app-skin-light">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-skin-light">Light</label>
-                        </div>
-                        <div class="col-6 text-center position-relative single-option dark-button">
-                            <input type="radio" class="btn-check" id="app-skin-dark" name="app-skin" value="2" data-app-skin="app-skin-dark">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-skin-dark">Dark</label>
-                        </div>
-                    </div>
-                </div>
-                <!--! END: [Skins] !-->
-                <!--! BEGIN: [Typography] !-->
-                <div class="position-relative px-3 pb-3 pt-4 mt-3 mb-0 border border-gray-2 theme-options-set">
-                    <label class="py-1 px-2 fs-8 fw-bold text-uppercase text-muted text-spacing-2 bg-white border border-gray-2 position-absolute rounded-2 options-label" style="top: -12px">Typography</label>
-                    <div class="row g-2 theme-options-items font-family" id="fontFamilyList">
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-lato" name="font-family" value="1" data-font-family="app-font-family-lato">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-lato">Lato</label>
-                        </div>
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-rubik" name="font-family" value="2" data-font-family="app-font-family-rubik">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-rubik">Rubik</label>
-                        </div>
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-inter" name="font-family" value="3" data-font-family="app-font-family-inter" checked>
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-inter">Inter</label>
-                        </div>
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-cinzel" name="font-family" value="4" data-font-family="app-font-family-cinzel">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-cinzel">Cinzel</label>
-                        </div>
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-nunito" name="font-family" value="6" data-font-family="app-font-family-nunito">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-nunito">Nunito</label>
-                        </div>
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-roboto" name="font-family" value="7" data-font-family="app-font-family-roboto">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-roboto">Roboto</label>
-                        </div>
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-ubuntu" name="font-family" value="8" data-font-family="app-font-family-ubuntu">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-ubuntu">Ubuntu</label>
-                        </div>
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-poppins" name="font-family" value="9" data-font-family="app-font-family-poppins">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-poppins">Poppins</label>
-                        </div>
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-raleway" name="font-family" value="10" data-font-family="app-font-family-raleway">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-raleway">Raleway</label>
-                        </div>
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-system-ui" name="font-family" value="11" data-font-family="app-font-family-system-ui">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-system-ui">System UI</label>
-                        </div>
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-noto-sans" name="font-family" value="12" data-font-family="app-font-family-noto-sans">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-noto-sans">Noto Sans</label>
-                        </div>
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-fira-sans" name="font-family" value="13" data-font-family="app-font-family-fira-sans">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-fira-sans">Fira Sans</label>
-                        </div>
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-work-sans" name="font-family" value="14" data-font-family="app-font-family-work-sans">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-work-sans">Work Sans</label>
-                        </div>
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-open-sans" name="font-family" value="15" data-font-family="app-font-family-open-sans">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-open-sans">Open Sans</label>
-                        </div>
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-maven-pro" name="font-family" value="16" data-font-family="app-font-family-maven-pro">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-maven-pro">Maven Pro</label>
-                        </div>
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-quicksand" name="font-family" value="17" data-font-family="app-font-family-quicksand">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-quicksand">Quicksand</label>
-                        </div>
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-montserrat" name="font-family" value="18" data-font-family="app-font-family-montserrat">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-montserrat">Montserrat</label>
-                        </div>
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-josefin-sans" name="font-family" value="19" data-font-family="app-font-family-josefin-sans">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-josefin-sans">Josefin Sans</label>
-                        </div>
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-ibm-plex-sans" name="font-family" value="20" data-font-family="app-font-family-ibm-plex-sans">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-ibm-plex-sans">IBM Plex Sans</label>
-                        </div>
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-source-sans-pro" name="font-family" value="5" data-font-family="app-font-family-source-sans-pro">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-source-sans-pro">Source Sans Pro</label>
-                        </div>
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-montserrat-alt" name="font-family" value="21" data-font-family="app-font-family-montserrat-alt">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-montserrat-alt">Montserrat Alt</label>
-                        </div>
-                        <div class="col-6 text-center single-option">
-                            <input type="radio" class="btn-check" id="app-font-family-roboto-slab" name="font-family" value="22" data-font-family="app-font-family-roboto-slab">
-                            <label class="py-2 fs-9 fw-bold text-dark text-uppercase text-spacing-1 border border-gray-2 w-100 h-100 c-pointer position-relative options-label" for="app-font-family-roboto-slab">Roboto Slab</label>
-                        </div>
-                    </div>
-                </div>
-                <!--! END: [Typography] !-->
-            </div>
-            <div class="customizer-sidebar-footer px-4 ht-60 border-top d-flex align-items-center gap-2">
-                <div class="flex-fill w-50">
-                    <a href="javascript:void(0);" class="btn btn-danger" data-style="reset-all-common-style">Reset</a>
-                </div>
-                <div class="flex-fill w-50">
-                    <a href="javascript:void(0);" class="btn btn-primary">Download</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--! ================================================================ !-->
-    <!--! [End] Theme Customizer !-->
-    <!--! ================================================================ !-->
-    <!--! ================================================================ !-->
-    <!--! Footer Script !-->
-    <!--! ================================================================ !-->
-    <!--! BEGIN: Vendors JS !-->
-    <script src="assets/vendors/js/vendors.min.js"></script>
-    <!-- vendors.min.js {always must need to be top} -->
-    <!--! END: Vendors JS !-->
-    <!--! BEGIN: Apps Init  !-->
-    <script src="assets/js/common-init.min.js"></script>
-    <!--! END: Apps Init !-->
-    <!--! BEGIN: Theme Customizer  !-->
-    <script src="assets/js/theme-customizer-init.min.js"></script>
-    <!--! END: Theme Customizer !-->
-</body>
 
+  <div class="vx-bg"></div>
+  <div class="vx-halo"></div>
+  <div class="vx-grid"></div>
+
+  <div class="vx-center">
+    <div class="vx-card">
+
+      <div class="vx-logo-wrap">
+        <img src="assets/images/valtrax-logo.svg" alt="Valtrax" />
+      </div>
+      <hr class="vx-divider" />
+
+      <h1 class="vx-title">Bienvenido</h1>
+      <p class="vx-sub">Ingresá tus credenciales para continuar</p>
+
+      <form id="loginForm" onsubmit="return false;" autocomplete="off">
+
+        <div class="vx-field">
+          <input id="vxUser" type="text" placeholder="Usuario" autocomplete="username" />
+        </div>
+
+        <div class="vx-field">
+          <input id="vxPass" type="password" placeholder="Contraseña" autocomplete="current-password" style="padding-right:42px;" />
+          <button type="button" class="vx-eye" id="vxEyeBtn" aria-label="Ver contraseña">
+            <svg id="vxEyeIcon" xmlns="http://www.w3.org/2000/svg" width="17" height="17"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="vx-alert" id="vxAlert"></div>
+
+        <button type="submit" class="vx-btn" id="vxBtn">INICIAR SESIÓN</button>
+
+      </form>
+
+      <p class="vx-footer">VALTRAX Industrial SPA &copy; 2025</p>
+    </div>
+  </div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── Usuarios ───────────────────────────────────────────────── */
+  var USUARIOS = [
+    { usuario: 'valtrax.admin', clave: 'Vx@2025!',  rol: 'administrador', nombre: 'Administrador' },
+    { usuario: 'vendedor',      clave: 'venta123',   rol: 'vendedor',      nombre: 'Vendedor'      }
+  ];
+
+  /* Sesión activa → directo a index */
+  if (localStorage.getItem('vx_usuario') && localStorage.getItem('vx_rol')) {
+    location.replace('index.html');
+  }
+
+  var inpUser = document.getElementById('vxUser');
+  var inpPass = document.getElementById('vxPass');
+  var alertEl = document.getElementById('vxAlert');
+  var btn     = document.getElementById('vxBtn');
+  var eyeBtn  = document.getElementById('vxEyeBtn');
+
+  /* Toggle contraseña */
+  eyeBtn.addEventListener('click', function () {
+    var show = inpPass.type === 'password';
+    inpPass.type = show ? 'text' : 'password';
+    document.getElementById('vxEyeIcon').innerHTML = show
+      ? '<line x1="1" y1="1" x2="23" y2="23"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 11 7 11 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 1 12s4 7 11 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="1" y1="1" x2="23" y2="23"/>'
+      : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  });
+
+  /* Enter en campos */
+  [inpUser, inpPass].forEach(function (el) {
+    el.addEventListener('keydown', function (e) { if (e.key === 'Enter') btn.click(); });
+    el.addEventListener('input',   function ()  {
+      el.classList.remove('error');
+      alertEl.style.display = 'none';
+    });
+  });
+
+  /* Login */
+  btn.addEventListener('click', function () {
+    var u = inpUser.value.trim();
+    var p = inpPass.value;
+
+    alertEl.style.display = 'none';
+    inpUser.classList.remove('error');
+    inpPass.classList.remove('error');
+
+    if (!u) { inpUser.classList.add('error'); inpUser.focus(); return; }
+    if (!p) { inpPass.classList.add('error'); inpPass.focus(); return; }
+
+    var match = USUARIOS.find(function (x) { return x.usuario === u && x.clave === p; });
+
+    if (!match) {
+      alertEl.textContent = 'Usuario o contraseña incorrectos.';
+      alertEl.style.display = 'block';
+      inpUser.classList.add('error');
+      inpPass.classList.add('error');
+      inpPass.value = '';
+      inpUser.focus();
+      return;
+    }
+
+    /* OK — animación y redirect */
+    btn.disabled = true;
+    btn.innerHTML = '<span class="vx-spinner"></span>Ingresando...';
+    localStorage.setItem('vx_usuario', match.nombre);
+    localStorage.setItem('vx_rol',     match.rol);
+
+    setTimeout(function () {
+      document.body.classList.add('vx-out');
+      setTimeout(function () { location.href = 'index.html'; }, 270);
+    }, 350);
+  });
+
+})();
+</script>
+
+</body>
 </html>
