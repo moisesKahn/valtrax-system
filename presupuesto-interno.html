@@ -235,7 +235,7 @@
                                 <p class="mb-0 fw-semibold fs-13" id="vx-nombre-header">VALTRAX</p>
                                 <p class="mb-0 text-muted fs-11">Administrador</p>
                             </div>
-                            <a href="auth-login-cover.html" class="dropdown-item text-danger fw-semibold" style="padding:9px 16px;font-size:13px;"><i class="feather-log-out me-2"></i>Cerrar sesión</a>
+                            <a href="#" onclick="localStorage.removeItem('vx_usuario');localStorage.removeItem('vx_rol');location.href='auth-login-cover.html';return false;" class="dropdown-item text-danger fw-semibold" style="padding:9px 16px;font-size:13px;"><i class="feather-log-out me-2"></i>Cerrar sesión</a>
                         </div>
                     </div>
                 </div>
@@ -1801,7 +1801,7 @@
         var modal = document.getElementById('modalEmitirCot');
         var ifrm  = document.getElementById('pdfPreviewIframe');
         modal.style.display = 'flex';
-        ifrm.srcdoc = '<html><body style="margin:0;display:flex;align-items:center;justify-content:center;height:100vh;background:#3d3d3d;color:#ccc;font-family:sans-serif;font-size:14px;"><span>⏳ Generando PDF...</span></body></html>';
+        ifrm.srcdoc = '<html><body style="margin:0;display:flex;align-items:center;justify-content:center;height:100vh;background:#3d3d3d;color:#aaa;font-family:sans-serif;font-size:13px;letter-spacing:.05em;">Generando PDF...</body></html>';
 
         var folio   = document.getElementById('cotFolio').value   || generarFolio();
         var cliente = document.getElementById('cotCliente').textContent || '—';
@@ -1828,65 +1828,49 @@
             //   MEMBRETE — función para dibujar en cada página
             // ════════════════════════════════════════════════════
             function dibujarMembrete() {
-                // Fondo blanco (por defecto en jsPDF)
+                // ── Fondo blanco total ────────────────────────────
+                doc.setFillColor(255,255,255);
+                doc.rect(0, 0, PW, PH, 'F');
 
-                // ── Franja curva azul marino superior-izquierda ──
+                // ── Forma azul superior-izquierda (trapecio) ─────
+                // Rectángulo base
                 doc.setFillColor(29, 67, 112);
-                doc.lines(
-                    [
-                        [68, 0],                          // línea derecha hasta (68, 0)
-                        [-8, 5, -42, 42, -68, 58]         // bezier curva hasta (0, 58)
-                    ],
-                    0, 0, [1,1], 'F', true
-                );
+                doc.rect(0, 0, 56, 30, 'F');
+                // Triángulo para el corte diagonal derecho
+                doc.triangle(56, 0, 74, 0, 56, 30, 'F');
 
                 // ── Logo VALTRAX superior-derecha ─────────────────
                 if (logoImg) {
-                    doc.addImage(logoImg, 'PNG', PW - 78, 7, 70, 15);
-                } else {
-                    doc.setFont('helvetica','bold');
-                    doc.setFontSize(16);
-                    doc.setTextColor(29,67,112);
-                    doc.text('VALTRAX', PW - 10, 16, {align:'right'});
-                    doc.setFont('helvetica','normal');
-                    doc.setFontSize(7);
-                    doc.setTextColor(104,108,119);
-                    doc.text('— INDUSTRIAL SPA —', PW - 10, 21, {align:'right'});
+                    doc.addImage(logoImg, 'PNG', PW - 76, 6, 64, 14);
                 }
-
-                // ── Franja inferior — capa navy ───────────────────
-                doc.setFillColor(29, 67, 112);
-                doc.lines(
-                    [
-                        [105, -10, 105, -10, PW, 0],  // bezier onda superior
-                        [0, 28],                       // baja al borde
-                        [-PW, 0]                       // vuelve izq
-                    ],
-                    0, PH - 28, [1,1], 'F', true
-                );
-
-                // ── Franja inferior — capa azul grisácea ─────────
-                doc.setFillColor(138, 154, 176);
-                doc.lines(
-                    [
-                        [105, -9, 105, -9, PW, 0],
-                        [0, 17],
-                        [-PW, 0]
-                    ],
-                    0, PH - 17, [1,1], 'F', true
-                );
-
-                // ── Pie de página (sobre franja) ──────────────────
+                // Subtítulo "— INDUSTRIAL SPA —"
                 doc.setFont('helvetica','normal');
-                doc.setFontSize(6.5);
-                doc.setTextColor(255,255,255);
-                doc.text('VALTRAX Industrial SPA  ·  Antofagasta, Chile  ·  contacto@valtrax.cl  ·  www.valtrax.cl', PW/2, PH-19, {align:'center'});
-                doc.text('Documento generado por VALTRAX Industrial SPA', PW/2, PH-14, {align:'center'});
+                doc.setFontSize(6);
+                doc.setTextColor(100, 108, 120);
+                doc.text('\u2014 INDUSTRIAL SPA \u2014', PW - 44, 24, {align:'center'});
 
                 // ── Línea separadora header ───────────────────────
                 doc.setDrawColor(29,67,112);
-                doc.setLineWidth(0.4);
-                doc.line(16, 32, PW-12, 32);
+                doc.setLineWidth(0.5);
+                doc.line(16, 31, PW - 12, 31);
+
+                // ── Footer navy ───────────────────────────────────
+                doc.setFillColor(29, 67, 112);
+                doc.rect(0, PH - 20, PW, 13, 'F');
+                // Onda simulada con triángulo navy claro
+                doc.setFillColor(44, 90, 145);
+                doc.triangle(0, PH - 20, PW * 0.55, PH - 26, PW, PH - 20, 'F');
+
+                // ── Footer gris ───────────────────────────────────
+                doc.setFillColor(138, 154, 176);
+                doc.rect(0, PH - 7, PW, 7, 'F');
+
+                // ── Pie de página — texto blanco ──────────────────
+                doc.setFont('helvetica','normal');
+                doc.setFontSize(6.5);
+                doc.setTextColor(255,255,255);
+                doc.text('VALTRAX Industrial SPA  \u00b7  Antofagasta, Chile  \u00b7  contacto@valtrax.cl  \u00b7  www.valtrax.cl', PW/2, PH - 14, {align:'center'});
+                doc.text('Documento generado por VALTRAX Industrial SPA', PW/2, PH - 9, {align:'center'});
             }
 
             // Dibujar membrete en página 1
@@ -1896,7 +1880,7 @@
             //   CONTENIDO
             // ════════════════════════════════════════════════════
             var ML = 18, MR = PW - 14;  // márgenes izq/der en mm
-            var y  = 38;                // posición Y actual
+            var y  = 36;                // posición Y actual
 
             // ── Encabezado documento ──────────────────────────────
             doc.setFont('helvetica','bold');
@@ -2081,7 +2065,8 @@
 
         } catch(err) {
             console.error('Error generando PDF:', err);
-            ifrm.srcdoc = '<html><body style="padding:20px;font-family:sans-serif;color:#dc2626;">Error generando PDF: ' + err.message + '</body></html>';
+            var errMsg = (err && err.message) ? err.message : String(err);
+            document.getElementById('pdfPreviewIframe').srcdoc = '<html><body style="padding:30px;font-family:sans-serif;color:#dc2626;background:#fff;"><b>Error al generar PDF:</b><br>' + errMsg + '</body></html>';
         }
     }
     // ══════════════════════════════════════════════════════════════

@@ -124,16 +124,6 @@
                         </a>
                     </li>
 
-                    <!-- ── HERRAMIENTAS ─────────────────────────────────── -->
-                    <li class="nxl-item nxl-caption"><label>Herramientas</label></li>
-
-                    <li class="nxl-item">
-                        <a class="nxl-link" href="buscador-precios.html">
-                            <span class="nxl-micon"><i class="feather-tag"></i></span>
-                            <span class="nxl-mtext">Buscador de Precios</span>
-                        </a>
-                    </li>
-
                 </ul>
             </div>
         </div>
@@ -197,7 +187,7 @@
                                 <p class="mb-0 fw-semibold fs-13" id="vx-nombre-header">VALTRAX</p>
                                 <p class="mb-0 text-muted fs-11" id="vx-rol-header">Administrador</p>
                             </div>
-                            <a href="auth-login-cover.html" class="dropdown-item text-danger fw-semibold" style="padding:9px 16px;font-size:13px;">
+                            <a href="#" onclick="localStorage.removeItem('vx_usuario');localStorage.removeItem('vx_rol');location.href='auth-login-cover.html';return false;" class="dropdown-item text-danger fw-semibold" style="padding:9px 16px;font-size:13px;">
                                 <i class="feather-log-out me-2"></i>Cerrar sesión
                             </a>
                         </div>
