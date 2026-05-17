@@ -1954,7 +1954,14 @@
         var faena    = document.getElementById('cotFaena').textContent    || '';
         var fecha    = document.getElementById('cotFecha').textContent    || new Date().toLocaleDateString('es-CL');
         var nota     = (document.getElementById('cotNota').value || '').trim();
-        var vigencia = (document.getElementById('cotVigencia').value || '').trim();
+        var vigDias  = parseInt(document.getElementById('solVigencia').value) || parseInt(document.getElementById('cotVigencia').value) || 30;
+        var formaPago = (document.getElementById('solPago') ? document.getElementById('solPago').value : '') || '50% Inicio - 50% Contra entrega';
+        // Calcular fecha de vencimiento
+        var fechaBase = document.getElementById('solFecha').value || new Date().toISOString().slice(0,10);
+        var dVenc = new Date(fechaBase + 'T12:00:00');
+        dVenc.setDate(dVenc.getDate() + vigDias);
+        var vigFechaStr = dVenc.toLocaleDateString('es-CL', {day:'2-digit',month:'2-digit',year:'numeric'});
+        var vigencia = vigDias + ' días (válido hasta ' + vigFechaStr + ')';
         var useIva   = document.getElementById('cotIva').value === 'si';
         var vendedor = localStorage.getItem('vx_usuario') || 'VALTRAX';
 
@@ -2070,16 +2077,22 @@
                 doc.setTextColor(...DARK);
                 doc.text(fecha, xi, yi + lineH*2, {align:'right'});
 
-                if (vigencia) {
-                    doc.setFont('helvetica','normal');
-                    doc.setTextColor(...GRAY);
-                    doc.text('Oferta válida hasta:', xi - 52, yi + lineH*3);
-                    doc.setFont('helvetica','bold');
-                    doc.setTextColor(...DARK);
-                    doc.text(vigencia, xi, yi + lineH*3, {align:'right'});
-                }
+                doc.setFont('helvetica','normal');
+                doc.setTextColor(...GRAY);
+                doc.text('Vigencia:', xi - 52, yi + lineH*3);
+                doc.setFont('helvetica','bold');
+                doc.setTextColor(...DARK);
+                doc.text(vigencia, xi, yi + lineH*3, {align:'right'});
 
-                return y + 14;
+                doc.setFont('helvetica','normal');
+                doc.setTextColor(...GRAY);
+                doc.text('Forma de pago:', xi - 52, yi + lineH*4);
+                doc.setFont('helvetica','bold');
+                doc.setTextColor(...DARK);
+                var pagoLines = doc.splitTextToSize(formaPago, 60);
+                doc.text(pagoLines[0], xi, yi + lineH*4, {align:'right'});
+
+                return y + 18;
             }
 
             // ════════════════════════════════════════════════════════
@@ -2132,21 +2145,24 @@
                 doc.setFont('helvetica','normal');
                 doc.setFontSize(7.5);
                 doc.setTextColor(...GRAY);
-                var yC = y + lineH*2;
-                // Datos adicionales del cliente
                 var cObj = window._clienteObj || {};
-                if (cObj.rut) { doc.text('RUT: ' + cObj.rut, xR, yC); yC += lineH; }
-                if (cObj.giro) { doc.text('Giro: ' + cObj.giro, xR, yC); yC += lineH; }
-                if (cObj.tel) { doc.text('Teléfono: ' + cObj.tel, xR, yC); yC += lineH; }
-                if (cObj.correo) { doc.text('Email: ' + cObj.correo, xR, yC); yC += lineH; }
+                var yC = y + lineH*2;
+                if (cObj.rut)    { doc.text('RUT: '       + cObj.rut,    xR, yC); yC += lineH; }
+                if (cObj.giro)   { doc.text('Giro: '      + cObj.giro,   xR, yC); yC += lineH; }
+                if (cObj.tel)    { doc.text('Teléfono: '  + cObj.tel,    xR, yC); yC += lineH; }
+                if (cObj.correo) { doc.text('Email: '     + cObj.correo, xR, yC); yC += lineH; }
+                if (cObj.ciudad) { doc.text('Ciudad: '    + cObj.ciudad, xR, yC); yC += lineH; }
                 if (faena && faena !== '—' && faena !== '') {
-                    doc.text('Faena / Proyecto: ' + faena, xR, yC);
-                    yC += lineH;
+                    doc.text('Faena / Proyecto: ' + faena, xR, yC); yC += lineH;
                 }
+                // Forma de pago destacada
+                doc.setFont('helvetica','bold');
+                doc.setTextColor(...DARK);
+                doc.text('Pago: ' + formaPago, xR, yC); yC += lineH;
 
-                // Ajustar avance según cuántas líneas se usaron
-                var lineasCliente = (cObj.rut?1:0)+(cObj.giro?1:0)+(cObj.tel?1:0)+(cObj.correo?1:0)+((faena&&faena!=='—'&&faena!=='')?1:0);
-                y += lineH * Math.max(5, lineasCliente + 2) + 6;
+                // Ajustar avance vertical según líneas usadas
+                var lineasCliente = 2 + (cObj.rut?1:0)+(cObj.giro?1:0)+(cObj.tel?1:0)+(cObj.correo?1:0)+(cObj.ciudad?1:0)+((faena&&faena!=='—'&&faena!=='')?1:0)+1;
+                y += lineH * Math.max(6, lineasCliente) + 6;
 
                 // Línea separadora inferior
                 doc.setDrawColor(...BORDER);
