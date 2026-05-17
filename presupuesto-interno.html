@@ -1939,283 +1939,482 @@
     async function emitirCotizacion() {
         if (!_pID) { toast('Guarda primero la solicitud','#dc2626'); return; }
 
-        // Mostrar modal con spinner
         var modal = document.getElementById('modalEmitirCot');
         modal.style.display = 'flex';
-        // Mostrar spinner
         document.getElementById('pdfSpinner').style.display = 'block';
         document.getElementById('pdfListo').style.display   = 'none';
         document.getElementById('pdfError').style.display   = 'none';
 
-        var folio   = document.getElementById('cotFolio').value   || generarFolio();
-        var cliente = document.getElementById('cotCliente').textContent || '—';
-        var faena   = document.getElementById('cotFaena').textContent   || '';
-        var fecha   = document.getElementById('cotFecha').textContent   || new Date().toLocaleDateString('es-CL');
-        var nota    = (document.getElementById('cotNota').value || '').trim();
+        var folio    = document.getElementById('cotFolio').value   || generarFolio();
+        var cliente  = document.getElementById('cotCliente').textContent  || '—';
+        var faena    = document.getElementById('cotFaena').textContent    || '';
+        var fecha    = document.getElementById('cotFecha').textContent    || new Date().toLocaleDateString('es-CL');
+        var nota     = (document.getElementById('cotNota').value || '').trim();
         var vigencia = (document.getElementById('cotVigencia').value || '').trim();
-        var useIva  = document.getElementById('cotIva').value === 'si';
+        var useIva   = document.getElementById('cotIva').value === 'si';
+        var vendedor = localStorage.getItem('vx_usuario') || 'VALTRAX';
 
-        document.getElementById('emitFolioLabel').textContent  = folio;
+        document.getElementById('emitFolioLabel').textContent   = folio;
         document.getElementById('emitClienteLabel').textContent = cliente;
 
         try {
-            // ── Cargar jsPDF ──────────────────────────────────────
             if (!window.jspdf) throw new Error('jsPDF no cargó. Verificá conexión a internet.');
             var jsPDF = window.jspdf.jsPDF;
             var doc   = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
-            var PW = 210, PH = 297;
 
-            // ── Logo PNG ──────────────────────────────────────────
+            var PW = 210, PH = 297;
+            var ML = 20,  MR_x = PW - 15;   // márgenes izq / der
+            var TW = MR_x - ML;              // ancho útil tabla
+
+            // ── Paleta colores ──────────────────────────────────────
+            var NAVY   = [30, 45, 78];        // #1E2D4E
+            var NAVY2  = [44, 70, 120];
+            var WHITE  = [255,255,255];
+            var LGRAY  = [245,245,245];       // filas pares
+            var BORDER = [221,221,221];
+            var DARK   = [34,34,34];
+            var GRAY   = [85,85,85];
+
+            // ── Logo PNG ────────────────────────────────────────────
             var logoImg = await vxLogoDataURL(620, 136);
 
-            // ════════════════════════════════════════════════════
-            //   MEMBRETE — función para dibujar en cada página
-            // ════════════════════════════════════════════════════
-            function dibujarMembrete() {
-                // ── Fondo blanco total ────────────────────────────
+            // ════════════════════════════════════════════════════════
+            //  MEMBRETE — se repite en cada página
+            // ════════════════════════════════════════════════════════
+            function dibujarMembrete(pageNum, totalPages) {
+                // Fondo blanco
                 doc.setFillColor(255,255,255);
                 doc.rect(0, 0, PW, PH, 'F');
 
-                // ── Forma azul superior-izquierda (trapecio) ─────
-                // Rectángulo base
-                doc.setFillColor(29, 67, 112);
-                doc.rect(0, 0, 56, 30, 'F');
-                // Triángulo para el corte diagonal derecho
-                doc.triangle(56, 0, 74, 0, 56, 30, 'F');
+                // Trapecio azul superior-izquierda
+                doc.setFillColor(...NAVY);
+                doc.rect(0, 0, 58, 33, 'F');
+                doc.triangle(58, 0, 80, 0, 58, 33, 'F');
 
-                // ── Logo VALTRAX superior-derecha ─────────────────
+                // Acento lateral azul medio
+                doc.setFillColor(...NAVY2);
+                doc.rect(0, 0, 6, 33, 'F');
+
+                // Logo VALTRAX — superior derecha
                 if (logoImg) {
-                    doc.addImage(logoImg, 'PNG', PW - 76, 6, 64, 14);
+                    doc.addImage(logoImg, 'PNG', MR_x - 62, 7, 60, 13);
                 }
-                // Subtítulo "— INDUSTRIAL SPA —"
+                // Subtítulo
                 doc.setFont('helvetica','normal');
-                doc.setFontSize(6);
-                doc.setTextColor(100, 108, 120);
-                doc.text('\u2014 INDUSTRIAL SPA \u2014', PW - 44, 24, {align:'center'});
+                doc.setFontSize(5.5);
+                doc.setTextColor(120,128,140);
+                doc.text('— INDUSTRIAL SPA —', MR_x - 32, 24, {align:'center'});
 
-                // ── Línea separadora header ───────────────────────
-                doc.setDrawColor(29,67,112);
+                // Línea separadora bajo membrete
+                doc.setDrawColor(...NAVY);
                 doc.setLineWidth(0.5);
-                doc.line(16, 31, PW - 12, 31);
+                doc.line(ML, 34, MR_x, 34);
 
-                // ── Footer navy ───────────────────────────────────
-                doc.setFillColor(29, 67, 112);
-                doc.rect(0, PH - 20, PW, 13, 'F');
-                // Onda simulada con triángulo navy claro
-                doc.setFillColor(44, 90, 145);
-                doc.triangle(0, PH - 20, PW * 0.55, PH - 26, PW, PH - 20, 'F');
-
-                // ── Footer gris ───────────────────────────────────
-                doc.setFillColor(138, 154, 176);
+                // ── Footer ──────────────────────────────────────────
+                // Franja azul marino
+                doc.setFillColor(...NAVY);
+                doc.rect(0, PH - 22, PW, 15, 'F');
+                // Onda decorativa
+                doc.setFillColor(...NAVY2);
+                doc.triangle(0, PH - 22, PW * 0.6, PH - 28, PW, PH - 22, 'F');
+                // Franja gris azulado
+                doc.setFillColor(138,154,176);
                 doc.rect(0, PH - 7, PW, 7, 'F');
 
-                // ── Pie de página — texto blanco ──────────────────
+                // Texto pie
                 doc.setFont('helvetica','normal');
                 doc.setFontSize(6.5);
                 doc.setTextColor(255,255,255);
-                doc.text('VALTRAX Industrial SPA  \u00b7  Antofagasta, Chile  \u00b7  contacto@valtrax.cl  \u00b7  www.valtrax.cl', PW/2, PH - 14, {align:'center'});
-                doc.text('Documento generado por VALTRAX Industrial SPA', PW/2, PH - 9, {align:'center'});
+                doc.text('VALTRAX Industrial SPA  ·  Antofagasta, Chile  ·  contacto@valtrax.cl  ·  www.valtrax.cl', PW/2, PH - 16, {align:'center'});
+                doc.text('Documento generado por VALTRAX Industrial SPA', PW/2, PH - 11, {align:'center'});
+
+                // Número de página
+                if (totalPages > 1) {
+                    doc.setFontSize(6);
+                    doc.setTextColor(200,210,225);
+                    doc.text('Página ' + pageNum + ' de ' + totalPages, MR_x, PH - 11, {align:'right'});
+                }
             }
 
-            // Dibujar membrete en página 1
-            dibujarMembrete();
+            // ════════════════════════════════════════════════════════
+            //  ENCABEZADO DE DOCUMENTO — se repite en cada página
+            // ════════════════════════════════════════════════════════
+            function dibujarEncabezado(y) {
+                // "COTIZACIÓN" grande izquierda
+                doc.setFont('helvetica','bold');
+                doc.setFontSize(18);
+                doc.setTextColor(...NAVY);
+                doc.text('COTIZACIÓN', ML, y + 7);
 
-            // ════════════════════════════════════════════════════
-            //   CONTENIDO
-            // ════════════════════════════════════════════════════
-            var ML = 18, MR = PW - 14;  // márgenes izq/der en mm
-            var y  = 36;                // posición Y actual
+                // Bloque info derecha
+                doc.setFont('helvetica','normal');
+                doc.setFontSize(7.5);
+                doc.setTextColor(...GRAY);
+                var xi = MR_x, yi = y + 1;
+                var lineH = 4.2;
 
-            // ── Encabezado documento ──────────────────────────────
-            doc.setFont('helvetica','bold');
-            doc.setFontSize(15);
-            doc.setTextColor(29,67,112);
-            doc.text('COTIZACIÓN', ML, y);
+                // N° Cotización
+                doc.text('N° Cotización:', xi - 52, yi + lineH);
+                doc.setFont('helvetica','bold');
+                doc.setTextColor(...DARK);
+                doc.text(folio, xi, yi + lineH, {align:'right'});
 
-            doc.setFont('helvetica','normal');
-            doc.setFontSize(8.5);
-            doc.setTextColor(80,80,80);
-            doc.text('N°  ' + folio, MR, y, {align:'right'});
-            y += 5;
-            doc.text('Fecha:  ' + fecha, MR, y, {align:'right'});
-            if (vigencia) {
+                doc.setFont('helvetica','normal');
+                doc.setTextColor(...GRAY);
+                doc.text('Fecha Cotización:', xi - 52, yi + lineH*2);
+                doc.setFont('helvetica','bold');
+                doc.setTextColor(...DARK);
+                doc.text(fecha, xi, yi + lineH*2, {align:'right'});
+
+                if (vigencia) {
+                    doc.setFont('helvetica','normal');
+                    doc.setTextColor(...GRAY);
+                    doc.text('Oferta válida hasta:', xi - 52, yi + lineH*3);
+                    doc.setFont('helvetica','bold');
+                    doc.setTextColor(...DARK);
+                    doc.text(vigencia, xi, yi + lineH*3, {align:'right'});
+                }
+
+                return y + 14;
+            }
+
+            // ════════════════════════════════════════════════════════
+            //  BLOQUES DATOS CLIENTE / EMISOR
+            // ════════════════════════════════════════════════════════
+            function dibujarDatosBloques(y) {
+                var colW = (TW - 10) / 2;
+                var xR   = ML + colW + 10;
+                var lineH = 4;
+
+                // Línea separadora superior
+                doc.setDrawColor(...BORDER);
+                doc.setLineWidth(0.25);
+                doc.line(ML, y, MR_x, y);
+                y += 5;
+
+                // Columna Izquierda — Emisor
+                doc.setFont('helvetica','bold');
+                doc.setFontSize(7.5);
+                doc.setTextColor(...NAVY);
+                doc.text('Nuestros datos', ML, y);
+
+                doc.setFont('helvetica','bold');
+                doc.setFontSize(8.5);
+                doc.setTextColor(...DARK);
+                doc.text('VALTRAX INDUSTRIAL SPA', ML, y + lineH);
+
+                doc.setFont('helvetica','normal');
+                doc.setFontSize(7.5);
+                doc.setTextColor(...GRAY);
+                doc.text('Antofagasta, Chile', ML, y + lineH*2);
+                doc.text('Giro: Comercialización de insumos industriales', ML, y + lineH*3);
+                doc.text('contacto@valtrax.cl', ML, y + lineH*4);
+                doc.setFont('helvetica','bold');
+                doc.setTextColor(...DARK);
+                doc.text('Ejecutivo: ' + vendedor, ML, y + lineH*5);
+
+                // Columna Derecha — Cliente
+                doc.setFont('helvetica','bold');
+                doc.setFontSize(7.5);
+                doc.setTextColor(...NAVY);
+                doc.text('Empresa / Cliente', xR, y);
+
+                doc.setFont('helvetica','bold');
+                doc.setFontSize(8.5);
+                doc.setTextColor(...DARK);
+                var clienteLines = doc.splitTextToSize(cliente, colW);
+                doc.text(clienteLines[0] || cliente, xR, y + lineH);
+
+                doc.setFont('helvetica','normal');
+                doc.setFontSize(7.5);
+                doc.setTextColor(...GRAY);
+                var yC = y + lineH*2;
+                if (faena && faena !== '—' && faena !== '') {
+                    doc.text('Faena / Proyecto: ' + faena, xR, yC);
+                    yC += lineH;
+                }
+
+                y += lineH*5 + 6;
+
+                // Línea separadora inferior
+                doc.setDrawColor(...BORDER);
+                doc.setLineWidth(0.25);
+                doc.line(ML, y, MR_x, y);
+                y += 6;
+
+                // Saludo
+                doc.setFont('helvetica','bold');
+                doc.setFontSize(8);
+                doc.setTextColor(...DARK);
+                doc.text('Estimado cliente,', ML, y);
                 y += 4.5;
-                doc.text('Vigencia:  ' + vigencia, MR, y, {align:'right'});
-            }
-            y += 6;
+                doc.setFont('helvetica','normal');
+                doc.setTextColor(...GRAY);
+                var saludo = 'Les agradecemos su interés. Con mucho gusto les ofertamos, sin compromiso, los siguientes artículos:';
+                doc.text(doc.splitTextToSize(saludo, TW), ML, y);
+                y += 8;
 
-            // Línea separadora
-            doc.setDrawColor(220,220,220); doc.setLineWidth(0.25);
-            doc.line(ML, y, MR, y);
-            y += 6;
-
-            // ── Datos emisor / cliente (dos columnas) ─────────────
-            var colW = (MR - ML - 8) / 2;
-            var xCli = ML + colW + 8;
-
-            // Columna izquierda — VALTRAX
-            doc.setFont('helvetica','bold');
-            doc.setFontSize(7.5);
-            doc.setTextColor(29,67,112);
-            doc.text('VALTRAX INDUSTRIAL SPA', ML, y);
-            doc.setFont('helvetica','normal');
-            doc.setTextColor(55,55,55);
-            doc.setFontSize(7.5);
-            var yE = y + 4;
-            doc.text('Antofagasta, Chile', ML, yE); yE += 3.8;
-            doc.text('Giro: Comercialización de insumos industriales', ML, yE); yE += 3.8;
-            doc.text('contacto@valtrax.cl', ML, yE);
-
-            // Columna derecha — CLIENTE
-            doc.setFont('helvetica','bold');
-            doc.setFontSize(7.5);
-            doc.setTextColor(29,67,112);
-            doc.text('CLIENTE / RECEPTOR', xCli, y);
-            doc.setFont('helvetica','normal');
-            doc.setTextColor(55,55,55);
-            var yC = y + 4;
-            doc.text(cliente, xCli, yC); yC += 3.8;
-            if (faena && faena !== '—' && faena !== '') {
-                doc.text('Faena: ' + faena, xCli, yC); yC += 3.8;
+                return y;
             }
 
-            y = Math.max(yE, yC) + 6;
-
-            doc.setDrawColor(220,220,220); doc.setLineWidth(0.25);
-            doc.line(ML, y, MR, y);
-            y += 7;
-
-            // ── Tabla de ítems ────────────────────────────────────
-            var TW  = MR - ML; // ancho total tabla
-            var ROW = 6.5;     // alto de fila
-            var cols = {
-                n:    {x: ML,              w: 8},
-                desc: {x: ML + 8,          w: 80},
-                cant: {x: ML + 88,         w: 14},
-                unid: {x: ML + 102,        w: 20},
-                pu:   {x: ML + 122,        w: 30},
-                sub:  {x: ML + 152,        w: TW - 152}
+            // ════════════════════════════════════════════════════════
+            //  CABECERA DE TABLA — se repite al saltar página
+            // ════════════════════════════════════════════════════════
+            // Columnas Würth
+            var C = {
+                pos:  { x: ML,           w: 8   },
+                desc: { x: ML + 8,       w: 75  },
+                cant: { x: ML + 83,      w: 16  },
+                ue:   { x: ML + 99,      w: 14  },
+                pu:   { x: ML + 113,     w: 26  },
+                dto:  { x: ML + 139,     w: 14  },
+                net:  { x: ML + 153,     w: TW - 153 }
             };
 
-            var yTbl = y;
+            function dibujarHeaderTabla(y) {
+                var hH = 8;
+                doc.setFillColor(...NAVY);
+                doc.rect(ML, y, TW, hH, 'F');
+                doc.setFont('helvetica','bold');
+                doc.setFontSize(7.5);
+                doc.setTextColor(255,255,255);
+                var hY = y + 5.3;
+                doc.text('Pos.',       C.pos.x + 1,  hY);
+                doc.text('Artículo / Descripción', C.desc.x + 1, hY);
+                doc.text('Cant.',      C.cant.x + 1, hY);
+                doc.text('U.E.',       C.ue.x + 1,   hY);
+                doc.text('P. Unitario', C.pu.x + C.pu.w - 1, hY, {align:'right'});
+                doc.text('Dto.',       C.dto.x + 1,  hY);
+                doc.text('P. Neto',    MR_x,         hY, {align:'right'});
+                return y + hH;
+            }
 
-            // Header
-            doc.setFillColor(29,67,112);
-            doc.rect(ML, yTbl, TW, 7, 'F');
-            doc.setFont('helvetica','bold');
-            doc.setFontSize(7.5);
-            doc.setTextColor(255,255,255);
-            var hY = yTbl + 5;
-            doc.text('#',           cols.n.x + 1, hY);
-            doc.text('Descripción', cols.desc.x + 1, hY);
-            doc.text('Cant.',       cols.cant.x + 1, hY);
-            doc.text('Unidad',      cols.unid.x + 1, hY);
-            doc.text('P. Unitario', cols.pu.x + 1,   hY);
-            doc.text('Subtotal',    MR,               hY, {align:'right'});
-            yTbl += 7;
+            // ════════════════════════════════════════════════════════
+            //  CONSTRUCCIÓN DEL DOCUMENTO
+            // ════════════════════════════════════════════════════════
+            // Primera pasada: calcular cuántas páginas (aprox) para la cabecera
+            var pages = 1;
+            dibujarMembrete(1, 1); // temporal
 
-            // Filas
-            doc.setFont('helvetica','normal');
-            doc.setFontSize(7.5);
-            var rowNum = 0;
+            var y = 37;
+            y = dibujarEncabezado(y) + 4;
+            y = dibujarDatosBloques(y);
+
+            // Header tabla
+            var yTbl = dibujarHeaderTabla(y);
+            var ROW_H = 7.5;
+            var ROW_MIN = PH - 45; // límite antes de saltar página
+
+            // Construir filas
+            var rows = [];
             _items.forEach(function(it, idx) {
                 if (!it.desc || !it.desc.trim()) return;
-                var pObj   = _ppto[it.id] || {};
-                var opSel  = (pObj.opciones||[]).find(function(o){ return o.seleccionada; });
-                var pu     = opSel ? (parseFloat(opSel.precio)||0) : 0;
-                var sub    = pu * (parseFloat(it.cant)||1);
-
-                // Fondo alterno
-                if (rowNum % 2 === 0) {
-                    doc.setFillColor(245,248,252);
-                    doc.rect(ML, yTbl, TW, ROW, 'F');
-                }
-                doc.setTextColor(35,35,35);
-                var rY = yTbl + ROW - 1.8;
-                doc.text(String(idx+1), cols.n.x + 1, rY);
-                var desc = String(it.desc || '');
-                if (desc.length > 46) desc = desc.substring(0,44)+'…';
-                doc.text(desc, cols.desc.x + 1, rY);
-                doc.text(String(it.cant||1), cols.cant.x + 1, rY);
-                doc.text(it.unidad||'un', cols.unid.x + 1, rY);
-                doc.text(fmtCLP(pu),  cols.pu.x + cols.pu.w - 1, rY, {align:'right'});
-                doc.text(fmtCLP(sub), MR, rY, {align:'right'});
-                yTbl += ROW;
-                rowNum++;
-
-                // Salto de página si se llena
-                if (yTbl > PH - 55) {
-                    doc.addPage();
-                    dibujarMembrete();
-                    yTbl = 40;
-                }
+                var pObj  = _ppto[it.id] || {};
+                var opSel = (pObj.opciones||[]).find(function(o){ return o.seleccionada; });
+                var pu    = opSel ? (parseFloat(opSel.precio)||0) : 0;
+                var cant  = parseFloat(it.cant)||1;
+                var sub   = pu * cant;
+                var lugar = opSel ? (opSel.lugar||'') : '';
+                rows.push({ idx: idx+1, pos: (idx+1)*10, desc: it.desc||'', cant: cant, ue: it.unidad||'un', pu: pu, sub: sub, lugar: lugar });
             });
 
-            // Borde tabla
-            doc.setDrawColor(200,210,225); doc.setLineWidth(0.25);
+            // Calcular páginas reales
+            var ySim = yTbl;
+            var pgCount = 1;
+            rows.forEach(function(r) {
+                var lines = doc.splitTextToSize(r.desc, C.desc.w - 2).length;
+                var rh = Math.max(ROW_H, lines * 3.5 + 4);
+                if (ySim + rh > ROW_MIN) { pgCount++; ySim = 44; }
+                ySim += rh;
+                if (r.lugar) ySim += 3;
+            });
+
+            // Segunda pasada — dibujar real
+            doc.setPage(1);
+            dibujarMembrete(1, pgCount);
+            y = 37;
+            y = dibujarEncabezado(y) + 4;
+            y = dibujarDatosBloques(y);
+            yTbl = dibujarHeaderTabla(y);
+
+            var rowIdx = 0;
+            rows.forEach(function(r) {
+                var descLines = doc.splitTextToSize(r.desc, C.desc.w - 2);
+                var rh = Math.max(ROW_H, descLines.length * 3.5 + 4);
+
+                // Salto de página
+                if (yTbl + rh > ROW_MIN) {
+                    doc.addPage();
+                    var pg = doc.internal.getCurrentPageInfo().pageNumber;
+                    dibujarMembrete(pg, pgCount);
+                    yTbl = 44;
+                    yTbl = dibujarHeaderTabla(yTbl);
+                    rowIdx = 0;
+                }
+
+                // Fondo fila alterna
+                if (rowIdx % 2 === 1) {
+                    doc.setFillColor(...LGRAY);
+                    doc.rect(ML, yTbl, TW, rh, 'F');
+                }
+                // Borde inferior fila
+                doc.setDrawColor(...BORDER);
+                doc.setLineWidth(0.2);
+                doc.line(ML, yTbl + rh, ML + TW, yTbl + rh);
+
+                var rY = yTbl + 4.8;
+                // Pos (estilo Würth: múltiplos de 10)
+                doc.setFont('helvetica','normal');
+                doc.setFontSize(7.5);
+                doc.setTextColor(136,136,136);
+                doc.text(String(r.pos), C.pos.x + 1, rY);
+
+                // Descripción (primera línea bold, resto normal)
+                doc.setFont('helvetica','bold');
+                doc.setFontSize(8);
+                doc.setTextColor(...DARK);
+                doc.text(descLines[0]||'', C.desc.x + 1, rY);
+                if (descLines.length > 1) {
+                    doc.setFont('helvetica','normal');
+                    doc.setFontSize(7);
+                    doc.setTextColor(...GRAY);
+                    for (var li = 1; li < descLines.length; li++) {
+                        doc.text(descLines[li], C.desc.x + 1, rY + li*3.5);
+                    }
+                }
+                // Proveedor/lugar en gris italic bajo descripción
+                if (r.lugar) {
+                    doc.setFont('helvetica','italic');
+                    doc.setFontSize(6.5);
+                    doc.setTextColor(150,150,150);
+                    doc.text('Proveedor: ' + r.lugar, C.desc.x + 1, rY + descLines.length*3.5);
+                }
+
+                // Cantidad
+                doc.setFont('helvetica','normal');
+                doc.setFontSize(7.5);
+                doc.setTextColor(...DARK);
+                doc.text(String(r.cant), C.cant.x + C.cant.w - 1, rY, {align:'right'});
+
+                // U.E.
+                doc.text(r.ue, C.ue.x + 1, rY);
+
+                // P. Unitario
+                doc.text(r.pu > 0 ? fmtCLP(r.pu) : '—', C.pu.x + C.pu.w - 1, rY, {align:'right'});
+
+                // Dto (—)
+                doc.setTextColor(180,180,180);
+                doc.text('—', C.dto.x + 1, rY);
+
+                // P. Neto
+                doc.setTextColor(...DARK);
+                doc.setFont('helvetica','bold');
+                doc.text(r.sub > 0 ? fmtCLP(r.sub) : '—', MR_x, rY, {align:'right'});
+
+                yTbl += rh;
+                rowIdx++;
+            });
+
+            // Borde exterior tabla
+            doc.setDrawColor(...BORDER);
+            doc.setLineWidth(0.3);
             doc.rect(ML, y, TW, yTbl - y, 'S');
 
-            y = yTbl + 5;
+            y = yTbl + 4;
 
-            // ── Totales ───────────────────────────────────────────
+            // ── Nota al pie tabla ──────────────────────────────────
+            doc.setFont('helvetica','italic');
+            doc.setFontSize(6.5);
+            doc.setTextColor(136,136,136);
+            doc.text('* U.E. = unidad de embalaje  /  Dto. = Descuento  /  P. Neto = Precio neto cotizado', ML, y);
+            y += 8;
+
+            // ── Bloque totales + condiciones ───────────────────────
             var neto = 0;
-            _items.forEach(function(it) {
-                var pObj  = _ppto[it.id]||{};
-                var opSel = (pObj.opciones||[]).find(function(o){ return o.seleccionada; });
-                if (opSel) neto += (parseFloat(opSel.precio)||0) * (parseFloat(it.cant)||1);
-            });
+            rows.forEach(function(r){ neto += r.sub; });
             var ivaAmt = useIva ? Math.round(neto * 0.19) : 0;
             var total  = neto + ivaAmt;
 
-            var totW = 72, totX = MR - totW;
+            // Condiciones — izquierda
+            var totW = 80, totX = MR_x - totW;
             doc.setFont('helvetica','normal');
-            doc.setFontSize(8);
-            doc.setTextColor(55,55,55);
-            doc.text('Neto:', totX, y + 4);
-            doc.text(fmtCLP(neto), MR, y + 4, {align:'right'});
-            y += 5.5;
-            if (useIva) {
-                doc.text('IVA (19%):', totX, y + 4);
-                doc.text(fmtCLP(ivaAmt), MR, y + 4, {align:'right'});
-                y += 5.5;
-            }
-            // Fila TOTAL
-            doc.setFillColor(29,67,112);
-            doc.rect(totX - 2, y, MR - totX + 2, 8, 'F');
+            doc.setFontSize(7.5);
+            doc.setTextColor(...GRAY);
+            doc.text('Plazo de entrega:', ML, y + 3);
+            doc.setFont('helvetica','normal');
+            doc.text('Según stock disponible (indicado por posición si aplica)', ML + 30, y + 3);
             doc.setFont('helvetica','bold');
-            doc.setFontSize(9);
-            doc.setTextColor(255,255,255);
-            doc.text('TOTAL:', totX, y + 5.5);
-            doc.text(fmtCLP(total), MR, y + 5.5, {align:'right'});
-            y += 12;
+            doc.text('Condición de pago:', ML, y + 7.5);
+            doc.setFont('helvetica','normal');
+            doc.text('Pagadero inmediatamente sin deducción', ML + 30, y + 7.5);
 
-            // ── Observaciones ─────────────────────────────────────
+            // Totales — derecha
+            var totRows = [];
+            if (useIva) {
+                totRows.push({ lbl:'Subtotal (neto):', val: fmtCLP(neto) });
+                totRows.push({ lbl:'IVA (19%):', val: fmtCLP(ivaAmt) });
+                totRows.push({ lbl:'IVA inc. impuesto CLP:', val: fmtCLP(total), bold: true });
+            } else {
+                totRows.push({ lbl:'Precio neto CLP:', val: fmtCLP(neto) });
+                totRows.push({ lbl:'IVA:', val: 'No incluido' });
+                totRows.push({ lbl:'Total CLP:', val: fmtCLP(neto), bold: true });
+            }
+
+            var tyStart = y;
+            totRows.forEach(function(tr, ti) {
+                var ty = tyStart + ti*6;
+                if (tr.bold) {
+                    doc.setFillColor(...NAVY);
+                    doc.rect(totX - 2, ty - 0.5, totW + 2, 7.5, 'F');
+                    doc.setFont('helvetica','bold');
+                    doc.setFontSize(9);
+                    doc.setTextColor(255,255,255);
+                    doc.text(tr.lbl, totX, ty + 5);
+                    doc.text(tr.val, MR_x, ty + 5, {align:'right'});
+                } else {
+                    doc.setDrawColor(...BORDER);
+                    doc.setLineWidth(0.2);
+                    doc.line(totX - 2, ty + 6, MR_x, ty + 6);
+                    doc.setFont('helvetica','normal');
+                    doc.setFontSize(7.5);
+                    doc.setTextColor(...GRAY);
+                    doc.text(tr.lbl, totX, ty + 4.5);
+                    doc.setFont('helvetica','bold');
+                    doc.setTextColor(...DARK);
+                    doc.text(tr.val, MR_x, ty + 4.5, {align:'right'});
+                }
+            });
+
+            y = tyStart + totRows.length * 6 + 8;
+
+            // ── Observaciones ──────────────────────────────────────
             if (nota) {
+                doc.setDrawColor(...BORDER);
+                doc.setLineWidth(0.25);
+                doc.line(ML, y, MR_x, y);
+                y += 5;
                 doc.setFont('helvetica','bold');
                 doc.setFontSize(8);
-                doc.setTextColor(55,55,55);
+                doc.setTextColor(...NAVY);
                 doc.text('Observaciones:', ML, y);
                 y += 4.5;
                 doc.setFont('helvetica','normal');
                 doc.setFontSize(7.5);
-                var ls = doc.splitTextToSize(nota, MR - ML);
-                doc.text(ls, ML, y);
+                doc.setTextColor(...GRAY);
+                doc.text(doc.splitTextToSize(nota, TW), ML, y);
             }
 
-            // ── Exportar como blob ────────────────────────────────
-            // ── Guardar referencia al doc para descarga/impresión ──
+            // ── Guardar y mostrar ──────────────────────────────────
             _pdfDoc  = doc;
             _pdfBlob = doc.output('blob');
-            // Mostrar estado: listo
             document.getElementById('pdfSpinner').style.display = 'none';
             document.getElementById('pdfListo').style.display   = 'block';
 
         } catch(err) {
             console.error('Error generando PDF:', err);
-            var errMsg = (err && err.message) ? err.message : String(err);
             document.getElementById('pdfSpinner').style.display = 'none';
             document.getElementById('pdfError').style.display   = 'block';
-            document.getElementById('pdfErrorMsg').textContent  = errMsg;
+            document.getElementById('pdfErrorMsg').textContent  = err && err.message ? err.message : String(err);
         }
     }
     // ══════════════════════════════════════════════════════════════
