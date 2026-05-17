@@ -585,7 +585,17 @@
                     d: cab.fecha||(p.creado_en?p.creado_en.slice(0,10):'—'),
                     v: cab.vigencia||'—',
                     e: p.estado||'solicitud',
-                    t: null, r: cab.responsable||'VALTRAX', tipo:'ppto',
+                    t: (function(){
+                        var ppto = typeof p.ppto==='string'?JSON.parse(p.ppto):(p.ppto||{});
+                        var items = typeof p.items==='string'?JSON.parse(p.items):(p.items||[]);
+                        var tv=0;
+                        items.forEach(function(it){
+                            var pp=ppto[it.id]||{};
+                            var sel=(pp.opciones||[]).find(function(o){return o.seleccionada;});
+                            if(sel) tv+=(parseFloat(sel.ventaUnit)||0)*(parseFloat(it.cant)||1);
+                        });
+                        return tv||null;
+                    })(), r: cab.responsable||'VALTRAX', tipo:'ppto',
                     bloqueado: p.bloqueado, pedido_folio: p.pedido_folio, oc_folio: p.oc_folio
                 };
             });
