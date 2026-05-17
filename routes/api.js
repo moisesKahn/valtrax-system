@@ -218,16 +218,23 @@ router.post('/oc', async (req, res) => {
         );
         const [rows] = await pool.query('SELECT * FROM ordenes_compra WHERE id=?', [r.insertId]);
         const row = rows[0];
-        res.json({ ...row, items: row.items ? JSON.parse(row.items) : [] });
+        res.json({
+            ...row,
+            items:         typeof row.items         === 'string' ? JSON.parse(row.items)         : (row.items         || []),
+            datos_cliente: typeof row.datos_cliente === 'string' ? JSON.parse(row.datos_cliente) : (row.datos_cliente || {})
+        });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 router.put('/oc/:folio', async (req, res) => {
     try {
         const d = req.body;
+        // Normalizar fecha a YYYY-MM-DD
+        let fecha = d.fecha || null;
+        if (fecha && fecha.includes('T')) fecha = fecha.split('T')[0];
         await pool.query(
             `UPDATE ordenes_compra SET proveedor=?,estado=?,fecha=?,total_costo=?,obs=?,items=?,datos_cliente=?,dir_entrega=? WHERE folio=?`,
-            [d.proveedor||null, d.estado||'Borrador', d.fecha||null,
+            [d.proveedor||null, d.estado||'Pendiente', fecha,
              d.total_costo||d.total||0, d.obs||null, JSON.stringify(d.items||[]),
              d.datos_cliente ? JSON.stringify(d.datos_cliente) : null,
              d.dir_entrega||null,
@@ -247,7 +254,11 @@ router.put('/oc/:folio', async (req, res) => {
             }
         }
 
-        res.json({ ...row, items: row.items ? JSON.parse(row.items) : [] });
+        res.json({
+            ...row,
+            items:         typeof row.items         === 'string' ? JSON.parse(row.items)         : (row.items         || []),
+            datos_cliente: typeof row.datos_cliente === 'string' ? JSON.parse(row.datos_cliente) : (row.datos_cliente || {})
+        });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
