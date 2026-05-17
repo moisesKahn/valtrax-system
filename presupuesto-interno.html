@@ -192,10 +192,27 @@
                     <li class="nxl-item"><a class="nxl-link" href="pedidos.html"><span class="nxl-micon"><i class="feather-package"></i></span><span class="nxl-mtext">Pedidos</span></a></li>
                     <li class="nxl-item"><a class="nxl-link" href="ordenes-compra.html"><span class="nxl-micon"><i class="feather-shopping-bag"></i></span><span class="nxl-mtext">Órdenes de Compra</span></a></li>
                     <li class="nxl-item"><a class="nxl-link" href="entregas.html"><span class="nxl-micon"><i class="feather-check-square"></i></span><span class="nxl-mtext">Entregas</span></a></li>
+
+                    <!-- ── ADMINISTRACIÓN (solo admin) ───────────────── -->
+                    <li class="nxl-item nxl-caption vx-admin-only" style="display:none;"><label>Administración</label></li>
+                    <li class="nxl-item vx-admin-only" style="display:none;">
+                        <a href="usuarios.html" class="nxl-link">
+                            <span class="nxl-micon"><i class="feather-user-check"></i></span>
+                            <span class="nxl-mtext">Usuarios</span>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
+    <script>
+    /* VALTRAX — Mostrar sección admin si rol=administrador */
+    (function(){
+        if(localStorage.getItem('vx_rol')==='administrador'){
+            document.querySelectorAll('.vx-admin-only').forEach(function(el){el.style.display='';});
+        }
+    })();
+    </script>
     <script>
     (function(){
         document.documentElement.classList.add('valtrax-loading');
@@ -1259,7 +1276,15 @@
     }
 
     // ── Presupuesto render ──────────────────────────────────────
-    function sincPpto(){ _items.forEach(it=>{ if(!_ppto[it.id]) _ppto[it.id]={opciones:[]}; }); }
+    function sincPpto(){
+        var mg=parseInt((document.getElementById('margenGlobal')||{}).value)||30;
+        _items.forEach(it=>{
+            if(!_ppto[it.id]) _ppto[it.id]={opciones:[{lugar:'',url:'',precio:0,margen:mg,ventaUnit:0,seleccionada:false}]};
+            // Garantizar al menos 1 slot vacío
+            else if(_ppto[it.id].opciones.length===0)
+                _ppto[it.id].opciones.push({lugar:'',url:'',precio:0,margen:mg,ventaUnit:0,seleccionada:false});
+        });
+    }
 
     function syncResumen(){
         document.getElementById('pptoCliente').textContent=document.getElementById('solCliente').value||'—';
@@ -1697,12 +1722,18 @@
         var op=cache[idx];
         var mg=parseInt(document.getElementById('margenGlobal').value)||30;
         if(!_ppto[itemId]) _ppto[itemId]={opciones:[]};
-        // Deseleccionar previas y agregar nueva
+        var newOp={lugar:op.tienda,url:op.url||'',precio:op.precio,margen:mg,ventaUnit:Math.round(op.precio*(1+mg/100)),seleccionada:true};
+        // Buscar primer slot vacío (lugar='' y precio=0) para rellenarlo
+        var emptyIdx=_ppto[itemId].opciones.findIndex(o=>o.lugar===''&&o.precio===0);
         _ppto[itemId].opciones.forEach(o=>o.seleccionada=false);
-        _ppto[itemId].opciones.push({lugar:op.tienda,url:op.url||'',precio:op.precio,margen:mg,ventaUnit:Math.round(op.precio*(1+mg/100)),seleccionada:true});
+        if(emptyIdx>=0){
+            _ppto[itemId].opciones[emptyIdx]=newOp;
+        } else {
+            _ppto[itemId].opciones.push(newOp);
+        }
         cerrarModalIA();
         renderPpto();
-        toast('✔ Opción IA agregada y seleccionada','#059669');
+        toast('✔ Opción IA agregada en línea '+(emptyIdx>=0?emptyIdx+1:_ppto[itemId].opciones.length),'#059669');
     }
 
     // ── Buscar todos Serper ──────────────────────────────────────

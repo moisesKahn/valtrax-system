@@ -114,10 +114,27 @@
                             <span class="nxl-mtext">Entregas</span>
                         </a>
                     </li>
+
+                    <!-- ── ADMINISTRACIÓN (solo admin) ───────────────── -->
+                    <li class="nxl-item nxl-caption vx-admin-only" style="display:none;"><label>Administración</label></li>
+                    <li class="nxl-item vx-admin-only" style="display:none;">
+                        <a href="usuarios.html" class="nxl-link">
+                            <span class="nxl-micon"><i class="feather-user-check"></i></span>
+                            <span class="nxl-mtext">Usuarios</span>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
+    <script>
+    /* VALTRAX — Mostrar sección admin si rol=administrador */
+    (function(){
+        if(localStorage.getItem('vx_rol')==='administrador'){
+            document.querySelectorAll('.vx-admin-only').forEach(function(el){el.style.display='';});
+        }
+    })();
+    </script>
     <script>
     (function(){
         document.documentElement.classList.add('valtrax-loading');
@@ -328,8 +345,6 @@ function buildBtns(p){
     if(p.estado==='En compra')    b+=`<button class="btn-act btn-blue"   onclick="cambiar('${f}','Preparación')"><i class="feather-box" style="font-size:11px;"></i> Preparación</button>`;
     if(p.estado==='Preparación')  b+=`<button class="btn-act btn-orange" onclick="cambiar('${f}','Despachado')"><i class="feather-truck" style="font-size:11px;"></i> Despachar</button>`;
     if(p.estado==='Despachado')   b+=`<button class="btn-act btn-green"  onclick="cambiar('${f}','Entregado')"><i class="feather-check-circle" style="font-size:11px;"></i> Entregado</button>`;
-    const ocFBtn=p.oc_folio||_ocMap[p.folio]||null;
-    if(ocFBtn) b+=`<a href="ordenes-compra.html?oc=${esc(ocFBtn)}" class="btn-act btn-sec" style="text-decoration:none;"><i class="feather-shopping-bag" style="font-size:11px;"></i> OC</a>`;
     return b;
 }
 
