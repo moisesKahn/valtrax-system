@@ -59,7 +59,7 @@ router.get('/cotizaciones', async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM cotizaciones ORDER BY id DESC');
         // Parsear items JSON
-        res.json(rows.map(r => ({ ...r, items: r.items ? JSON.parse(r.items) : [] })));
+        res.json(rows.map(r => ({ ...r, items: typeof r.items === 'string' ? JSON.parse(r.items) : (r.items || []) })));
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -68,7 +68,7 @@ router.get('/cotizaciones/:folio', async (req, res) => {
         const [rows] = await pool.query('SELECT * FROM cotizaciones WHERE folio=?', [req.params.folio]);
         if (!rows.length) return res.status(404).json({ error: 'No encontrada' });
         const r = rows[0];
-        res.json({ ...r, items: r.items ? JSON.parse(r.items) : [] });
+        res.json({ ...r, items: typeof r.items === 'string' ? JSON.parse(r.items) : (r.items || []) });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -83,7 +83,7 @@ router.post('/cotizaciones', async (req, res) => {
         );
         const [rows] = await pool.query('SELECT * FROM cotizaciones WHERE id=?', [r.insertId]);
         const row = rows[0];
-        res.json({ ...row, items: row.items ? JSON.parse(row.items) : [] });
+        res.json({ ...row, items: typeof row.items === 'string' ? JSON.parse(row.items) : (row.items || []) });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -97,7 +97,7 @@ router.put('/cotizaciones/:folio', async (req, res) => {
         );
         const [rows] = await pool.query('SELECT * FROM cotizaciones WHERE folio=?', [req.params.folio]);
         const row = rows[0];
-        res.json({ ...row, items: row.items ? JSON.parse(row.items) : [] });
+        res.json({ ...row, items: typeof row.items === 'string' ? JSON.parse(row.items) : (row.items || []) });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -149,7 +149,7 @@ router.post('/pedidos', async (req, res) => {
         );
         const [rows] = await pool.query('SELECT * FROM pedidos WHERE id=?', [r.insertId]);
         const row = rows[0];
-        res.json({ ...row, items: row.items ? JSON.parse(row.items) : [] });
+        res.json({ ...row, items: typeof row.items === 'string' ? JSON.parse(row.items) : (row.items || []) });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -169,7 +169,10 @@ router.put('/pedidos/:folio', async (req, res) => {
         );
         const [rows] = await pool.query('SELECT * FROM pedidos WHERE folio=?', [req.params.folio]);
         const row = rows[0];
-        res.json({ ...row, items: row.items ? JSON.parse(row.items) : [] });
+        res.json({ ...row,
+            items:         typeof row.items         === 'string' ? JSON.parse(row.items)         : (row.items         || []),
+            datos_cliente: typeof row.datos_cliente === 'string' ? JSON.parse(row.datos_cliente) : (row.datos_cliente || {})
+        });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
