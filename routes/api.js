@@ -7,7 +7,7 @@ const router     = Router();
    ════════════════════════════════════════════════════════════ */
 async function nextFolio(tabla, prefijo) {
     const [rows] = await pool.query(`SELECT COUNT(*) as n FROM \`${tabla}\``);
-    const n = (rows[0].n || 0) + 1;
+    const n = (rows[0].n || 0) + 100;
     return prefijo + String(n).padStart(5, '0');
 }
 
@@ -388,11 +388,11 @@ router.post('/presupuestos/:id/aprobar', async (req, res) => {
 
         // 3. Generar folio pedido
         const [cntPed] = await conn.query('SELECT COUNT(*) as n FROM pedidos');
-        const folioPed = 'PED-' + String((cntPed[0].n || 0) + 1).padStart(5, '0');
+        const folioPed = 'PED-' + String((cntPed[0].n || 0) + 100).padStart(5, '0');
 
         // 4. Generar folio OC (una por proveedor o una general)
         const [cntOC] = await conn.query('SELECT COUNT(*) as n FROM ordenes_compra');
-        const folioOC  = 'OC-' + String((cntOC[0].n || 0) + 1).padStart(5, '0');
+        const folioOC  = 'OC-' + String((cntOC[0].n || 0) + 100).padStart(5, '0');
 
         // 5. Insertar Pedido
         const datosCliente = {
