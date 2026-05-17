@@ -124,16 +124,6 @@
                         </a>
                     </li>
 
-                    <!-- ── HERRAMIENTAS ─────────────────────────────────── -->
-                    <li class="nxl-item nxl-caption"><label>Herramientas</label></li>
-
-                    <li class="nxl-item">
-                        <a class="nxl-link" href="buscador-precios.html">
-                            <span class="nxl-micon"><i class="feather-tag"></i></span>
-                            <span class="nxl-mtext">Buscador de Precios</span>
-                        </a>
-                    </li>
-
                 </ul>
             </div>
         </div>
@@ -242,7 +232,7 @@
                     </ul>
                 </div>
                 <div class="page-header-right ms-auto">
-                    <a href="cotizaciones-crear.html" class="btn btn-sm btn-primary">
+                    <a href="presupuesto-interno.html" class="btn btn-sm btn-primary">
                         <i class="feather-plus me-1"></i>Nueva Cotización
                     </a>
                 </div>
@@ -253,11 +243,13 @@
                         <h5 class="card-title mb-0">Listado de Cotizaciones</h5>
                         <div class="d-flex gap-1 flex-wrap" id="tabsCot">
                             <button class="btn btn-sm btn-primary tab-cot active" data-estado="">Todas</button>
-                            <button class="btn btn-sm btn-outline-secondary tab-cot" data-estado="Borrador">Borrador</button>
-                            <button class="btn btn-sm btn-outline-secondary tab-cot" data-estado="Pendiente">Pendiente</button>
-                            <button class="btn btn-sm btn-outline-secondary tab-cot" data-estado="En Revisión">En Revisión</button>
-                            <button class="btn btn-sm btn-outline-secondary tab-cot" data-estado="Aprobada">Aprobada</button>
-                            <button class="btn btn-sm btn-outline-secondary tab-cot" data-estado="Rechazada">Rechazada</button>
+                            <button class="btn btn-sm btn-outline-secondary tab-cot" data-estado="solicitud">Solicitud</button>
+                            <button class="btn btn-sm btn-outline-secondary tab-cot" data-estado="presupuesto">Presupuesto</button>
+                            <button class="btn btn-sm btn-outline-secondary tab-cot" data-estado="pendiente">Pendiente</button>
+                            <button class="btn btn-sm btn-outline-secondary tab-cot" data-estado="cotizacion">Cotización</button>
+                            <button class="btn btn-sm btn-outline-secondary tab-cot" data-estado="aprobada">Aprobada</button>
+                            <button class="btn btn-sm btn-outline-secondary tab-cot" data-estado="rechazada">Rechazada</button>
+                            <button class="btn btn-sm btn-outline-secondary tab-cot" data-estado="inactiva">Inactiva</button>
                         </div>
                     </div>
                     <div class="card-body p-0">
@@ -282,6 +274,23 @@
             </footer>
         </div>
     </main>
+
+    <!-- ══ MODAL GLASS: CONFIRMAR APROBAR PRESUPUESTO ═══════════════════ -->
+    <div id="mglass" style="display:none;position:fixed;inset:0;z-index:16000;background:rgba(5,15,35,0.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);align-items:center;justify-content:center;">
+      <div style="width:90%;max-width:420px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:36px 32px 28px;box-shadow:0 24px 60px rgba(0,0,0,0.45);font-family:'DM Sans',sans-serif;color:#fff;">
+        <!-- Ícono -->
+        <div style="width:52px;height:52px;background:rgba(22,163,74,0.18);border:1px solid rgba(22,163,74,0.35);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+          <i class="feather-check-circle" style="font-size:24px;color:#4ade80;"></i>
+        </div>
+        <h5 style="margin:0 0 8px;font-weight:700;font-size:17px;text-align:center;">Pasar a Pedido</h5>
+        <p style="margin:0 0 20px;font-size:13px;color:rgba(255,255,255,0.6);text-align:center;line-height:1.5;">Se generará un <strong style="color:#fff;">Pedido</strong> y una <strong style="color:#fff;">Orden de Compra</strong> automáticamente.<br>Esta acción bloqueará la edición de la cotización.</p>
+        <div id="mglassErr" style="display:none;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:10px 14px;font-size:12px;color:#fca5a5;margin-bottom:16px;"></div>
+        <div style="display:flex;gap:10px;">
+          <button id="mglassCancel" style="flex:1;padding:11px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:50px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);cursor:pointer;">Cancelar</button>
+          <button id="mglassOk" style="flex:1;padding:11px;background:rgba(22,163,74,0.8);border:1px solid rgba(22,163,74,0.5);border-radius:50px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;">Confirmar</button>
+        </div>
+      </div>
+    </div>
 
     <!-- ══ MODAL: PASAR A PEDIDO ══════════════════════════════════════════ -->
     <div id="modalPedido" style="display:none;position:fixed;inset:0;z-index:10500;background:rgba(10,18,35,0.80);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center;">
@@ -368,39 +377,198 @@
     <script src="assets/js/valtrax-db.js"></script>
     <script>
     ValtraxDB.seedIfEmpty();
-    const DEMO_COTS = [];
+
+    // Cotizaciones desde localStorage (flujo antiguo)
     const dbCots = ValtraxDB.getCotizaciones().map(c=>({
         f:c.folio, c:c.cliente, fa:c.faena||'—', d:c.fecha, v:c.vigencia||'—',
-        e:c.estado, t:c.total, r:'Responsable'
+        e:c.estado, t:c.total, r:'Responsable', tipo:'cot'
     }));
-    const cots = [...dbCots, ...DEMO_COTS];
-    const em = {'Aprobada':'bg-success-subtle text-success','Pendiente':'bg-warning-subtle text-warning',
-                'Borrador':'bg-secondary-subtle text-secondary',
-                'Convertida':'bg-primary-subtle text-primary',
-                'En Revisión':'bg-info-subtle text-info','Rechazada':'bg-danger-subtle text-danger'};
-    const fmt = n => '$ '+Math.round(n).toLocaleString('es-CL');
+
+    let cots = [...dbCots];
+
+    const em = {
+        'solicitud':   'bg-info-subtle text-info',
+        'presupuesto': 'bg-warning-subtle text-warning',
+        'pendiente':   'bg-warning-subtle text-warning',
+        'cotizacion':  'bg-purple-subtle text-purple',
+        'aprobada':    'bg-success-subtle text-success',
+        'rechazada':   'bg-danger-subtle text-danger',
+        'inactiva':    'bg-secondary-subtle text-secondary'
+    };
+    const emLabel = {
+        'solicitud':   'Solicitud',
+        'presupuesto': 'Presupuesto',
+        'pendiente':   'Pendiente',
+        'cotizacion':  'Cotización',
+        'aprobada':    'Aprobada',
+        'rechazada':   'Rechazada',
+        'inactiva':    'Inactiva'
+    };
+    // Retorna true si una cotizacion ya venció (fecha + vigencia + 3 días de gracia < hoy)
+    function cotVencida(fecha, vigencia){
+        if(!fecha) return false;
+        var vig = parseInt(vigencia)||30;
+        var base = new Date(fecha);
+        if(isNaN(base.getTime())) return false;
+        var expiry = new Date(base.getTime() + (vig + 3) * 86400000);
+        return expiry < new Date();
+    }
+
+    const fmt = n => n ? '$ '+Math.round(n).toLocaleString('es-CL') : '—';
 
     function renderCots(filtro){
         const data = filtro ? cots.filter(c=>c.e===filtro) : cots;
         document.getElementById('tablaCot').innerHTML = data.length ? data.map(c=>{
-          const convertida = c.e === 'Convertida';
-          const accEdit = convertida
-            ? `<span class="text-muted" title="Convertida a Pedido — bloqueada" style="cursor:not-allowed;opacity:0.4;"><i class="feather-eye"></i></span>`
+          const esPpto = c.tipo==='ppto';
+          const aprobada = c.e === 'aprobada' || c.bloqueado;
+          const folioLink = esPpto
+            ? `<a href="#" onclick="abrirPresupuesto('${c.id||c.f}');return false;" style="color:#2563eb;font-weight:600;">${c.f}</a>`
+            : `<span style="color:#2563eb;font-weight:600;">${c.f_corto||c.f}</span>`;
+          const accEdit = esPpto
+            ? `<button onclick="abrirPresupuesto('${c.id||c.f}')" class="text-primary" title="Abrir" style="background:none;border:none;padding:0;cursor:pointer;"><i class="feather-edit-2"></i></button>`
             : `<button onclick="verPDFCot('${c.f}')" class="text-primary" title="Ver PDF" style="background:none;border:none;padding:0;cursor:pointer;"><i class="feather-eye"></i></button>`;
-          const accPed = convertida
-            ? `<span class="badge bg-primary-subtle text-primary" style="font-size:10px;">En Pedido</span>`
-            : `<button onclick="abrirModalPedido(${JSON.stringify(c).replace(/"/g,'&quot;')})" class="btn btn-xs" style="padding:3px 9px;font-size:11px;font-weight:600;background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;border-radius:6px;" title="Pasar a Pedido"><i class="feather-arrow-right-circle me-1"></i>Pedido</button>`;
+          const accDup = esPpto
+            ? `<button onclick="duplicarPpto('${c.id||c.f}')" class="text-secondary" title="Duplicar" style="background:none;border:none;padding:0;cursor:pointer;"><i class="feather-copy"></i></button>`
+            : '';
+          let accExtra = '';
+          if(esPpto){
+              if(aprobada){
+                  accExtra = `<span class="badge bg-success-subtle text-success" style="font-size:10px;" title="Pedido: ${c.pedido_folio||'—'}">✔ ${c.pedido_folio||'Aprobada'}</span>`;
+              } else if(c.e === 'pendiente'){
+                  accExtra = `<button onclick="autorizarPpto('${c.id||c.f}')" class="btn btn-xs" style="padding:3px 9px;font-size:11px;font-weight:600;background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;border-radius:6px;"><i class="feather-check-circle me-1"></i>Autorizar</button>`;
+              } else if(c.e === 'cotizacion'){
+                  accExtra = `
+                    <button onclick="pasarPedidoPpto('${c.id||c.f}')" class="btn btn-xs" style="padding:3px 9px;font-size:11px;font-weight:600;background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;border-radius:6px;"><i class="feather-shopping-bag me-1"></i>A Pedido</button>
+                    <button onclick="rechazarPpto('${c.id||c.f}')" class="btn btn-xs" style="padding:3px 9px;font-size:11px;font-weight:600;background:#fef2f2;color:#dc2626;border:1px solid #fecaca;border-radius:6px;"><i class="feather-x me-1"></i>Rechazar</button>`;
+              } else if(c.e === 'inactiva'){
+                  accExtra = `<button onclick="duplicarPpto('${c.id||c.f}')" class="btn btn-xs" style="padding:3px 9px;font-size:11px;font-weight:600;background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;border-radius:6px;"><i class="feather-copy me-1"></i>Renovar</button>`;
+              }
+          }
+          const badge = em[c.e]||'bg-secondary-subtle text-secondary';
+          const label = emLabel[c.e]||c.e;
           return `<tr>
-            <td class="fw-semibold"><a href="cotizaciones-crear.html?folio=${c.f}" class="text-primary">${c.f}</a></td><td>${c.c}</td><td class="fs-12 text-muted">${c.fa}</td>
+            <td class="fw-semibold">${folioLink}</td>
+            <td>${c.c}</td><td class="fs-12 text-muted">${c.fa}</td>
             <td class="fs-12">${c.d}</td><td class="fs-12">${c.v}</td>
-            <td><span class="badge ${em[c.e]||'bg-secondary-subtle text-secondary'}">${c.e}</span></td>
+            <td><span class="badge ${badge}">${label}</span></td>
             <td class="fw-semibold">${fmt(c.t)}</td><td class="fs-12">${c.r}</td>
-            <td><div class="d-flex align-items-center gap-2">${accEdit}${accPed}</div></td>
+            <td><div class="d-flex align-items-center gap-2 flex-wrap">${accEdit}${accDup}${accExtra}</div></td>
           </tr>`;
         }).join('')
-        : '<tr><td colspan="9" class="text-center text-muted py-4">Sin cotizaciones en este estado</td></tr>';
+        : '<tr><td colspan="9" class="text-center text-muted py-4">Sin registros en este estado</td></tr>';
     }
-    renderCots('');
+
+    window.abrirPresupuesto = function(id){
+        sessionStorage.setItem('vx_ppto_id', id);
+        window.location.href = 'presupuesto-interno.html';
+    };
+
+    // Duplicar presupuesto
+    window.duplicarPpto = async function(id){
+        if(!confirm('¿Duplicar esta cotización? Se creará una copia en estado Solicitud.')) return;
+        try{
+            var r = await fetch('/api/presupuestos/'+id+'/duplicar', {method:'POST'});
+            if(!r.ok){ var e=await r.json(); throw new Error(e.error||'Error'); }
+            var data = await r.json();
+            alert('✔ Duplicada como '+data.folio+'\n\nAbriendo nuevo registro...');
+            sessionStorage.setItem('vx_ppto_id', data.id);
+            window.location.href = 'presupuesto-interno.html';
+        } catch(e){ alert('Error al duplicar: '+e.message); }
+    };
+
+    // Autorizar pendiente → cotizacion (solo admin)
+    window.autorizarPpto = async function(id){
+        if(!confirm('¿Autorizar esta propuesta como Cotización?\nEl vendedor podrá continuar al Tab 3.')) return;
+        try{
+            var r = await fetch('/api/presupuestos/'+id, {
+                method:'PUT', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({estado:'cotizacion'})
+            });
+            if(!r.ok){ var e=await r.json(); throw new Error(e.error||'Error'); }
+            alert('✔ Propuesta autorizada como Cotización.');
+            location.reload();
+        } catch(e){ alert('Error: '+e.message); }
+    };
+
+    // Rechazar cotizacion
+    window.rechazarPpto = async function(id){
+        if(!confirm('¿Marcar esta cotización como Rechazada?')) return;
+        try{
+            var r = await fetch('/api/presupuestos/'+id, {
+                method:'PUT', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({estado:'rechazada'})
+            });
+            if(!r.ok){ var e=await r.json(); throw new Error(e.error||'Error'); }
+            location.reload();
+        } catch(e){ alert('Error: '+e.message); }
+    };
+
+    // ── Modal glassmorphism confirmar aprobar presupuesto ──
+    var _pptoAprobarId = null;
+    window.pasarPedidoPpto = function(id){
+        _pptoAprobarId = id;
+        document.getElementById('mglass').style.display = 'flex';
+    };
+    document.getElementById('mglassOk').addEventListener('click', async function(){
+        document.getElementById('mglass').style.display = 'none';
+        if(!_pptoAprobarId) return;
+        var btn = this;
+        btn.disabled = true;
+        btn.textContent = 'Procesando...';
+        try{
+            var r = await fetch('/api/presupuestos/'+_pptoAprobarId+'/aprobar', {method:'POST',headers:{'Content-Type':'application/json'},body:'{}'}); 
+            var data = await r.json();
+            if(!r.ok) throw new Error(data.error||'Error del servidor');
+            // Mostrar éxito
+            document.getElementById('mglass_ok_ped').textContent = data.folioPed||'—';
+            document.getElementById('mglass_ok_oc').textContent  = data.folioOC||'—';
+            document.getElementById('mglassOkResult').style.display = 'flex';
+            location.reload();
+        } catch(e){
+            document.getElementById('mglassErr').textContent = e.message;
+            document.getElementById('mglassErr').style.display = 'block';
+            document.getElementById('mglass').style.display = 'flex';
+        } finally { btn.disabled = false; btn.textContent = 'Confirmar'; }
+    });
+    document.getElementById('mglassCancel').addEventListener('click', function(){
+        document.getElementById('mglass').style.display = 'none';
+        _pptoAprobarId = null;
+    });    // Cargar presupuestos desde API y combinar
+    document.getElementById('tablaCot').innerHTML =
+        '<tr><td colspan="9" class="text-center text-muted py-4"><span class="spinner-border spinner-border-sm me-2"></span>Cargando...</td></tr>';
+
+    (async function(){
+        try{
+            var r = await fetch('/api/presupuestos');
+            if(!r.ok) throw new Error('HTTP '+r.status);
+            var pptos = await r.json();
+            // Si la respuesta es un error de MySQL (objeto con .error)
+            if(!Array.isArray(pptos)) throw new Error(pptos.error||'Respuesta inválida');
+                var apiRows = pptos.map(p=>{
+                var cab = typeof p.cabecera==='string' ? JSON.parse(p.cabecera) : (p.cabecera||{});
+                var estadoReal = p.estado||'solicitud';
+                if(estadoReal === 'cotizacion' && !p.bloqueado && cotVencida(cab.fecha, cab.vigencia)){
+                    estadoReal = 'inactiva';
+                }
+                return {
+                    id: p.id,
+                    f: p.folio || ('SOL-'+p.id.slice(-6).toUpperCase()),
+                    c: p.cliente||cab.cliente||'—',
+                    fa: cab.faena||'—',
+                    d: cab.fecha||(p.creado_en?p.creado_en.slice(0,10):'—'),
+                    v: cab.vigencia||'—',
+                    e: p.estado||'solicitud',
+                    t: null, r: cab.responsable||'VALTRAX', tipo:'ppto',
+                    bloqueado: p.bloqueado, pedido_folio: p.pedido_folio, oc_folio: p.oc_folio
+                };
+            });
+            cots = [...apiRows, ...dbCots];
+        } catch(e){
+            console.warn('API presupuestos:', e);
+            cots = [...dbCots];
+        }
+        renderCots(document.querySelector('.tab-cot.active')?.dataset?.estado||'');
+    })();
 
     document.getElementById('tabsCot').addEventListener('click', function(e){
         const btn = e.target.closest('.tab-cot');
