@@ -329,7 +329,15 @@
                                     <div class="pi-total-box">
                                         <div class="pi-total-row"><span>Costo total:</span><span id="piTotCosto">$ 0</span></div>
                                         <div class="pi-total-row"><span>Margen promedio:</span><span id="piTotMargen">0 %</span></div>
-                                        <div class="pi-total-row final"><span>PRECIO VENTA:</span><span id="piTotVenta" style="color:#2563eb;">$ 0</span></div>
+                                        <div class="pi-total-row" style="align-items:center;">
+                                            <span>Comisión:</span>
+                                            <select id="piComision" onchange="recalcTotales()" style="border:1.5px solid #cbd5e1;border-radius:6px;padding:2px 8px;font-size:13px;font-weight:600;color:#1e293b;background:#fff;cursor:pointer;">
+                                                <option value="3">3 %</option>
+                                                <option value="4" selected>4 %</option>
+                                                <option value="5">5 %</option>
+                                            </select>
+                                        </div>
+                                        <div class="pi-total-row final"><span>PRECIO VENTA NETO:</span><span id="piTotVenta" style="color:#2563eb;">$ 0</span></div>
                                     </div>
                                 </div>
                             </div>
@@ -633,10 +641,15 @@
             ventaTot+= Math.round(precio*(1+margen/100)) * cant;
             if(precio>0){ margenes.push(margen); cnt++; }
         });
+        var comPct = parseFloat((document.getElementById('piComision')||{}).value||4);
+        var ventaConCom = Math.round(ventaTot * (1 + comPct/100));
         var promMargen = cnt>0 ? (margenes.reduce((a,b)=>a+b,0)/cnt).toFixed(1) : 0;
         document.getElementById('piTotCosto').textContent  = fmtCLP(costo);
-        document.getElementById('piTotVenta').textContent  = fmtCLP(ventaTot);
+        document.getElementById('piTotVenta').textContent  = fmtCLP(ventaConCom);
         document.getElementById('piTotMargen').textContent = promMargen+' %';
+        // Guardar venta con comisión para usar en emisión
+        window._ventaFinalConCom = ventaConCom;
+        window._comisionPct = comPct;
     }
 
     function aplicarMargenGlobal(){
@@ -919,7 +932,10 @@ Precio entero CLP. Ordena menor a mayor.`;
             var p=_ppto[it.id]||{};
             var precio=parseFloat(p.precio)||0;
             var margen=parseFloat(p.margen)||(parseInt(document.getElementById('margenGlobal').value)||30);
-            var venta=precio>0?Math.round(precio*(1+margen/100)):0;
+            var comPct=window._comisionPct||4;
+            // Precio venta unitario ya incluye margen + comisión (no se muestra por separado)
+            var ventaSinCom=precio>0?Math.round(precio*(1+margen/100)):0;
+            var venta=ventaSinCom>0?Math.round(ventaSinCom*(1+comPct/100)):0;
             return {desc:it.desc, cant:it.cant, unidad:it.unidad, costoUnit:precio, margen, ventaUnit:venta, url:p.url||''};
         }).filter(i=>i.ventaUnit>0);
 
