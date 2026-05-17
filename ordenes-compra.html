@@ -34,14 +34,18 @@
     tbody tr:hover td{background:#f8fafc;}
     .badge-est{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;}
     /* OC estados */
-    .oc-borrador  {background:#f1f5f9;color:#475569;}
+    .oc-pendiente {background:#f1f5f9;color:#475569;}
+    .oc-evaluada  {background:#fef3c7;color:#92400e;}
     .oc-aprobada  {background:#dbeafe;color:#1d4ed8;}
     .oc-comprada  {background:#d1fae5;color:#065f46;}
     .oc-cancelada {background:#fee2e2;color:#991b1b;}
-    /* Pedido estados (referencia) */
-    .e-pendiente  {background:#fef9c3;color:#92400e;}
-    .e-encompra   {background:#dbeafe;color:#1d4ed8;}
-    .e-preparacion{background:#ede9fe;color:#6d28d9;}
+    /* editable inline */
+    .oc-input{border:1.5px solid #e2e8f0;border-radius:6px;padding:4px 7px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;width:100%;transition:border .2s;}
+    .oc-input:focus{border-color:#2563eb;}
+    /* cmt resuelto */
+    .cmt-resuelta{text-decoration:line-through;color:#94a3b8;}
+    .hist-item{display:flex;align-items:flex-start;gap:5px;padding:4px 8px;background:#f0fdf4;border-radius:5px;margin-bottom:3px;font-size:11px;color:#64748b;text-decoration:line-through;border:1px solid #d1fae5;}
+    .hist-item .hist-ico{color:#059669;flex-shrink:0;font-size:11px;margin-top:1px;}
     .btn-act{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid transparent;transition:all .15s;text-decoration:none;}
     .btn-sec   {background:#f1f5f9;color:#475569;border-color:#e2e8f0;}
     .btn-sec:hover{background:#e2e8f0;}
@@ -53,9 +57,9 @@
     .btn-red:hover{background:#fecaca;}
     .folio-link{font-weight:700;color:#7c3aed;text-decoration:none;font-size:12px;}
     .folio-link:hover{text-decoration:underline;}
-    .vx-modal-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:1000;align-items:center;justify-content:center;}
+    .vx-modal-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:1000;align-items:flex-start;justify-content:center;padding:24px 12px;overflow-y:auto;}
     .vx-modal-bg.open{display:flex;}
-    .vx-modal{background:#fff;border-radius:16px;padding:28px;width:680px;max-width:96vw;max-height:90vh;overflow-y:auto;box-shadow:0 16px 48px rgba(0,0,0,.18);}
+    .vx-modal{background:#fff;border-radius:16px;padding:28px;width:900px;max-width:98vw;box-shadow:0 16px 48px rgba(0,0,0,.18);margin:auto;}
     .detail-label{font-size:10px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;}
     .detail-val{font-size:13px;color:#1e293b;}
     .empty-state{text-align:center;padding:60px 20px;color:#94a3b8;}
@@ -119,10 +123,31 @@
                             <span class="nxl-mtext">Entregas</span>
                         </a>
                     </li>
+
+                    <!-- ── ADMINISTRACIÓN (solo admin) ───────────────── -->
+                    <li class="nxl-item nxl-caption vx-admin-only" style="display:none;"><label>Administración</label></li>
+                    <li class="nxl-item nxl-hasmenu vx-admin-only" style="display:none;">
+                        <a href="javascript:void(0);" class="nxl-link">
+                            <span class="nxl-micon"><i class="feather-user-check"></i></span>
+                            <span class="nxl-mtext">Usuarios</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        </a>
+                        <ul class="nxl-submenu">
+                            <li class="nxl-item"><a class="nxl-link" href="usuarios.html">Lista de Usuarios</a></li>
+                            <li class="nxl-item"><a class="nxl-link" href="usuarios.html?nuevo=1">Nuevo Usuario</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
+    <script>
+    /* VALTRAX — Mostrar sección admin si rol=administrador */
+    (function(){
+        if(localStorage.getItem('vx_rol')==='administrador'){
+            document.querySelectorAll('.vx-admin-only').forEach(function(el){el.style.display='';});
+        }
+    })();
+    </script>
     <script>
     (function(){
         document.documentElement.classList.add('valtrax-loading');
@@ -200,7 +225,8 @@
                     <div class="d-flex align-items-center gap-2 flex-wrap">
                         <div class="d-flex gap-1 flex-wrap" id="tabsOC">
                             <button class="btn btn-sm btn-primary tab-oc active"    data-tab="todos">Todas</button>
-                            <button class="btn btn-sm btn-outline-secondary tab-oc" data-tab="Borrador">Borrador</button>
+                            <button class="btn btn-sm btn-outline-secondary tab-oc" data-tab="Pendiente">Pendiente</button>
+                            <button class="btn btn-sm btn-outline-secondary tab-oc" data-tab="Evaluada">Evaluada</button>
                             <button class="btn btn-sm btn-outline-secondary tab-oc" data-tab="Aprobada">Aprobada</button>
                             <button class="btn btn-sm btn-outline-secondary tab-oc" data-tab="Comprada">Comprada</button>
                             <button class="btn btn-sm btn-outline-secondary tab-oc" data-tab="Cancelada">Cancelada</button>
@@ -255,59 +281,48 @@
     </div>
 </div>
 
-<!-- Modal proveedor -->
-<div class="vx-modal-bg" id="modalProv" onclick="if(event.target===this)cerrarProv()">
-    <div class="vx-modal" style="width:400px;">
-        <div style="font-size:15px;font-weight:700;color:#1e293b;margin-bottom:16px;">Asignar Proveedor</div>
-        <div style="margin-bottom:12px;">
-            <label style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px;">Proveedor</label>
-            <input type="text" id="inpProveedor" placeholder="Nombre del proveedor..." style="width:100%;border:1.5px solid #e2e8f0;border-radius:8px;padding:8px 10px;font-size:13px;outline:none;font-family:'DM Sans',sans-serif;">
-        </div>
-        <div style="display:flex;gap:8px;justify-content:flex-end;">
-            <button onclick="cerrarProv()" class="btn-act btn-sec">Cancelar</button>
-            <button onclick="guardarProveedor()" class="btn-act btn-blue" style="background:#2563eb;color:#fff;border-color:#2563eb;">Guardar y Aprobar</button>
-        </div>
-    </div>
-</div>
 
 <script src="assets/vendors/js/vendors.min.js"></script>
 <script src="assets/js/common-init.min.js"></script>
 <script>
 var _datos = [];
 var _tab = 'todos';
-var _folioAprobando = null;
 
 const EST_OC = {
-    'Borrador':  {css:'oc-borrador', lbl:'Borrador'},
-    'Aprobada':  {css:'oc-aprobada', lbl:'Aprobada'},
-    'Comprada':  {css:'oc-comprada', lbl:'Comprada'},
-    'Cancelada': {css:'oc-cancelada',lbl:'Cancelada'},
+    'Pendiente': {css:'oc-pendiente', lbl:'Pendiente'},
+    'Evaluada':  {css:'oc-evaluada',  lbl:'Evaluada'},
+    'Aprobada':  {css:'oc-aprobada',  lbl:'Aprobada'},
+    'Comprada':  {css:'oc-comprada',  lbl:'Comprada'},
+    'Cancelada': {css:'oc-cancelada', lbl:'Cancelada'},
 };
 
 function fmtCLP(n){return '$'+Math.round(n||0).toLocaleString('es-CL');}
 function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function fmtF(f){if(!f)return '—';var d=new Date(f+'T12:00:00');return d.toLocaleDateString('es-CL',{day:'2-digit',month:'short',year:'2-digit'});}
+function fmtF(f){if(!f)return '—';var s=String(f);var d=new Date(s.includes('T')?s:s+'T12:00:00');return isNaN(d)?'—':d.toLocaleDateString('es-CL',{day:'2-digit',month:'short',year:'2-digit'});}
+// Devuelve historial de comentarios de un ítem, migrando formato antiguo
+function getHistorial(it){
+    if(it.historial&&Array.isArray(it.historial))return it.historial;
+    const hist=[];
+    if((it.comentario||'').trim()) hist.push({texto:it.comentario.trim(),resuelto:!!(it.cmtResuelto)});
+    it.historial=hist;
+    return hist;
+}
+
+function getItems(oc){return Array.isArray(oc.items)?oc.items:(oc.items?JSON.parse(oc.items):[]);}
 
 async function cargar(){
     try{const r=await fetch('/api/oc');if(r.ok)_datos=await r.json();}catch(_){_datos=[];}
-    // Checar si viene oc= en URL
+    // Migrar Borrador → Pendiente en memoria
+    _datos.forEach(o=>{if(o.estado==='Borrador')o.estado='Pendiente';});
     const params=new URLSearchParams(location.search);
     const ocParam=params.get('oc');
     renderTabla();
-    if(ocParam){
-        setTimeout(()=>{
-            const oc=_datos.find(x=>x.folio===ocParam);
-            if(oc) verDet(oc.folio);
-        },200);
-    }
+    if(ocParam)setTimeout(()=>{const oc=_datos.find(x=>x.folio===ocParam);if(oc)verDet(oc.folio);},200);
 }
 
 function setTab(t){
     _tab=t;
-    document.querySelectorAll('.tab-oc').forEach(b=>{
-        b.classList.remove('btn-primary','active');
-        b.classList.add('btn-outline-secondary');
-    });
+    document.querySelectorAll('.tab-oc').forEach(b=>{b.classList.remove('btn-primary','active');b.classList.add('btn-outline-secondary');});
     const act=document.querySelector('.tab-oc[data-tab="'+t+'"]');
     if(act){act.classList.add('btn-primary','active');act.classList.remove('btn-outline-secondary');}
     renderTabla();
@@ -323,7 +338,7 @@ function renderTabla(){
     if(!filas.length){tbody.innerHTML='';empty.style.display='block';return;}
     empty.style.display='none';
     tbody.innerHTML=filas.map(oc=>{
-        const e=EST_OC[oc.estado]||{css:'oc-borrador',lbl:oc.estado};
+        const e=EST_OC[oc.estado]||{css:'oc-pendiente',lbl:oc.estado};
         const pedLink=oc.pedido_folio?`<a href="pedidos.html" style="font-size:12px;color:#2563eb;font-weight:600;text-decoration:none;">${esc(oc.pedido_folio)}</a>`:'<span style="color:#cbd5e1;">—</span>';
         const cotLink=oc.cot_folio?`<a href="#" onclick="abrirCot('${esc(oc.cot_folio)}');return false;" style="font-size:12px;color:#64748b;font-weight:600;text-decoration:none;">${esc(oc.cot_folio)}</a>`:'<span style="color:#cbd5e1;">—</span>';
         return `<tr style="border-bottom:1px solid rgba(148,163,184,0.1);">
@@ -336,71 +351,46 @@ function renderTabla(){
             <td style="padding:10px 12px;font-size:12px;">${fmtF(oc.fecha)}</td>
             <td style="padding:10px 12px;font-weight:700;">${fmtCLP(oc.total_costo)}</td>
             <td style="padding:10px 12px;"><span class="badge-est ${e.css}">${e.lbl}</span></td>
-            <td style="padding:10px 16px 10px 12px;text-align:right;"><div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">${buildBtns(oc)}</div></td>
+            <td style="padding:10px 16px 10px 12px;text-align:right;"><div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">${buildBtnsTabla(oc)}</div></td>
         </tr>`;
     }).join('');
 }
 
-function buildBtns(oc){
+function buildBtnsTabla(oc){
     const f=esc(oc.folio);
     let b=`<button class="btn-act btn-sec" onclick="verDet('${f}')"><i class="feather-eye" style="font-size:11px;"></i> Ver</button>`;
-    if(oc.estado==='Borrador'){
-        b+=`<button class="btn-act btn-blue" onclick="abrirModalProv('${f}')"><i class="feather-check" style="font-size:11px;"></i> Aprobar</button>`;
+    if(oc.estado==='Pendiente'||oc.estado==='Evaluada'){
+        b+=`<button class="btn-act btn-blue" onclick="aprobarOC('${f}')"><i class="feather-check" style="font-size:11px;"></i> Aprobar</button>`;
         b+=`<button class="btn-act btn-red"  onclick="cambiar('${f}','Cancelada')"><i class="feather-x" style="font-size:11px;"></i> Cancelar</button>`;
     }
     if(oc.estado==='Aprobada'){
-        b+=`<button class="btn-act btn-green" onclick="cambiar('${f}','Comprada')"><i class="feather-shopping-cart" style="font-size:11px;"></i> Marcar Comprada</button>`;
+        b+=`<button class="btn-act btn-green" onclick="cambiar('${f}','Comprada')"><i class="feather-shopping-cart" style="font-size:11px;"></i> Comprada</button>`;
     }
     return b;
 }
 
-async function cambiar(folio,nuevoEstado){
+async function cambiar(folio,nuevoEstado,extraData){
     const oc=_datos.find(x=>x.folio===folio);
     if(!oc)return;
     try{
         const r=await fetch('/api/oc/'+encodeURIComponent(folio),{
             method:'PUT',headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({...oc,estado:nuevoEstado})
+            body:JSON.stringify({...oc,...(extraData||{}),estado:nuevoEstado})
         });
         if(r.ok){
             const upd=await r.json();Object.assign(oc,upd);
+            if(upd.estado==='Pendiente'&&upd.items)oc.items=upd.items;
             renderTabla();
-            const msg={
-                'Aprobada':'OC Aprobada → Pedido ahora en «En compra»',
-                'Comprada':'OC Comprada → Pedido ahora en «Preparación»',
-                'Cancelada':'OC cancelada'
-            }[nuevoEstado]||('Estado → '+nuevoEstado);
+            const msg={'Aprobada':'OC Aprobada → Pedido ahora en «En compra»','Comprada':'OC Comprada → Pedido en «Preparación»','Cancelada':'OC cancelada','Evaluada':'OC marcada como Evaluada','Pendiente':'Todos los comentarios resueltos → vuelve a Pendiente'}[nuevoEstado]||('Estado → '+nuevoEstado);
             toast(msg,'#10b981');
         } else toast('Error al actualizar','#ef4444');
     }catch(e){toast('Error: '+e.message,'#ef4444');}
 }
 
-function abrirModalProv(folio){
-    _folioAprobando=folio;
-    const oc=_datos.find(x=>x.folio===folio);
-    document.getElementById('inpProveedor').value=oc?oc.proveedor||'':'';
-    document.getElementById('modalProv').classList.add('open');
-    setTimeout(()=>document.getElementById('inpProveedor').focus(),100);
-}
-function cerrarProv(){document.getElementById('modalProv').classList.remove('open');}
-
-async function guardarProveedor(){
-    if(!_folioAprobando)return;
-    const prv=document.getElementById('inpProveedor').value.trim();
-    const oc=_datos.find(x=>x.folio===_folioAprobando);
-    if(!oc)return;
-    cerrarProv();
-    try{
-        const r=await fetch('/api/oc/'+encodeURIComponent(_folioAprobando),{
-            method:'PUT',headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({...oc,estado:'Aprobada',proveedor:prv})
-        });
-        if(r.ok){
-            const upd=await r.json();Object.assign(oc,upd);
-            renderTabla();
-            toast('OC Aprobada → Pedido actualizado a «En compra»','#10b981');
-        } else toast('Error al aprobar','#ef4444');
-    }catch(e){toast('Error: '+e.message,'#ef4444');}
+async function aprobarOC(folio){
+    await cambiar(folio,'Aprobada');
+    const mdl=document.getElementById('modalDet');
+    if(mdl&&mdl.classList.contains('open'))cerrar();
 }
 
 function abrirCot(folio){
@@ -414,62 +404,222 @@ function abrirCot(folio){
 function verDet(folio){
     const oc=_datos.find(x=>x.folio===folio);
     if(!oc)return;
-    const items=Array.isArray(oc.items)?oc.items:(oc.items?JSON.parse(oc.items):[]);
+    const items=getItems(oc);
     const dc=oc.datos_cliente?(typeof oc.datos_cliente==='string'?JSON.parse(oc.datos_cliente):oc.datos_cliente):{};
-    const e=EST_OC[oc.estado]||{css:'oc-borrador',lbl:oc.estado};
+    const e=EST_OC[oc.estado]||{css:'oc-pendiente',lbl:oc.estado};
+    const esEvaluada=(oc.estado==='Evaluada');
+
     document.getElementById('mdlTitle').textContent=oc.folio;
     document.getElementById('mdlBody').innerHTML=`
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
-            <div><div class="detail-label">Estado</div><span class="badge-est ${e.css}">${e.lbl}</span>
-                ${oc.estado==='Aprobada'?'<span class="sync-note">Pedido: En compra</span>':''}
-                ${oc.estado==='Comprada'?'<span class="sync-note">Pedido: Preparación</span>':''}
+        <!-- Cabecera compacta -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px 14px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid #f1f5f9;">
+            <div><div class="detail-label">Estado</div>
+                <span class="badge-est ${e.css}">${e.lbl}</span>
+                ${oc.estado==='Evaluada'?'&nbsp;<span class="sync-note" style="background:#fef3c7;color:#92400e;">Con comentarios</span>':''}
+                ${oc.estado==='Aprobada'?'&nbsp;<span class="sync-note">Pedido: En compra</span>':''}
+                ${oc.estado==='Comprada'?'&nbsp;<span class="sync-note">Pedido: Preparación</span>':''}
             </div>
             <div><div class="detail-label">Fecha</div><div class="detail-val">${fmtF(oc.fecha)}</div></div>
-            <div><div class="detail-label">Cliente</div>
-                <div class="detail-val" style="font-weight:600;">${esc(oc.cliente||dc.nombre||'—')}</div>
-                ${dc.rut?`<div style="font-size:11px;color:#64748b;">${esc(dc.rut)}</div>`:''}
-                ${dc.giro?`<div style="font-size:11px;color:#64748b;">${esc(dc.giro)}</div>`:''}
-                ${dc.email?`<div style="font-size:11px;color:#64748b;">${esc(dc.email)}</div>`:''}
-                ${dc.telefono?`<div style="font-size:11px;color:#64748b;">${esc(dc.telefono)}</div>`:''}
-            </div>
-            <div><div class="detail-label">Dirección entrega</div><div class="detail-val">${esc(oc.dir_entrega||'—')}</div></div>
             <div><div class="detail-label">Pedido</div>
-                <div class="detail-val">${oc.pedido_folio?`<a href="pedidos.html" style="color:#2563eb;font-weight:700;font-size:12px;text-decoration:none;">${esc(oc.pedido_folio)}</a>`:'—'}</div></div>
+                <div class="detail-val">${oc.pedido_folio?`<a href="pedidos.html" style="color:#2563eb;font-weight:700;font-size:12px;text-decoration:none;">${esc(oc.pedido_folio)}</a>`:'\u2014'}</div></div>
             <div><div class="detail-label">Cotización</div>
-                <div class="detail-val">${oc.cot_folio?`<a href="#" onclick="cerrar();abrirCot('${esc(oc.cot_folio)}');return false;" style="color:#2563eb;font-weight:700;font-size:12px;text-decoration:none;">${esc(oc.cot_folio)}</a>`:'—'}</div></div>
-            <div><div class="detail-label">Proveedor</div><div class="detail-val">${esc(oc.proveedor||'—')}</div></div>
-            <div><div class="detail-label">Total costo</div><div class="detail-val" style="font-size:16px;font-weight:700;color:#2563eb;">${fmtCLP(oc.total_costo)}</div></div>
+                <div class="detail-val">${oc.cot_folio?`<a href="#" onclick="cerrar();abrirCot('${esc(oc.cot_folio)}');return false;" style="color:#2563eb;font-weight:700;font-size:12px;text-decoration:none;">${esc(oc.cot_folio)}</a>`:'\u2014'}</div></div>
+            <div><div class="detail-label">Cliente</div>
+                <div class="detail-val" style="font-weight:600;font-size:12px;">${esc(oc.cliente||dc.nombre||'\u2014')}</div>
+                ${dc.rut?`<div style="font-size:10px;color:#64748b;">${esc(dc.rut)}</div>`:''}
+            </div>
+            <div><div class="detail-label">Dirección entrega</div><div class="detail-val" style="font-size:12px;">${esc(oc.dir_entrega||'\u2014')}</div></div>
+            <div><div class="detail-label">Proveedor</div>
+                ${esEvaluada
+                    ?`<input class="oc-input" id="edit_prov" value="${esc(oc.proveedor||'')}}" placeholder="Proveedor...">`
+                    :`<div class="detail-val">${esc(oc.proveedor||'\u2014')}</div>`}
+            </div>
+            <div><div class="detail-label">Total costo</div><div class="detail-val" style="font-size:15px;font-weight:800;color:#1d4ed8;">${fmtCLP(oc.total_costo)}</div></div>
         </div>
-        <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;">Ítems a comprar</div>
+        <!-- Ítems -->
+        <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;">Ítems a comprar</div>
         <div style="border:1.5px solid #e2e8f0;border-radius:10px;overflow:hidden;">
-        ${items.length?items.map((it,i)=>`
+        ${items.length?items.map((it,i)=>{
+            return `
             <div style="padding:10px 14px;${i>0?'border-top:1px solid #f1f5f9':''}">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
-                    <div style="flex:1;">
-                        <div style="font-size:13px;font-weight:600;color:#1e293b;">${esc(it.desc)}</div>
-                        ${(it.subItems||[]).map(s=>`<div style="font-size:11px;color:#64748b;padding-left:14px;">↳ ${esc(s.texto||s)}</div>`).join('')}
+                <div style="display:grid;grid-template-columns:1fr 1.1fr;gap:12px;align-items:start;">
+                    <div>
+                        ${esEvaluada
+                            ?`<input class="oc-input" id="edit_desc_${i}" value="${esc(it.desc)}" placeholder="Descripción..." style="font-weight:600;margin-bottom:4px;">`
+                            :`<div style="font-size:13px;font-weight:600;color:#1e293b;">${esc(it.desc)}</div>`}
+                        ${(it.subItems||[]).map(s=>`<div style="font-size:11px;color:#64748b;padding-left:12px;">↳ ${esc(s.texto||s)}</div>`).join('')}
                         ${it.tienda?`<div style="font-size:11px;color:#64748b;margin-top:2px;"><i class="feather-map-pin" style="font-size:10px;"></i> ${esc(it.tienda)}</div>`:''}
-                        ${it.url?`<a href="${esc(it.url)}" target="_blank" style="font-size:11px;color:#2563eb;display:block;margin-top:2px;"><i class="feather-external-link" style="font-size:10px;"></i> Ver producto online</a>`:''}
+                        ${it.url?`<a href="${esc(it.url)}" target="_blank" style="font-size:11px;color:#2563eb;display:block;margin-top:2px;"><i class="feather-external-link" style="font-size:10px;"></i> Ver online</a>`:''}
+                        <div style="display:flex;gap:8px;align-items:center;margin-top:4px;">
+                            ${esEvaluada
+                                ?`<input class="oc-input" id="edit_cant_${i}" type="number" value="${it.cant}" step="any" style="width:60px;text-align:center;">
+                                   <span style="font-size:11px;color:#64748b;">${it.unidad||'un'}</span>
+                                   <span style="font-size:11px;color:#64748b;">·</span>
+                                   <input class="oc-input" id="edit_precio_${i}" type="number" value="${it.costoUnit||0}" style="width:90px;text-align:right;">
+                                   <span style="font-size:11px;color:#64748b;">/u</span>`
+                                :`<span style="font-size:11px;color:#64748b;">${it.cant} ${it.unidad||'un'} · ${fmtCLP(it.costoUnit)}/u · <strong style="color:#1e293b;">${fmtCLP(it.totalCosto||(it.costoUnit*it.cant))}</strong></span>`}
+                        </div>
                     </div>
-                    <div style="text-align:right;flex-shrink:0;">
-                        <div style="font-size:11px;color:#64748b;">${it.cant} ${it.unidad||'un'}</div>
-                        <div style="font-size:13px;font-weight:700;color:#475569;">${fmtCLP(it.costoUnit)}/u</div>
-                        <div style="font-size:12px;font-weight:700;color:#1e293b;">= ${fmtCLP(it.totalCosto||(it.costoUnit*it.cant))}</div>
+                    <div>
+                        <label style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.3px;display:block;margin-bottom:3px;">Comentarios</label>
+                        ${(()=>{
+                            const hist=getHistorial(it);
+                            const resueltos=hist.filter(h=>h.resuelto);
+                            const activo=hist.find(h=>!h.resuelto);
+                            const txtActivo=activo?activo.texto:'';
+                            const tieneActivo=!!(txtActivo.trim());
+                            const htmlHist=resueltos.map(h=>`<div class="hist-item"><span class="hist-ico">✓</span><span>${esc(h.texto)}</span></div>`).join('');
+                            const borderColor=tieneActivo?'#f59e0b':'#e2e8f0';
+                            return `${htmlHist}<textarea id="cmt_item_${i}" rows="2" placeholder="Agregar comentario..."
+                                style="width:100%;border:1.5px solid ${borderColor};border-radius:6px;padding:5px 8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;resize:vertical;transition:border .2s;"
+                                onfocus="this.style.borderColor='#f59e0b'" onblur="this.style.borderColor='${borderColor}'"
+                                >${esc(txtActivo)}</textarea>${tieneActivo?`<label style="display:flex;align-items:center;gap:6px;cursor:pointer;margin-top:4px;font-size:11px;color:#64748b;font-weight:600;">
+                                    <input type="checkbox" id="res_${i}"
+                                        onchange="onResueltoChange('${esc(oc.folio)}',${i},this.checked)"
+                                        style="width:14px;height:14px;accent-color:#059669;cursor:pointer;">
+                                    <span>Marcar como resuelto</span>
+                                </label>`:''}`.trim();
+                        })()}
                     </div>
                 </div>
-            </div>`).join(''):'<div style="padding:20px;text-align:center;color:#94a3b8;font-size:13px;">Sin ítems</div>'}
+            </div>`;
+        }).join(''):'<div style="padding:20px;text-align:center;color:#94a3b8;font-size:13px;">Sin ítems</div>'}
         </div>
-        <div style="display:flex;justify-content:flex-end;padding:10px 16px;margin-top:8px;background:#f8fafc;border-radius:10px;">
-            <div style="text-align:right;"><div style="font-size:10px;color:#94a3b8;font-weight:700;text-transform:uppercase;">Costo total OC</div><div style="font-size:18px;font-weight:800;color:#1e293b;">${fmtCLP(oc.total_costo)}</div></div>
-        </div>
-        ${oc.obs?`<div style="margin-top:12px;padding:10px 14px;background:#fef9c3;border-radius:8px;font-size:13px;color:#92400e;">${esc(oc.obs)}</div>`:''}`;
-    document.getElementById('mdlBtns').innerHTML=buildBtns(oc)
-        .replace(/onclick="cambiar\('([^']+)','([^']+)'\)"/g,(m,f,e)=>`onclick="cambiar('${f}','${e}');cerrar()"`)
-        .replace(/onclick="abrirModalProv\('([^']+)'\)"/g,(m,f)=>`onclick="cerrar();abrirModalProv('${f}')"`);
+        <!-- Total + Comentario general -->
+        <div style="display:flex;gap:14px;align-items:flex-start;margin-top:10px;">
+            <div style="flex:1;">
+                <label style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.3px;display:block;margin-bottom:3px;">Comentario general</label>
+                <textarea id="cmt_global" rows="1" placeholder="Observaciones generales para el equipo..."
+                    style="width:100%;border:1.5px solid #e2e8f0;border-radius:6px;padding:5px 8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;resize:vertical;transition:border .2s;"
+                    onfocus="this.style.borderColor='#f59e0b'" onblur="this.style.borderColor='#e2e8f0'">${esc(oc.obs||'')}</textarea>
+            </div>
+            <div style="text-align:right;flex-shrink:0;padding-top:16px;">
+                <div style="font-size:10px;color:#94a3b8;font-weight:700;text-transform:uppercase;">Costo total OC</div>
+                <div style="font-size:18px;font-weight:800;color:#1e293b;">${fmtCLP(oc.total_costo)}</div>
+            </div>
+        </div>`;
+
+    // Botones footer
+    const btnCmt=`<button onclick="guardarComentarios('${esc(oc.folio)}',${items.length})" class="btn-act" style="background:#f59e0b;color:#fff;border-color:#f59e0b;gap:5px;margin-right:auto;">
+        <i class="feather-send" style="font-size:11px;"></i> Enviar comentarios
+    </button>`;
+    let btnAccion='';
+    if(oc.estado==='Pendiente'||oc.estado==='Evaluada'){
+        btnAccion+=`<button class="btn-act btn-blue" onclick="aprobarOC('${esc(oc.folio)}')"><i class="feather-check" style="font-size:11px;"></i> Aprobar</button>`;
+        btnAccion+=`<button class="btn-act btn-red" onclick="cambiar('${esc(oc.folio)}','Cancelada');cerrar()"><i class="feather-x" style="font-size:11px;"></i> Cancelar</button>`;
+    }
+    if(oc.estado==='Aprobada'){
+        btnAccion+=`<button class="btn-act btn-green" onclick="cambiar('${esc(oc.folio)}','Comprada');cerrar()"><i class="feather-shopping-cart" style="font-size:11px;"></i> Marcar Comprada</button>`;
+    }
+    if(esEvaluada){
+        btnAccion=`<button class="btn-act btn-blue" onclick="guardarEdicion('${esc(oc.folio)}',${items.length})" style="gap:5px;"><i class="feather-save" style="font-size:11px;"></i> Guardar cambios</button>`+btnAccion;
+    }
+    document.getElementById('mdlBtns').innerHTML=btnCmt+btnAccion;
     document.getElementById('modalDet').classList.add('open');
 }
 
 function cerrar(){document.getElementById('modalDet').classList.remove('open');}
+
+// Cuando se marca una casilla de comentario resuelto (NO cierra el modal)
+async function onResueltoChange(folio, idx, checked){
+    const oc=_datos.find(x=>x.folio===folio);
+    if(!oc)return;
+    const items=getItems(oc);
+    const it=items[idx];
+    if(!it)return;
+    // Marcar el último comentario activo (no resuelto) como resuelto
+    const hist=getHistorial(it);
+    const activo=hist.find(h=>!h.resuelto);
+    if(activo) activo.resuelto=checked;
+    // Verificar si TODOS los ítems con historial tienen todos resueltos
+    const conHist=items.filter(x=>getHistorial(x).some(h=>h.texto));
+    const todosResueltos=conHist.length>0&&conHist.every(x=>getHistorial(x).every(h=>h.resuelto));
+    const nuevoEstado=todosResueltos?'Pendiente':oc.estado;
+    try{
+        const r=await fetch('/api/oc/'+encodeURIComponent(folio),{
+            method:'PUT',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({...oc,items,estado:nuevoEstado})
+        });
+        if(r.ok){
+            const upd=await r.json();Object.assign(oc,upd);
+            renderTabla();
+            if(todosResueltos) toast('Todos los comentarios resueltos → OC vuelve a Pendiente','#059669');
+            // Refrescar modal sin cerrarlo
+            verDet(folio);
+        }
+    }catch(_){}
+}
+
+// Guardar edición de items (modo Evaluada)
+async function guardarEdicion(folio, nItems){
+    const oc=_datos.find(x=>x.folio===folio);
+    if(!oc)return;
+    const items=getItems(oc);
+    for(let i=0;i<nItems;i++){
+        const dEl=document.getElementById('edit_desc_'+i);
+        const cEl=document.getElementById('edit_cant_'+i);
+        const pEl=document.getElementById('edit_precio_'+i);
+        if(items[i]){
+            if(dEl) items[i].desc=dEl.value.trim();
+            if(cEl) items[i].cant=parseFloat(cEl.value)||items[i].cant;
+            if(pEl){ items[i].costoUnit=parseFloat(pEl.value)||items[i].costoUnit; items[i].totalCosto=items[i].costoUnit*items[i].cant; }
+        }
+    }
+    const prvEl=document.getElementById('edit_prov');
+    const proveedor=prvEl?prvEl.value.trim():oc.proveedor;
+    const total=items.reduce((s,it)=>s+(it.totalCosto||(it.costoUnit*it.cant)||0),0);
+    try{
+        const r=await fetch('/api/oc/'+encodeURIComponent(folio),{
+            method:'PUT',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({...oc,items,proveedor,total_costo:total})
+        });
+        if(r.ok){const upd=await r.json();Object.assign(oc,upd);renderTabla();toast('Cambios guardados','#10b981');verDet(folio);}
+        else toast('Error al guardar','#ef4444');
+    }catch(e){toast('Error: '+e.message,'#ef4444');}
+}
+
+async function guardarComentarios(folio, nItems){
+    const oc=_datos.find(x=>x.folio===folio);
+    if(!oc)return;
+    const items=getItems(oc);
+    let hayComentario=false;
+    for(let i=0;i<nItems;i++){
+        const ta=document.getElementById('cmt_item_'+i);
+        if(ta&&items[i]){
+            const newText=ta.value.trim();
+            if(newText){
+                const hist=getHistorial(items[i]);
+                // Si hay uno activo (no resuelto) actualizarlo, sino agregar nuevo
+                const activoIdx=hist.findIndex(h=>!h.resuelto);
+                if(activoIdx>=0) hist[activoIdx].texto=newText;
+                else hist.push({texto:newText,resuelto:false});
+                items[i].historial=hist;
+                hayComentario=true;
+            }
+        }
+    }
+    const globalTa=document.getElementById('cmt_global');
+    const obs=globalTa?globalTa.value.trim():(oc.obs||'');
+    if(obs) hayComentario=true;
+    const estadoAntes=oc.estado;
+    const nuevoEstado=(hayComentario&&estadoAntes==='Pendiente')?'Evaluada':estadoAntes;
+    try{
+        const r=await fetch('/api/oc/'+encodeURIComponent(folio),{
+            method:'PUT',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({...oc,obs,items,estado:nuevoEstado})
+        });
+        if(r.ok){
+            const upd=await r.json();Object.assign(oc,upd);
+            renderTabla();
+            if(nuevoEstado==='Evaluada'&&estadoAntes!=='Evaluada'){
+                toast('Comentarios enviados → OC marcada como Evaluada','#f59e0b');
+            } else {
+                toast('Comentarios enviados','#10b981');
+            }
+            cerrar(); // ← cerrar modal al enviar
+        } else toast('Error al guardar comentarios','#ef4444');
+    }catch(e){toast('Error: '+e.message,'#ef4444');}
+}
 
 function toast(msg,color){
     var t=document.createElement('div');
@@ -485,6 +635,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTab(btn.dataset.tab);
     });
 });
+
 </script>
 </body>
 </html>
