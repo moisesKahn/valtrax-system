@@ -605,7 +605,6 @@ async function guardarEdicion(folio, nItems){
         else toast('Error al guardar','#ef4444');
     }catch(e){toast('Error: '+e.message,'#ef4444');}
 }
-}
 
 async function guardarComentarios(folio, nItems){
     const oc=_datos.find(x=>x.folio===folio);
