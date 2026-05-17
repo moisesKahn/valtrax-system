@@ -292,27 +292,27 @@
     </main>
 
     <!-- ══ MODAL GLASS: CONFIRMAR APROBAR PRESUPUESTO ═══════════════════ -->
-    <div id="mglass" style="display:none;position:fixed;inset:0;z-index:16000;background:rgba(5,15,35,0.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);align-items:center;justify-content:center;">
-      <div style="width:90%;max-width:420px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:36px 32px 28px;box-shadow:0 24px 60px rgba(0,0,0,0.45);font-family:'DM Sans',sans-serif;color:#fff;">
+        <div id="mglass" style="display:none;position:fixed;inset:0;z-index:16000;background:rgba(15,23,42,0.42);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);align-items:center;justify-content:center;">
+            <div style="width:90%;max-width:420px;background:rgba(255,255,255,0.96);border:1px solid #e2e8f0;border-radius:20px;padding:36px 32px 28px;box-shadow:0 24px 60px rgba(15,23,42,0.22);font-family:'DM Sans',sans-serif;color:#0f172a;">
         <!-- Ícono -->
-        <div style="width:52px;height:52px;background:rgba(22,163,74,0.18);border:1px solid rgba(22,163,74,0.35);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+                <div style="width:52px;height:52px;background:#ecfdf3;border:1px solid #bbf7d0;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
           <i class="feather-check-circle" style="font-size:24px;color:#4ade80;"></i>
         </div>
         <h5 style="margin:0 0 8px;font-weight:700;font-size:17px;text-align:center;">Pasar a Pedido</h5>
-        <p style="margin:0 0 20px;font-size:13px;color:rgba(255,255,255,0.6);text-align:center;line-height:1.5;">Se generará un <strong style="color:#fff;">Pedido</strong> y una <strong style="color:#fff;">Orden de Compra</strong> automáticamente.<br>Esta acción bloqueará la edición de la cotización.</p>
-        <div id="mglassErr" style="display:none;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:10px 14px;font-size:12px;color:#fca5a5;margin-bottom:16px;"></div>
+                <p style="margin:0 0 20px;font-size:13px;color:#64748b;text-align:center;line-height:1.5;">Se generará un <strong style="color:#0f172a;">Pedido</strong> y una <strong style="color:#0f172a;">Orden de Compra</strong> automáticamente.<br>Esta acción bloqueará la edición de la cotización.</p>
+                <div id="mglassErr" style="display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:10px 14px;font-size:12px;color:#b91c1c;margin-bottom:16px;"></div>
         <!-- Botones de confirmación -->
         <div id="mglassBtns" style="display:flex;gap:10px;">
-          <button id="mglassCancel" style="flex:1;padding:11px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:50px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);cursor:pointer;">Cancelar</button>
-          <button id="mglassOk" style="flex:1;padding:11px;background:rgba(22,163,74,0.8);border:1px solid rgba(22,163,74,0.5);border-radius:50px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;">Confirmar</button>
+                    <button id="mglassCancel" style="flex:1;padding:11px;background:#f8fafc;border:1px solid #cbd5e1;border-radius:50px;font-size:13px;font-weight:600;color:#334155;cursor:pointer;">Cancelar</button>
+                    <button id="mglassOk" style="flex:1;padding:11px;background:#16a34a;border:1px solid #15803d;border-radius:50px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;">Confirmar</button>
         </div>
         <!-- Resultado exitoso -->
         <div id="mglassOkResult" style="display:none;">
-          <div style="background:rgba(22,163,74,0.12);border:1px solid rgba(22,163,74,0.3);border-radius:12px;padding:16px;margin-bottom:16px;font-size:12px;">
-            <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="color:rgba(255,255,255,0.5);">Pedido generado:</span><span id="mglass_ok_ped" style="color:#4ade80;font-weight:700;">—</span></div>
-            <div style="display:flex;justify-content:space-between;"><span style="color:rgba(255,255,255,0.5);">Orden de Compra:</span><span id="mglass_ok_oc" style="color:#4ade80;font-weight:700;">—</span></div>
+                    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:16px;margin-bottom:16px;font-size:12px;">
+                        <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="color:#64748b;">Pedido generado:</span><span id="mglass_ok_ped" style="color:#15803d;font-weight:700;">—</span></div>
+                        <div style="display:flex;justify-content:space-between;"><span style="color:#64748b;">Orden de Compra:</span><span id="mglass_ok_oc" style="color:#15803d;font-weight:700;">—</span></div>
           </div>
-          <button id="mglassClose" style="width:100%;padding:11px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:50px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);cursor:pointer;">Cerrar</button>
+                    <button id="mglassClose" style="width:100%;padding:11px;background:#f8fafc;border:1px solid #cbd5e1;border-radius:50px;font-size:13px;font-weight:600;color:#334155;cursor:pointer;">Cerrar</button>
         </div>
       </div>
     </div>
