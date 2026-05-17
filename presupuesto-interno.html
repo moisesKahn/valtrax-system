@@ -2163,10 +2163,9 @@
             // Columnas Würth
             var C = {
                 pos:  { x: ML,           w: 8   },
-                desc: { x: ML + 8,       w: 75  },
-                cant: { x: ML + 83,      w: 16  },
-                ue:   { x: ML + 99,      w: 14  },
-                pu:   { x: ML + 113,     w: 26  },
+                desc: { x: ML + 8,       w: 85  },
+                cant: { x: ML + 93,      w: 16  },
+                pu:   { x: ML + 109,     w: 30  },
                 dto:  { x: ML + 139,     w: 14  },
                 net:  { x: ML + 153,     w: TW - 153 }
             };
@@ -2182,7 +2181,6 @@
                 doc.text('Pos.',       C.pos.x + 1,  hY);
                 doc.text('Artículo / Descripción', C.desc.x + 1, hY);
                 doc.text('Cant.',      C.cant.x + 1, hY);
-                doc.text('U.E.',       C.ue.x + 1,   hY);
                 doc.text('P. Unitario', C.pu.x + C.pu.w - 1, hY, {align:'right'});
                 doc.text('Dto.',       C.dto.x + 1,  hY);
                 doc.text('P. Neto',    MR_x,         hY, {align:'right'});
@@ -2226,7 +2224,6 @@
                 var rh = Math.max(ROW_H, lines * 3.5 + 4);
                 if (ySim + rh > ROW_MIN) { pgCount++; ySim = 44; }
                 ySim += rh;
-                if (r.lugar) ySim += 3;
             });
 
             // Segunda pasada — dibujar real
@@ -2282,22 +2279,11 @@
                         doc.text(descLines[li], C.desc.x + 1, rY + li*3.5);
                     }
                 }
-                // Proveedor/lugar en gris italic bajo descripción
-                if (r.lugar) {
-                    doc.setFont('helvetica','italic');
-                    doc.setFontSize(6.5);
-                    doc.setTextColor(150,150,150);
-                    doc.text('Proveedor: ' + r.lugar, C.desc.x + 1, rY + descLines.length*3.5);
-                }
-
                 // Cantidad
                 doc.setFont('helvetica','normal');
                 doc.setFontSize(7.5);
                 doc.setTextColor(...DARK);
                 doc.text(String(r.cant), C.cant.x + C.cant.w - 1, rY, {align:'right'});
-
-                // U.E.
-                doc.text(r.ue, C.ue.x + 1, rY);
 
                 // P. Unitario
                 doc.text(r.pu > 0 ? fmtCLP(r.pu) : '—', C.pu.x + C.pu.w - 1, rY, {align:'right'});
@@ -2326,7 +2312,7 @@
             doc.setFont('helvetica','italic');
             doc.setFontSize(6.5);
             doc.setTextColor(136,136,136);
-            doc.text('* U.E. = unidad de embalaje  /  Dto. = Descuento  /  P. Neto = Precio neto cotizado', ML, y);
+            doc.text('* Dto. = Descuento  /  P. Neto = Precio neto cotizado', ML, y);
             y += 8;
 
             // ── Bloque totales + condiciones ───────────────────────
