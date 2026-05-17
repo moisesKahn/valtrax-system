@@ -149,4 +149,26 @@ async function initDB() {
     }
 }
 
+        await conn.query(`
+            CREATE TABLE IF NOT EXISTS usuarios (
+                id          BIGINT PRIMARY KEY AUTO_INCREMENT,
+                nombre      VARCHAR(100) NOT NULL,
+                usuario     VARCHAR(60) UNIQUE NOT NULL,
+                clave       VARCHAR(200) NOT NULL,
+                rol         VARCHAR(30) NOT NULL DEFAULT 'vendedor',
+                activo      TINYINT(1) NOT NULL DEFAULT 1,
+                creado_en   DATETIME DEFAULT CURRENT_TIMESTAMP,
+                actualizado DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )`);
+
+        // Usuario admin por defecto si la tabla está vacía
+        try {
+            const [ucount] = await conn.query('SELECT COUNT(*) as n FROM usuarios');
+            if ((ucount[0].n || 0) === 0) {
+                await conn.query(
+                    `INSERT INTO usuarios (nombre,usuario,clave,rol) VALUES ('Administrador','valtrax.admin','Vx@2025!','administrador'),('Vendedor','vendedor','venta123','vendedor')`
+                );
+            }
+        } catch(_){}
+
 module.exports = { pool, initDB };

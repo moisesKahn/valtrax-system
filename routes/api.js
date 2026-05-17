@@ -562,4 +562,69 @@ router.get('/serper-shopping', async (req, res) => {
     }
 });
 
+/* ════════════════════════════════════════════════════════════
+   USUARIOS
+   ════════════════════════════════════════════════════════════ */
+router.get('/usuarios', async (req, res) => {
+    try {
+        const [rows] = await pool.query('SELECT id,nombre,usuario,rol,activo,creado_en FROM usuarios ORDER BY id ASC');
+        res.json(rows);
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/usuarios', async (req, res) => {
+    try {
+        const d = req.body;
+        if (!d.usuario || !d.clave || !d.nombre) return res.status(400).json({ error: 'Nombre, usuario y clave son obligatorios' });
+        // Verificar duplicado
+        const [ex] = await pool.query('SELECT id FROM usuarios WHERE usuario=?', [d.usuario]);
+        if (ex.length) return res.status(400).json({ error: 'El nombre de usuario ya existe' });
+        const [r] = await pool.query(
+            'INSERT INTO usuarios (nombre,usuario,clave,rol,activo) VALUES (?,?,?,?,?)',
+            [d.nombre, d.usuario, d.clave, d.rol||'vendedor', d.activo!==false?1:0]
+        );
+        const [rows] = await pool.query('SELECT id,nombre,usuario,rol,activo,creado_en FROM usuarios WHERE id=?', [r.insertId]);
+        res.json(rows[0]);
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+router.put('/usuarios/:id', async (req, res) => {
+    try {
+        const d = req.body;
+        // Si cambia usuario, verificar duplicado
+        if (d.usuario) {
+            const [ex] = await pool.query('SELECT id FROM usuarios WHERE usuario=? AND id<>?', [d.usuario, req.params.id]);
+            if (ex.length) return res.status(400).json({ error: 'El nombre de usuario ya existe' });
+        }
+        const sets = [], vals = [];
+        if (d.nombre  !== undefined) { sets.push('nombre=?');  vals.push(d.nombre); }
+        if (d.usuario !== undefined) { sets.push('usuario=?'); vals.push(d.usuario); }
+        if (d.clave   && d.clave.trim()) { sets.push('clave=?'); vals.push(d.clave); }
+        if (d.rol     !== undefined) { sets.push('rol=?');     vals.push(d.rol); }
+        if (d.activo  !== undefined) { sets.push('activo=?');  vals.push(d.activo?1:0); }
+        if (!sets.length) return res.status(400).json({ error: 'Nada que actualizar' });
+        vals.push(req.params.id);
+        await pool.query(`UPDATE usuarios SET ${sets.join(',')} WHERE id=?`, vals);
+        const [rows] = await pool.query('SELECT id,nombre,usuario,rol,activo,creado_en FROM usuarios WHERE id=?', [req.params.id]);
+        res.json(rows[0]);
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+router.delete('/usuarios/:id', async (req, res) => {
+    try {
+        await pool.query('DELETE FROM usuarios WHERE id=?', [req.params.id]);
+        res.json({ ok: true });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+/* login via API */
+router.post('/auth/login', async (req, res) => {
+    try {
+        const { usuario, clave } = req.body;
+        const [rows] = await pool.query('SELECT id,nombre,usuario,rol,activo FROM usuarios WHERE usuario=? AND clave=? AND activo=1', [usuario, clave]);
+        if (!rows.length) return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
+        res.json({ ok: true, ...rows[0] });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 module.exports = router;

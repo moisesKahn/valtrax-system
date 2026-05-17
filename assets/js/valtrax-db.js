@@ -278,3 +278,17 @@ const ValtraxDB = (function(){
            getOrdenesCompra, saveOrdenCompra, deleteOrdenCompra, updateOrdenCompra,
            seedIfEmpty };
 })();
+
+/* ── Transición suave entre páginas ── */
+document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('click', function(e) {
+        var a = e.target.closest('a[href]');
+        if (!a) return;
+        var href = a.getAttribute('href');
+        if (!href || href.startsWith('#') || href.startsWith('javascript') ||
+            e.ctrlKey || e.metaKey || e.shiftKey || a.target === '_blank') return;
+        e.preventDefault();
+        document.body.classList.add('vx-fadeout');
+        setTimeout(function() { location.href = href; }, 190);
+    });
+});

@@ -126,16 +126,6 @@
                         </a>
                     </li>
 
-                    <!-- ── HERRAMIENTAS ─────────────────────────────────── -->
-                    <li class="nxl-item nxl-caption"><label>Herramientas</label></li>
-
-                    <li class="nxl-item">
-                        <a class="nxl-link" href="buscador-precios.html">
-                            <span class="nxl-micon"><i class="feather-tag"></i></span>
-                            <span class="nxl-mtext">Buscador de Precios</span>
-                        </a>
-                    </li>
-
                 </ul>
             </div>
         </div>
@@ -252,14 +242,14 @@
             <div class="main-content">
             <div class="card stretch stretch-full">
                 <!-- Toolbar -->
-                <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2" style="border-bottom:1px solid rgba(148,163,184,0.2);">
-                    <h6 class="card-title mb-0 fw-semibold">Lista de Entidades</h6>
+                <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2" style="padding:10px 20px;border-bottom:1px solid rgba(148,163,184,0.15);">
+                    <span style="font-size:13px;font-weight:600;color:#1e293b;">Lista de Entidades</span>
                     <div class="d-flex align-items-center gap-2">
-                        <div class="input-group input-group-sm" style="width:220px;">
-                            <span class="input-group-text border-end-0 bg-white"><i class="feather-search text-muted" style="font-size:13px;"></i></span>
-                            <input type="text" id="buscarEntidad" class="form-control border-start-0 ps-0" placeholder="Buscar entidad..." oninput="filtrarTabla()" style="font-size:13px;">
+                        <div style="display:flex;align-items:center;height:32px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;overflow:hidden;width:210px;">
+                            <span style="padding:0 10px;color:#94a3b8;"><i class="feather-search" style="font-size:12px;"></i></span>
+                            <input type="text" id="buscarEntidad" placeholder="Buscar entidad..." oninput="filtrarTabla()" style="border:none;outline:none;font-size:12.5px;width:100%;color:#334155;background:transparent;padding:0 8px 0 0;">
                         </div>
-                        <select id="filtroTipo" class="form-select form-select-sm" style="width:160px;font-size:13px;" onchange="filtrarTabla()">
+                        <select id="filtroTipo" onchange="filtrarTabla()" style="height:32px;border:1px solid #e2e8f0;border-radius:8px;font-size:12.5px;color:#334155;padding:0 28px 0 10px;background:#fff;outline:none;appearance:auto;">
                             <option value="">Todos los tipos</option>
                             <option>Cliente Natural</option>
                             <option>Cliente Juridico</option>
@@ -272,17 +262,17 @@
                 <!-- Tabla -->
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table mb-0" id="tablaEntidades" style="font-size:13px;">
+                        <table class="table mb-0" id="tablaEntidades" style="font-size:13px;border-collapse:collapse;">
                             <thead>
-                                <tr style="background:rgba(241,245,249,0.7);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#64748b;">
-                                    <th class="ps-4 py-3">Entidad</th>
-                                    <th class="py-3">Tipo</th>
-                                    <th class="py-3">RUT / ID</th>
-                                    <th class="py-3">Teléfono</th>
-                                    <th class="py-3">Correo</th>
-                                    <th class="py-3">Ciudad</th>
-                                    <th class="py-3">Estado</th>
-                                    <th class="py-3 text-end pe-4">Acciones</th>
+                                <tr style="background:rgba(248,250,252,0.9);border-bottom:1px solid rgba(148,163,184,0.15);">
+                                    <th class="ps-4" style="padding:7px 12px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;">Entidad</th>
+                                    <th style="padding:7px 12px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;">Tipo</th>
+                                    <th style="padding:7px 12px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;">RUT / ID</th>
+                                    <th style="padding:7px 12px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;">Teléfono</th>
+                                    <th style="padding:7px 12px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;">Correo</th>
+                                    <th style="padding:7px 12px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;">Ciudad</th>
+                                    <th style="padding:7px 12px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;">Estado</th>
+                                    <th style="padding:7px 16px 7px 12px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;text-align:right;">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="tbodyEntidades"></tbody>
@@ -309,31 +299,62 @@
     <script>
     /* ── datos de ejemplo ─────────────────────────────────────── */
     ValtraxDB.seedIfEmpty();
-    let ENTIDADES = ValtraxDB.getEntidades();
+    let ENTIDADES = [];
 
     const TIPO_BADGE = {
-      'Cliente Natural':  'background:rgba(20,184,166,0.15);color:#0d9488;',
-      'Cliente Juridico': 'background:rgba(37,99,235,0.12);color:#1d4ed8;',
-      'Proveedor':        'background:rgba(245,158,11,0.15);color:#b45309;',
-      'Contacto Tecnico': 'background:rgba(139,92,246,0.13);color:#6d28d9;',
-      'Tercero':          'background:rgba(100,116,139,0.13);color:#475569;',
+      'Cliente Natural':  'background:rgba(20,184,166,0.12);color:#0d9488;',
+      'Cliente Juridico': 'background:rgba(37,99,235,0.10);color:#1d4ed8;',
+      'Proveedor':        'background:rgba(245,158,11,0.12);color:#b45309;',
+      'Contacto Tecnico': 'background:rgba(139,92,246,0.11);color:#6d28d9;',
+      'Tercero':          'background:rgba(100,116,139,0.11);color:#475569;',
     };
     const ESTADO_BADGE = {
-      'Activo':    'background:rgba(16,185,129,0.15);color:#059669;',
-      'Inactivo':  'background:rgba(245,158,11,0.15);color:#b45309;',
-      'Bloqueado': 'background:rgba(239,68,68,0.15);color:#dc2626;',
-      'Prospecto': 'background:rgba(14,165,233,0.15);color:#0284c7;',
+      'Activo':    'background:rgba(16,185,129,0.12);color:#059669;',
+      'Inactivo':  'background:rgba(245,158,11,0.12);color:#b45309;',
+      'Bloqueado': 'background:rgba(239,68,68,0.12);color:#dc2626;',
+      'Prospecto': 'background:rgba(14,165,233,0.12);color:#0284c7;',
     };
 
-    const POR_PAG = 8;
+    const POR_PAG = 10;
     let paginaActual = 1;
-    let filtrados = [...ENTIDADES];
+    let filtrados = [];
+
+    // Cargar desde API MySQL + merge con localStorage
+    (async function cargarEntidades(){
+        try {
+            const r = await fetch('/api/clientes');
+            if(r.ok){
+                const apiData = await r.json();
+                if(Array.isArray(apiData)){
+                    // Convertir formato API → formato ValtraxDB
+                    const apiRows = apiData.map(c => ({
+                        id: 'api-'+c.id,
+                        nombre: c.nombre||'',
+                        tipo: (() => { try{ return JSON.parse(c.datos_extra||'{}').tipo || c.giro || 'Cliente Natural'; }catch(e){ return c.giro||'Cliente Natural'; } })(),
+                        rut: c.rut||'',
+                        tel: c.telefono||'',
+                        correo: c.email||'',
+                        ciudad: c.direccion||'',
+                        estado: 'Activo',
+                        giro: c.giro||'',
+                        contacto: c.contacto||''
+                    }));
+                    // Fusionar: preferir API, solo agregar los de localStorage que no estén
+                    const apiNombres = new Set(apiRows.map(r=>r.nombre.toLowerCase()));
+                    const local = ValtraxDB.getEntidades().filter(e => !apiNombres.has(e.nombre.toLowerCase()));
+                    ENTIDADES = [...apiRows, ...local];
+                }
+            }
+        } catch(e){ /* sin API, solo localStorage */ }
+        if(!ENTIDADES.length) ENTIDADES = ValtraxDB.getEntidades();
+        filtrarTabla();
+    })();
 
     function filtrarTabla(){
         const q = document.getElementById('buscarEntidad').value.toLowerCase();
         const t = document.getElementById('filtroTipo').value;
         filtrados = ENTIDADES.filter(e =>
-            (!q || e.nombre.toLowerCase().includes(q) || e.rut.includes(q) || e.correo.toLowerCase().includes(q)) &&
+            (!q || (e.nombre||'').toLowerCase().includes(q) || (e.rut||'').includes(q) || (e.correo||'').toLowerCase().includes(q)) &&
             (!t || e.tipo === t)
         );
         paginaActual = 1;
@@ -343,31 +364,33 @@
     function renderTabla(){
         const inicio = (paginaActual-1)*POR_PAG;
         const pagina = filtrados.slice(inicio, inicio+POR_PAG);
-        const totalPags = Math.ceil(filtrados.length/POR_PAG);
+        const totalPags = Math.max(1, Math.ceil(filtrados.length/POR_PAG));
 
-        document.getElementById('paginaInfo').textContent =
-            `Mostrando ${inicio+1}-${Math.min(inicio+POR_PAG,filtrados.length)} de ${filtrados.length.toLocaleString('es-CL')} entidades`;
+        document.getElementById('paginaInfo').textContent = filtrados.length
+            ? `Mostrando ${inicio+1}-${Math.min(inicio+POR_PAG,filtrados.length)} de ${filtrados.length.toLocaleString('es-CL')} entidades`
+            : 'Sin entidades';
 
-        document.getElementById('tbodyEntidades').innerHTML = pagina.map(e => `
-            <tr style="border-bottom:1px solid rgba(148,163,184,0.12);cursor:pointer;" onclick="window.location.href='customers-view.html?id=${e.id}'" title="Ver ficha">
-                <td class="ps-4 py-3 fw-semibold" style="color:#1e293b;">${e.nombre}</td>
-                <td class="py-3"><span class="badge rounded-pill" style="font-size:11px;font-weight:600;padding:4px 10px;${TIPO_BADGE[e.tipo]||''}">${e.tipo}</span></td>
-                <td class="py-3" style="color:#64748b;">${e.rut}</td>
-                <td class="py-3" style="color:#475569;">${e.tel}</td>
-                <td class="py-3" style="color:#64748b;">${e.correo}</td>
-                <td class="py-3" style="color:#475569;">${e.ciudad}</td>
-                <td class="py-3"><span class="badge rounded-pill" style="font-size:11px;font-weight:600;padding:4px 10px;${ESTADO_BADGE[e.estado]||''}">${e.estado}</span></td>
-                <td class="py-3 text-end pe-4" onclick="event.stopPropagation();">
-                    <a href="customers-view.html?id=${e.id}" class="btn btn-icon btn-sm btn-light-brand me-1" title="Ver ficha"><i class="feather-eye" style="font-size:14px;"></i></a>
+        document.getElementById('tbodyEntidades').innerHTML = pagina.length ? pagina.map(e => `
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.10);transition:background .15s;" onmouseover="this.style.background='rgba(248,250,252,0.8)'" onmouseout="this.style.background=''" title="Ver ficha">
+                <td class="ps-4" style="padding:8px 12px;font-weight:500;font-size:13px;color:#1e293b;">${e.nombre}</td>
+                <td style="padding:8px 12px;"><span style="display:inline-block;font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;${TIPO_BADGE[e.tipo]||'background:#f1f5f9;color:#64748b;'}">${e.tipo||'—'}</span></td>
+                <td style="padding:8px 12px;font-size:12px;color:#64748b;">${e.rut||'—'}</td>
+                <td style="padding:8px 12px;font-size:12px;color:#64748b;">${e.tel||'—'}</td>
+                <td style="padding:8px 12px;font-size:12px;color:#64748b;">${e.correo||'—'}</td>
+                <td style="padding:8px 12px;font-size:12px;color:#64748b;">${e.ciudad||'—'}</td>
+                <td style="padding:8px 12px;"><span style="display:inline-block;font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;${ESTADO_BADGE[e.estado]||'background:#f1f5f9;color:#64748b;'}">${e.estado||'Activo'}</span></td>
+                <td style="padding:8px 16px 8px 12px;text-align:right;" onclick="event.stopPropagation();">
+                    <a href="customers-view.html?id=${e.id}" class="btn btn-icon btn-sm" style="background:none;border:none;color:#64748b;padding:4px 6px;" title="Ver ficha"><i class="feather-eye" style="font-size:14px;"></i></a>
                     <div class="dropdown d-inline-block">
-                        <button class="btn btn-icon btn-sm btn-light-brand" data-bs-toggle="dropdown"><i class="feather-more-vertical" style="font-size:14px;"></i></button>
-                        <ul class="dropdown-menu dropdown-menu-end" style="font-size:13px;">
-                            <li><a class="dropdown-item" href="customers-view.html?id=${e.id}"><i class="feather-edit-2 me-2"></i>Editar</a></li>
-                            <li><a class="dropdown-item text-danger" href="javascript:void(0)" onclick="eliminarEntidad(${e.id})"><i class="feather-trash-2 me-2"></i>Eliminar</a></li>
+                        <button class="btn btn-icon btn-sm" style="background:none;border:none;color:#64748b;padding:4px 6px;" data-bs-toggle="dropdown"><i class="feather-more-vertical" style="font-size:14px;"></i></button>
+                        <ul class="dropdown-menu dropdown-menu-end" style="font-size:13px;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.10);border:1px solid rgba(148,163,184,0.2);padding:4px 0;">
+                            <li><a class="dropdown-item" href="customers-view.html?id=${e.id}" style="padding:8px 16px;"><i class="feather-edit-2 me-2" style="font-size:13px;"></i>Editar</a></li>
+                            <li><a class="dropdown-item text-danger" href="javascript:void(0)" onclick="eliminarEntidad('${e.id}')" style="padding:8px 16px;"><i class="feather-trash-2 me-2" style="font-size:13px;"></i>Eliminar</a></li>
                         </ul>
                     </div>
                 </td>
-            </tr>`).join('');
+            </tr>`).join('')
+        : `<tr><td colspan="8" style="text-align:center;padding:32px;font-size:13px;color:#94a3b8;">Sin entidades registradas</td></tr>`;
 
         /* paginacion */
         let html = `<li class="page-item ${paginaActual===1?'disabled':''}">
@@ -382,19 +405,20 @@
     }
 
     function cambiarPag(p){
-        const total = Math.ceil(filtrados.length/POR_PAG);
+        const total = Math.max(1,Math.ceil(filtrados.length/POR_PAG));
         if(p<1||p>total) return;
         paginaActual=p; renderTabla();
     }
 
     function eliminarEntidad(id){
         if(!confirm('¿Eliminar esta entidad?')) return;
+        if(String(id).startsWith('api-')){
+            fetch('/api/clientes/'+id.replace('api-',''), {method:'DELETE'}).catch(()=>{});
+        }
         ValtraxDB.deleteEntidad(id);
-        ENTIDADES = ValtraxDB.getEntidades();
+        ENTIDADES = ENTIDADES.filter(e=>String(e.id)!==String(id));
         filtrarTabla();
     }
-
-    filtrarTabla();
     </script>
     <!--! ================================================================ !-->
     <!--! [End] Main Content !-->

@@ -266,3 +266,16 @@ textarea.valtrax-input {
 .nxl-navigation .b-brand .logo-sm { display: none; max-height: 36px; width: auto; }
 html.minimenu .nxl-navigation .b-brand .logo-lg { display: none !important; }
 html.minimenu .nxl-navigation .b-brand .logo-sm { display: block !important; }
+
+/* ── Transición suave entre páginas ─────────────────────────────── */
+.nxl-container { animation: vx-fadein 0.22s ease; }
+@keyframes vx-fadein {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+body.vx-fadeout .nxl-container {
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.16s ease, transform 0.16s ease;
+    pointer-events: none;
+}

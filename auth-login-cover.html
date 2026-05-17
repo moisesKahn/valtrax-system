@@ -286,7 +286,7 @@
     });
   });
 
-  btn.addEventListener('click', function () {
+  btn.addEventListener('click', async function () {
     var u = inpUser.value.trim(), p = inpPass.value;
     alertEl.style.display = 'none';
     inpUser.classList.remove('vx-err');
@@ -295,7 +295,34 @@
     if (!u) { inpUser.classList.add('vx-err'); inpUser.focus(); return; }
     if (!p) { inpPass.classList.add('vx-err'); inpPass.focus(); return; }
 
-    var match = USUARIOS.find(function (x) { return x.usuario === u && x.clave === p; });
+    btn.disabled = true;
+    btn.innerHTML = '<span class="vx-spinner"></span>Ingresando...';
+
+    var match = null;
+
+    // 1. Intentar autenticar contra la API (DB)
+    try {
+      var res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuario: u, clave: p })
+      });
+      if (res.ok) {
+        var data = await res.json();
+        if (data.ok) match = { nombre: data.nombre, rol: data.rol };
+      }
+    } catch (_) {}
+
+    // 2. Fallback a usuarios locales si la DB no está disponible
+    if (!match) {
+      var LOCAL = [
+        { usuario: 'valtrax.admin', clave: 'Vx@2025!', rol: 'administrador', nombre: 'Administrador' },
+        { usuario: 'vendedor',      clave: 'venta123',  rol: 'vendedor',      nombre: 'Vendedor'      }
+      ];
+      var localMatch = LOCAL.find(function(x){ return x.usuario===u && x.clave===p; });
+      if (localMatch) match = { nombre: localMatch.nombre, rol: localMatch.rol };
+    }
+
     if (!match) {
       alertEl.textContent = 'Usuario o contraseña incorrectos.';
       alertEl.style.display = 'block';
@@ -303,11 +330,11 @@
       inpPass.classList.add('vx-err');
       inpPass.value = '';
       inpUser.focus();
+      btn.disabled = false;
+      btn.innerHTML = 'Ingresar';
       return;
     }
 
-    btn.disabled = true;
-    btn.innerHTML = '<span class="vx-spinner"></span>Ingresando...';
     localStorage.setItem('vx_usuario', match.nombre);
     localStorage.setItem('vx_rol', match.rol);
     setTimeout(function () {

@@ -124,6 +124,19 @@
                         </a>
                     </li>
 
+                    <!-- ── ADMINISTRACIÓN (solo admin) ───────────────── -->
+                    <li class="nxl-item nxl-caption vx-admin-only" style="display:none;"><label>Administración</label></li>
+                    <li class="nxl-item nxl-hasmenu vx-admin-only" style="display:none;">
+                        <a href="javascript:void(0);" class="nxl-link">
+                            <span class="nxl-micon"><i class="feather-user-check"></i></span>
+                            <span class="nxl-mtext">Usuarios</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        </a>
+                        <ul class="nxl-submenu">
+                            <li class="nxl-item"><a class="nxl-link" href="usuarios.html">Lista de Usuarios</a></li>
+                            <li class="nxl-item"><a class="nxl-link" href="usuarios.html?nuevo=1">Nuevo Usuario</a></li>
+                        </ul>
+                    </li>
+
                 </ul>
             </div>
         </div>
@@ -148,6 +161,10 @@
                 if(hm){hm.classList.add('nxl-trigger');var sub=hm.querySelector(':scope>.nxl-submenu');if(sub)sub.style.display='block';}
                 break;
             }
+        }
+        // Mostrar menú de admin solo si es administrador
+        if(localStorage.getItem('vx_rol')==='administrador'){
+            document.querySelectorAll('.vx-admin-only').forEach(function(el){el.style.display='';});
         }
     })();
     </script>
