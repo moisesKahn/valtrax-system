@@ -114,7 +114,11 @@ router.delete('/cotizaciones/:folio', async (req, res) => {
 router.get('/pedidos', async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM pedidos ORDER BY id DESC');
-        res.json(rows.map(r => ({ ...r, items: r.items ? JSON.parse(r.items) : [] })));
+        res.json(rows.map(r => ({
+            ...r,
+            items:         typeof r.items         === 'string' ? JSON.parse(r.items)         : (r.items         || []),
+            datos_cliente: typeof r.datos_cliente === 'string' ? JSON.parse(r.datos_cliente) : (r.datos_cliente || {})
+        })));
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -123,7 +127,11 @@ router.get('/pedidos/:folio', async (req, res) => {
         const [rows] = await pool.query('SELECT * FROM pedidos WHERE folio=?', [req.params.folio]);
         if (!rows.length) return res.status(404).json({ error: 'No encontrado' });
         const r = rows[0];
-        res.json({ ...r, items: r.items ? JSON.parse(r.items) : [] });
+        res.json({
+            ...r,
+            items:         typeof r.items         === 'string' ? JSON.parse(r.items)         : (r.items         || []),
+            datos_cliente: typeof r.datos_cliente === 'string' ? JSON.parse(r.datos_cliente) : (r.datos_cliente || {})
+        });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -132,9 +140,12 @@ router.post('/pedidos', async (req, res) => {
         const d = req.body;
         const folio = d.folio || await nextFolio('pedidos', 'PED');
         const [r] = await pool.query(
-            'INSERT INTO pedidos (folio,cot_folio,cliente,faena,responsable,estado,fecha,forma_pago,total,abono,obs,items) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
-            [folio, d.cot_folio||d.cotFolio||null, d.cliente||null, d.faena||null, d.responsable||null,
-             d.estado||'Pendiente', d.fecha||null, d.forma_pago||null, d.total||0, d.abono||0, d.obs||null, JSON.stringify(d.items||[])]
+            'INSERT INTO pedidos (folio,cot_folio,ppto_id,cliente,cliente_id,faena,responsable,estado,fecha,forma_pago,total_venta,total_costo,total_margen,ganancia,abono,obs,items) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+            [folio, d.cot_folio||d.cotFolio||null, d.ppto_id||null,
+             d.cliente||null, d.cliente_id||null, d.faena||null, d.responsable||null,
+             d.estado||'Pendiente', d.fecha||null, d.forma_pago||null,
+             d.total_venta||d.total||0, d.total_costo||0, d.total_margen||0, d.ganancia||0,
+             d.abono||0, d.obs||null, JSON.stringify(d.items||[])]
         );
         const [rows] = await pool.query('SELECT * FROM pedidos WHERE id=?', [r.insertId]);
         const row = rows[0];
@@ -146,9 +157,15 @@ router.put('/pedidos/:folio', async (req, res) => {
     try {
         const d = req.body;
         await pool.query(
-            'UPDATE pedidos SET cliente=?,faena=?,responsable=?,estado=?,fecha=?,forma_pago=?,total=?,abono=?,obs=?,items=? WHERE folio=?',
+            `UPDATE pedidos SET cliente=?,faena=?,responsable=?,estado=?,fecha=?,forma_pago=?,
+             total_venta=?,total_costo=?,ganancia=?,abono=?,obs=?,items=?,datos_cliente=?,dir_entrega=? WHERE folio=?`,
             [d.cliente||null, d.faena||null, d.responsable||null, d.estado||'Pendiente',
-             d.fecha||null, d.forma_pago||null, d.total||0, d.abono||0, d.obs||null, JSON.stringify(d.items||[]), req.params.folio]
+             d.fecha||null, d.forma_pago||null,
+             d.total_venta||d.total||0, d.total_costo||0, d.ganancia||0,
+             d.abono||0, d.obs||null, JSON.stringify(d.items||[]),
+             d.datos_cliente ? JSON.stringify(d.datos_cliente) : null,
+             d.dir_entrega||null,
+             req.params.folio]
         );
         const [rows] = await pool.query('SELECT * FROM pedidos WHERE folio=?', [req.params.folio]);
         const row = rows[0];
@@ -169,7 +186,11 @@ router.delete('/pedidos/:folio', async (req, res) => {
 router.get('/oc', async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM ordenes_compra ORDER BY id DESC');
-        res.json(rows.map(r => ({ ...r, items: r.items ? JSON.parse(r.items) : [] })));
+        res.json(rows.map(r => ({
+            ...r,
+            items:         typeof r.items         === 'string' ? JSON.parse(r.items)         : (r.items         || []),
+            datos_cliente: typeof r.datos_cliente === 'string' ? JSON.parse(r.datos_cliente) : (r.datos_cliente || {})
+        })));
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -178,7 +199,11 @@ router.get('/oc/:folio', async (req, res) => {
         const [rows] = await pool.query('SELECT * FROM ordenes_compra WHERE folio=?', [req.params.folio]);
         if (!rows.length) return res.status(404).json({ error: 'No encontrada' });
         const r = rows[0];
-        res.json({ ...r, items: r.items ? JSON.parse(r.items) : [] });
+        res.json({
+            ...r,
+            items:         typeof r.items         === 'string' ? JSON.parse(r.items)         : (r.items         || []),
+            datos_cliente: typeof r.datos_cliente === 'string' ? JSON.parse(r.datos_cliente) : (r.datos_cliente || {})
+        });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -187,9 +212,9 @@ router.post('/oc', async (req, res) => {
         const d = req.body;
         const folio = d.folio || await nextFolio('ordenes_compra', 'OC');
         const [r] = await pool.query(
-            'INSERT INTO ordenes_compra (folio,pedido_folio,proveedor,estado,fecha,total,obs,items) VALUES (?,?,?,?,?,?,?,?)',
-            [folio, d.pedido_folio||d.pedidoFolio||null, d.proveedor||null,
-             d.estado||'Borrador', d.fecha||null, d.total||0, d.obs||null, JSON.stringify(d.items||[])]
+            'INSERT INTO ordenes_compra (folio,pedido_folio,ppto_id,proveedor,estado,fecha,total_costo,obs,items) VALUES (?,?,?,?,?,?,?,?,?)',
+            [folio, d.pedido_folio||d.pedidoFolio||null, d.ppto_id||null, d.proveedor||null,
+             d.estado||'Borrador', d.fecha||null, d.total_costo||d.total||0, d.obs||null, JSON.stringify(d.items||[])]
         );
         const [rows] = await pool.query('SELECT * FROM ordenes_compra WHERE id=?', [r.insertId]);
         const row = rows[0];
@@ -201,11 +226,27 @@ router.put('/oc/:folio', async (req, res) => {
     try {
         const d = req.body;
         await pool.query(
-            'UPDATE ordenes_compra SET proveedor=?,estado=?,fecha=?,total=?,obs=?,items=? WHERE folio=?',
-            [d.proveedor||null, d.estado||'Borrador', d.fecha||null, d.total||0, d.obs||null, JSON.stringify(d.items||[]), req.params.folio]
+            `UPDATE ordenes_compra SET proveedor=?,estado=?,fecha=?,total_costo=?,obs=?,items=?,datos_cliente=?,dir_entrega=? WHERE folio=?`,
+            [d.proveedor||null, d.estado||'Borrador', d.fecha||null,
+             d.total_costo||d.total||0, d.obs||null, JSON.stringify(d.items||[]),
+             d.datos_cliente ? JSON.stringify(d.datos_cliente) : null,
+             d.dir_entrega||null,
+             req.params.folio]
         );
         const [rows] = await pool.query('SELECT * FROM ordenes_compra WHERE folio=?', [req.params.folio]);
         const row = rows[0];
+
+        // ── Sincronización automática OC → Pedido ────────────────
+        const pedFolio = row.pedido_folio;
+        if (pedFolio) {
+            let nuevoEstadoPed = null;
+            if (d.estado === 'Aprobada')  nuevoEstadoPed = 'En compra';
+            if (d.estado === 'Comprada')  nuevoEstadoPed = 'Preparación';
+            if (nuevoEstadoPed) {
+                await pool.query('UPDATE pedidos SET estado=? WHERE folio=?', [nuevoEstadoPed, pedFolio]);
+            }
+        }
+
         res.json({ ...row, items: row.items ? JSON.parse(row.items) : [] });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -214,6 +255,217 @@ router.delete('/oc/:folio', async (req, res) => {
     try {
         await pool.query('DELETE FROM ordenes_compra WHERE folio=?', [req.params.folio]);
         res.json({ ok: true });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+/* ════════════════════════════════════════════════════════════
+   PRESUPUESTOS (Solicitud → Presupuesto Interno → Cotización)
+   ════════════════════════════════════════════════════════════ */
+router.get('/presupuestos', async (req, res) => {
+    try {
+        const [rows] = await pool.query(
+            'SELECT id, folio, estado, cliente, cliente_id, cabecera, creado_en, actualizado FROM presupuestos ORDER BY creado_en DESC'
+        );
+        res.json(rows.map(r => ({
+            ...r,
+            cabecera: typeof r.cabecera === 'string' ? JSON.parse(r.cabecera) : r.cabecera,
+            items:    typeof r.items    === 'string' ? JSON.parse(r.items)    : r.items,
+            ppto:     typeof r.ppto     === 'string' ? JSON.parse(r.ppto)     : r.ppto
+        })));
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+router.get('/presupuestos/:id', async (req, res) => {
+    try {
+        const [rows] = await pool.query('SELECT * FROM presupuestos WHERE id=?', [req.params.id]);
+        if (!rows.length) return res.status(404).json({ error: 'No encontrado' });
+        const r = rows[0];
+        res.json({
+            ...r,
+            cabecera: typeof r.cabecera === 'string' ? JSON.parse(r.cabecera) : r.cabecera,
+            items:    typeof r.items    === 'string' ? JSON.parse(r.items)    : r.items,
+            ppto:     typeof r.ppto     === 'string' ? JSON.parse(r.ppto)     : r.ppto
+        });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/presupuestos', async (req, res) => {
+    try {
+        const d = req.body;
+        await pool.query(
+            'INSERT INTO presupuestos (id,folio,estado,cliente,cliente_id,cabecera,items,ppto) VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE estado=VALUES(estado),cliente=VALUES(cliente),cliente_id=VALUES(cliente_id),cabecera=VALUES(cabecera),items=VALUES(items),ppto=VALUES(ppto)',
+            [d.id, d.folio||d.id, d.estado||'solicitud', d.cabecera?.cliente||'', d.cabecera?.clienteId||'', JSON.stringify(d.cabecera||{}), JSON.stringify(d.items||[]), JSON.stringify(d.ppto||{})]
+        );
+        const [rows] = await pool.query('SELECT * FROM presupuestos WHERE id=?', [d.id]);
+        res.json(rows[0]);
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+router.put('/presupuestos/:id', async (req, res) => {
+    try {
+        const d = req.body;
+        await pool.query(
+            'UPDATE presupuestos SET estado=?,cliente=?,cliente_id=?,cabecera=?,items=?,ppto=? WHERE id=?',
+            [d.estado||'solicitud', d.cabecera?.cliente||'', d.cabecera?.clienteId||'', JSON.stringify(d.cabecera||{}), JSON.stringify(d.items||[]), JSON.stringify(d.ppto||{}), req.params.id]
+        );
+        const [rows] = await pool.query('SELECT * FROM presupuestos WHERE id=?', [req.params.id]);
+        res.json(rows[0]);
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+router.delete('/presupuestos/:id', async (req, res) => {
+    try {
+        await pool.query('DELETE FROM presupuestos WHERE id=?', [req.params.id]);
+        res.json({ ok: true });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+/* ─────────────────────────────────────────────────────────────
+   APROBAR COTIZACIÓN → genera Pedido + OC de forma atómica
+   POST /api/presupuestos/:id/aprobar
+   ───────────────────────────────────────────────────────────── */
+router.post('/presupuestos/:id/aprobar', async (req, res) => {
+    const conn = await pool.getConnection();
+    try {
+        await conn.beginTransaction();
+
+        // 1. Cargar presupuesto
+        const [rows] = await conn.query('SELECT * FROM presupuestos WHERE id=?', [req.params.id]);
+        if (!rows.length) { await conn.rollback(); conn.release(); return res.status(404).json({ error: 'No encontrado' }); }
+        const p = rows[0];
+        if (p.bloqueado) { await conn.rollback(); conn.release(); return res.status(400).json({ error: 'Este registro ya está aprobado y bloqueado' }); }
+
+        const cabecera  = typeof p.cabecera === 'string' ? JSON.parse(p.cabecera) : (p.cabecera || {});
+        const items     = typeof p.items    === 'string' ? JSON.parse(p.items)    : (p.items    || []);
+        const ppto      = typeof p.ppto     === 'string' ? JSON.parse(p.ppto)     : (p.ppto     || {});
+        const folioCot  = p.folio || req.params.id;
+        const fecha     = cabecera.fecha || new Date().toISOString().slice(0,10);
+        const mg        = parseInt(req.body.margen) || 30;
+
+        // 2. Construir ítems enriquecidos con financiero
+        let totalVenta = 0, totalCosto = 0, ganancia = 0;
+        const itemsPedido = items.map(it => {
+            const pptoIt  = ppto[it.id] || { opciones: [] };
+            const sel     = (pptoIt.opciones || []).find(o => o.seleccionada);
+            const cant    = parseFloat(it.cant) || 1;
+            const costo   = sel ? (parseFloat(sel.precio) || 0) : 0;
+            const margen  = sel ? (parseFloat(sel.margen) ?? mg) : mg;
+            const venta   = sel ? (parseFloat(sel.ventaUnit) || Math.round(costo * (1 + margen/100))) : 0;
+            totalCosto += costo * cant;
+            totalVenta += venta * cant;
+            return {
+                desc:       it.desc,
+                cant,
+                unidad:     it.unidad || 'un',
+                subItems:   it.subItems || [],
+                costoUnit:  costo,
+                ventaUnit:  venta,
+                margen,
+                tienda:     sel ? (sel.lugar || '') : '',
+                url:        sel ? (sel.url   || '') : '',
+                ganancia:   Math.round((venta - costo) * cant)
+            };
+        }).filter(it => it.costoUnit > 0 || it.ventaUnit > 0);
+        ganancia = totalVenta - totalCosto;
+        const margenProm = totalCosto > 0 ? Math.round((ganancia / totalCosto) * 100 * 100) / 100 : 0;
+
+        const financiero = { totalVenta, totalCosto, ganancia, margenProm };
+
+        // 3. Generar folio pedido
+        const [cntPed] = await conn.query('SELECT COUNT(*) as n FROM pedidos');
+        const folioPed = 'PED-' + String((cntPed[0].n || 0) + 1).padStart(5, '0');
+
+        // 4. Generar folio OC (una por proveedor o una general)
+        const [cntOC] = await conn.query('SELECT COUNT(*) as n FROM ordenes_compra');
+        const folioOC  = 'OC-' + String((cntOC[0].n || 0) + 1).padStart(5, '0');
+
+        // 5. Insertar Pedido
+        const datosCliente = {
+            nombre:    cabecera.cliente    || '',
+            id:        cabecera.clienteId  || '',
+            rut:       cabecera.rut        || '',
+            giro:      cabecera.giro       || '',
+            direccion: cabecera.dirCliente || '',
+            contacto:  cabecera.contacto   || '',
+            email:     cabecera.email      || '',
+            telefono:  cabecera.telefono   || ''
+        };
+        const dirEntrega = cabecera.faena || cabecera.dirEntrega || '';
+        await conn.query(
+            `INSERT INTO pedidos (folio,cot_folio,ppto_id,cliente,cliente_id,faena,responsable,estado,fecha,forma_pago,total_venta,total_costo,total_margen,ganancia,obs,items,datos_cliente,dir_entrega)
+             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+            [folioPed, folioCot, p.id,
+             cabecera.cliente||'', cabecera.clienteId||'', cabecera.faena||'', cabecera.responsable||'',
+             'Pendiente', fecha, cabecera.pago||null, totalVenta, totalCosto, margenProm, ganancia,
+             cabecera.obs||null, JSON.stringify(itemsPedido),
+             JSON.stringify(datosCliente), dirEntrega]
+        );
+
+        // 6. Insertar OC — ítems con costo interno + trazabilidad completa
+        const itemsOC = itemsPedido.map(it => ({
+            desc:       it.desc,
+            cant:       it.cant,
+            unidad:     it.unidad,
+            subItems:   it.subItems || [],
+            costoUnit:  it.costoUnit,
+            totalCosto: Math.round(it.costoUnit * it.cant),
+            tienda:     it.tienda,
+            url:        it.url
+        }));
+        await conn.query(
+            `INSERT INTO ordenes_compra (folio,pedido_folio,ppto_id,cot_folio,cliente,cliente_id,proveedor,estado,fecha,total_costo,obs,items,datos_cliente,dir_entrega)
+             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+            [folioOC, folioPed, p.id, folioCot,
+             cabecera.cliente||'', cabecera.clienteId||'',
+             null, 'Borrador', fecha, totalCosto, cabecera.obs||null, JSON.stringify(itemsOC),
+             JSON.stringify(datosCliente), dirEntrega]
+        );
+
+        // 7. Actualizar presupuesto: aprobada + bloqueado + referencias
+        await conn.query(
+            `UPDATE presupuestos SET estado='aprobada', bloqueado=1, pedido_folio=?, oc_folio=?, financiero=? WHERE id=?`,
+            [folioPed, folioOC, JSON.stringify(financiero), p.id]
+        );
+
+        await conn.commit();
+        res.json({ ok: true, folioPed, folioOC, financiero });
+    } catch (e) {
+        await conn.rollback();
+        res.status(500).json({ error: e.message });
+    } finally {
+        conn.release();
+    }
+});
+
+/* ─────────────────────────────────────────────────────────────
+   DUPLICAR COTIZACIÓN
+   POST /api/presupuestos/:id/duplicar
+   ───────────────────────────────────────────────────────────── */
+router.post('/presupuestos/:id/duplicar', async (req, res) => {
+    try {
+        const [rows] = await pool.query('SELECT * FROM presupuestos WHERE id=?', [req.params.id]);
+        if (!rows.length) return res.status(404).json({ error: 'No encontrado' });
+        const orig = rows[0];
+
+        // Nuevo ID y folio
+        const nuevoId    = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+        const n          = Math.floor(Math.random() * 900000 + 100000);
+        const nuevoFolio = 'COT-' + n;
+
+        await pool.query(
+            `INSERT INTO presupuestos (id,folio,estado,bloqueado,cliente,cliente_id,cabecera,items,ppto)
+             VALUES (?,?,?,0,?,?,?,?,?)`,
+            [nuevoId, nuevoFolio, 'solicitud', orig.cliente||'', orig.cliente_id||'',
+             orig.cabecera, orig.items, orig.ppto]
+        );
+        const [newRows] = await pool.query('SELECT * FROM presupuestos WHERE id=?', [nuevoId]);
+        const r = newRows[0];
+        res.json({
+            ...r,
+            cabecera: typeof r.cabecera === 'string' ? JSON.parse(r.cabecera) : r.cabecera,
+            items:    typeof r.items    === 'string' ? JSON.parse(r.items)    : r.items,
+            ppto:     typeof r.ppto     === 'string' ? JSON.parse(r.ppto)     : r.ppto
+        });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -259,44 +511,55 @@ router.post('/sync', async (req, res) => {
 });
 
 /* ════════════════════════════════════════════════════════════
-   PROXY MERCADOLIBRE — evita bloqueo CORS/403 desde browser
-   GET /api/ml-search?q=...&limit=...&condition=...
+   BÚSQUEDA DE PRECIOS — Serper Shopping (Google Shopping Chile)
+   GET /api/serper-shopping?q=...
    ════════════════════════════════════════════════════════════ */
-router.get('/ml-search', (req, res) => {
-    const { q, limit = '20', condition } = req.query;
-    if (!q) return res.status(400).json({ error: 'Falta parámetro q' });
+router.get('/serper-shopping', async (req, res) => {
+    const { q } = req.query;
+    if (!q) return res.status(400).json({ error: 'Parámetro q requerido' });
 
-    let path = `/sites/MLC/search?q=${encodeURIComponent(q)}&limit=${limit}`;
-    if (condition) path += `&condition=${condition}`;
+    try {
+        const response = await fetch('https://google.serper.dev/shopping', {
+            method: 'POST',
+            headers: {
+                'X-API-KEY': process.env.SERPER_API_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ q, gl: 'cl', hl: 'es-419', num: 10 })
+        });
 
-    const https = require('https');
-    const options = {
-        hostname: 'api.mercadolibre.com',
-        path,
-        method: 'GET',
-        headers: {
-            'User-Agent': 'Mozilla/5.0 (compatible; VALTRAX/1.0)',
-            'Accept': 'application/json'
-        }
-    };
+        const data = await response.json();
+        const items = (data.shopping || []).map(item => ({
+            name: item.title,
+            store: item.source,
+            price_raw: item.price,
+            price: parseFloat(String(item.price).replace(/[^0-9.]/g, '')) || 0,
+            currency: 'CLP',
+            url: item.link,
+            image_url: item.imageUrl || ''
+        })).filter(item => item.price > 0);
 
-    const request = https.request(options, (mlRes) => {
-        let body = '';
-        mlRes.on('data', chunk => body += chunk);
-        mlRes.on('end', () => {
-            if (mlRes.statusCode !== 200) {
-                return res.status(502).json({ error: 'MercadoLibre HTTP ' + mlRes.statusCode });
-            }
-            try {
-                res.json(JSON.parse(body));
-            } catch (e) {
-                res.status(502).json({ error: 'JSON inválido: ' + e.message });
+        const prices = items.map(i => i.price);
+        const avg = prices.length ? prices.reduce((a, b) => a + b, 0) / prices.length : 0;
+
+        res.json({
+            query: q,
+            results: items,
+            summary: {
+                total: items.length,
+                min_price: prices.length ? Math.min(...prices) : 0,
+                max_price: prices.length ? Math.max(...prices) : 0,
+                avg_price: Math.round(avg)
+            },
+            price_suggestions: {
+                margin_15: Math.round(avg * 1.15),
+                margin_25: Math.round(avg * 1.25),
+                margin_35: Math.round(avg * 1.35)
             }
         });
-    });
-
-    request.on('error', e => res.status(502).json({ error: e.message }));
-    request.end();
+    } catch (error) {
+        res.status(500).json({ error: 'Error al buscar precios', detail: error.message });
+    }
 });
 
 module.exports = router;
