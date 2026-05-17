@@ -505,8 +505,51 @@
 
     /* ── cargar entidad ────────────────────────────────────────────── */
     const params = new URLSearchParams(location.search);
-    const id = parseInt(params.get('id')) || 1;
-    const ent = ValtraxDB.getEntidad(id) || ValtraxDB.getEntidades()[0];
+    const rawId  = params.get('id') || '';
+
+    async function resolverEntidad() {
+        // IDs con prefijo "api-" provienen de clientes en MySQL
+        if (rawId.startsWith('api-')) {
+            // 1. Buscar primero en ValtraxDB (si fue guardado localmente)
+            let ent = ValtraxDB.getEntidades().find(e => String(e.id) === rawId);
+            if (!ent) {
+                // 2. Fetchar desde la API
+                try {
+                    const numId = rawId.replace('api-', '');
+                    const res = await fetch('/api/clientes/' + numId);
+                    if (res.ok) {
+                        const c = await res.json();
+                        ent = {
+                            id:        rawId,
+                            nombre:    c.nombre || c.razon_social || '',
+                            rut:       c.rut        || '',
+                            giro:      c.giro       || '',
+                            estado:    c.estado     || 'Activo',
+                            tipo:      c.tipo       || 'Cliente Jurídico',
+                            contacto:  c.contacto   || '',
+                            cargo:     c.cargo      || '',
+                            tel:       c.telefono   || '',
+                            correo:    c.email      || '',
+                            ciudad:    c.direccion  || '',
+                            pago:      c.condicion_pago || '',
+                            moneda:    c.moneda     || 'CLP',
+                            credito:   c.credito    || 0,
+                            descuento: c.descuento  || 0,
+                            obs:       c.obs        || ''
+                        };
+                    }
+                } catch(e) { /* sin conexión */ }
+            }
+            return ent || ValtraxDB.getEntidades()[0] || { nombre: 'Sin datos' };
+        }
+        // IDs numéricos → localStorage
+        const id = parseInt(rawId) || 1;
+        return ValtraxDB.getEntidad(id) || ValtraxDB.getEntidades()[0] || { nombre: 'Sin datos' };
+    }
+
+    resolverEntidad().then(function(ent) { hydratarPagina(ent); });
+
+    function hydratarPagina(ent) {
 
     /* header */
     document.getElementById('phNombre').textContent = ent.nombre;
@@ -621,6 +664,7 @@
       ValtraxDB.saveEntidad(updated);
       alert('Cambios guardados correctamente.');
     };
+    } // fin hydratarPagina
     </script>
     <!--! ================================================================ !-->
     <!--! [End] Main Content !-->
