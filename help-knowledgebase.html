@@ -126,8 +126,8 @@
                     </li>
 
                     <!-- ── ADMINISTRACIÓN (solo admin) ───────────────── -->
-                    <li class="nxl-item nxl-caption vx-admin-only" style="display:none;"><label>Administración</label></li>
-                    <li class="nxl-item vx-admin-only" style="display:none;">
+                    <li class="nxl-item nxl-caption vx-admin-only vx-superadmin-only" style="display:none;"><label>Administración</label></li>
+                    <li class="nxl-item vx-superadmin-only" style="display:none;">
                         <a href="usuarios.html" class="nxl-link">
                             <span class="nxl-micon"><i class="feather-user-check"></i></span>
                             <span class="nxl-mtext">Usuarios</span>
@@ -225,8 +225,12 @@
     <script>
     /* VALTRAX — Mostrar sección admin si rol=administrador */
     (function(){
-        if(localStorage.getItem('vx_rol')==='administrador'){
+        var vxRol=localStorage.getItem('vx_rol');
+        if(vxRol==='administrador'||vxRol==='superadministrador'){
             document.querySelectorAll('.vx-admin-only').forEach(function(el){el.style.display='';});
+        }
+        if(vxRol==='superadministrador'){
+            document.querySelectorAll('.vx-superadmin-only').forEach(function(el){el.style.display='';});
         }
     })();
     </script>
