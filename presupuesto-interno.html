@@ -16,6 +16,7 @@
     <link rel="stylesheet" type="text/css" href="assets/css/valtrax-dashboard.css" />
     <link rel="stylesheet" type="text/css" href="assets/css/cotizacion.css" />
     <style id="valtrax-nav-pre-init">.nxl-navbar .nxl-submenu{display:none}html.valtrax-loading .nxl-navigation,html.valtrax-loading .nxl-navigation *{transition:none!important;animation:none!important}</style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
     /* ── Tabs ── */
     .pi-tabs{display:flex;gap:0;border-bottom:2px solid #e2e8f0;margin-bottom:0;}
@@ -31,7 +32,9 @@
     .e-badge{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
     .e-sol{background:#fef3c7;color:#b45309;}
     .e-ppto{background:#dbeafe;color:#1d4ed8;}
-    .e-emit{background:#d1fae5;color:#065f46;}
+    .e-pendiente{background:#ffedd5;color:#c2410c;}
+    .e-cot{background:#ede9fe;color:#6d28d9;}
+    .e-aprobada{background:#d1fae5;color:#065f46;}
 
     /* ── Sección/card ── */
     .pi-sec{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px 24px;margin-bottom:18px;}
@@ -43,7 +46,7 @@
 
     /* ── Autocomplete ── */
     .ac-drop{position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid #2563eb;border-radius:0 0 10px 10px;z-index:2000;max-height:200px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.12);}
-    .ac-drop .ac-it{padding:9px 14px;font-size:13px;cursor:pointer;color:#1e293b;}
+    .ac-drop .ac-it{padding:9px 16px 9px 20px;font-size:13px;cursor:pointer;color:#1e293b;}
     .ac-drop .ac-it:hover{background:#eff6ff;}
 
     /* ── Tabla ítems Tab1 ── */
@@ -54,7 +57,7 @@
     .pi-tbl tr:hover td{background:#f8fafc;}
     .pi-tbl input,.pi-tbl select{border:1.5px solid #e2e8f0;border-radius:8px;padding:6px 10px;font-size:13px;width:100%;outline:none;transition:border .2s;font-family:'DM Sans',sans-serif;background:#fff;}
     .pi-tbl input:focus,.pi-tbl select:focus{border-color:#2563eb;}
-    .sub-row td{background:#fafcff;padding:4px 10px 8px 36px;border-bottom:1px dashed #e2e8f0;}
+    .sub-row td{background:#fafcff;padding:4px 8px 8px 8px;border-bottom:1px dashed #e2e8f0;}
     .sub-row:hover td{background:#f0f6ff;}
     .btn-addsub{background:none;border:1px dashed #cbd5e1;border-radius:6px;color:#64748b;font-size:11px;padding:3px 10px;cursor:pointer;margin-top:4px;transition:all .15s;}
     .btn-addsub:hover{border-color:#2563eb;color:#2563eb;}
@@ -99,18 +102,56 @@
 
     /* ── Modal IA ── */
     #modalIA{display:none;position:fixed;inset:0;z-index:12000;background:rgba(10,18,35,.72);backdrop-filter:blur(5px);align-items:center;justify-content:center;}
-    .mia-box{background:#fff;border-radius:18px;width:96%;max-width:780px;max-height:88vh;overflow-y:auto;box-shadow:0 28px 72px rgba(0,0,0,.28);font-family:'DM Sans',sans-serif;}
-    .mia-hdr{display:flex;justify-content:space-between;align-items:flex-start;padding:18px 22px 14px;border-bottom:1px solid #e2e8f0;position:sticky;top:0;background:#fff;z-index:2;border-radius:18px 18px 0 0;}
-    .ia-card{border:1.5px solid #e2e8f0;border-radius:11px;padding:12px 14px;cursor:pointer;transition:all .16s;display:flex;gap:12px;align-items:flex-start;margin-bottom:8px;}
-    .ia-card:hover{border-color:#2563eb;background:#eff6ff;}
-    .ia-card.sel{border-color:#059669;background:#f0fdf4;}
-    .ia-rk{width:28px;height:28px;border-radius:50%;background:#2563eb;color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-    .ia-rk.g{background:linear-gradient(135deg,#f59e0b,#fcd34d);color:#78350f;}
-    .ia-rk.s{background:linear-gradient(135deg,#94a3b8,#cbd5e1);color:#334155;}
-    .ia-rk.b{background:linear-gradient(135deg,#d97706,#fbbf24);color:#78350f;}
+    .mia-box{background:#fff;border-radius:18px;width:96%;max-width:920px;max-height:88vh;overflow-y:auto;box-shadow:0 28px 72px rgba(0,0,0,.28);font-family:'DM Sans',sans-serif;}
+    .mia-hdr{display:flex;justify-content:space-between;align-items:flex-start;padding:16px 20px 12px;border-bottom:1px solid #e2e8f0;position:sticky;top:0;background:#fff;z-index:2;border-radius:18px 18px 0 0;}
+    /* Grid de tarjetas estilo Google Shopping */
+    #miaLista{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;padding:4px 0;}
+    .ia-card{border:1.5px solid #e2e8f0;border-radius:10px;padding:0;cursor:pointer;transition:all .16s;display:flex;flex-direction:column;overflow:hidden;position:relative;}
+    .ia-card:hover{border-color:#2563eb;box-shadow:0 4px 16px rgba(37,99,235,.15);transform:translateY(-1px);}
+    .ia-card.sel{border-color:#059669;box-shadow:0 4px 14px rgba(5,150,105,.18);}
+    .ia-card-img{width:100%;aspect-ratio:1/1;object-fit:contain;background:#f8fafc;border-bottom:1px solid #f1f5f9;padding:8px;}
+    .ia-card-img-ph{width:100%;aspect-ratio:1/1;background:#f1f5f9;display:flex;align-items:center;justify-content:center;color:#cbd5e1;font-size:28px;border-bottom:1px solid #f1f5f9;}
+    .ia-card-body{padding:8px 10px;flex:1;display:flex;flex-direction:column;gap:2px;}
+    .ia-card-store{font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .ia-card-name{font-size:11px;color:#334155;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;flex:1;}
+    .ia-card-price{font-size:15px;font-weight:800;color:#2563eb;margin-top:4px;}
+    .ia-card-venta{font-size:10px;color:#059669;font-weight:600;}
+    .ia-card-rank{position:absolute;top:6px;left:6px;width:20px;height:20px;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;color:#fff;background:#2563eb;}
+    .ia-card-rank.g{background:linear-gradient(135deg,#f59e0b,#fcd34d);color:#78350f;}
+    .ia-card-rank.s{background:linear-gradient(135deg,#94a3b8,#cbd5e1);color:#334155;}
+    .ia-card-rank.b{background:linear-gradient(135deg,#d97706,#fbbf24);color:#78350f;}
+    /* compat legacy */
+    .ia-rk{display:none;}
 
     /* ── Toast ── */
     #vx-toast{position:fixed;bottom:28px;right:28px;z-index:99999;background:#1e293b;color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;}
+
+    /* ── Ocultar flechas en input number ── */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+    input[type=number]{-moz-appearance:textfield;appearance:textfield;}
+
+    /* ── Money wrap (prefijo $) ── */
+    .money-wrap{position:relative;display:block;}
+    .money-wrap::before{content:'$';position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:12px;color:#94a3b8;pointer-events:none;z-index:1;}
+    .money-wrap input{padding-left:20px!important;}
+
+    /* ── Compactar pcard header ── */
+    .pcard-hdr{background:#f8fafc;padding:7px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;user-select:none;}
+    .pcard-title{font-weight:700;font-size:12px;color:#1e293b;}
+    .pcard-meta{font-size:10px;color:#64748b;margin-top:1px;}
+    .pcard-body{padding:10px 14px;}
+
+    /* ── Compactar filas Tab1 ── */
+    .pi-tbl td{padding:5px 8px;border-bottom:1px solid #f1f5f9;vertical-align:middle;font-size:13px;}
+
+    /* ── Badge autorización (legacy, se mantiene por compatibilidad) ── */
+    .e-auth{background:#fef9c3;color:#92400e;}
+    .e-autorizado{background:#d1fae5;color:#065f46;}
+    /* ── Zona multi-check ── */
+    .zona-opt{display:flex;align-items:center;gap:7px;padding:5px 14px;font-size:13px;cursor:pointer;white-space:nowrap;transition:background .12s;}
+    .zona-opt:hover{background:#f1f5f9;}
+    .zona-opt input{accent-color:#7c3aed;width:14px;height:14px;cursor:pointer;}
     </style>
 </head>
 <body>
@@ -151,8 +192,6 @@
                     <li class="nxl-item"><a class="nxl-link" href="pedidos.html"><span class="nxl-micon"><i class="feather-package"></i></span><span class="nxl-mtext">Pedidos</span></a></li>
                     <li class="nxl-item"><a class="nxl-link" href="ordenes-compra.html"><span class="nxl-micon"><i class="feather-shopping-bag"></i></span><span class="nxl-mtext">Órdenes de Compra</span></a></li>
                     <li class="nxl-item"><a class="nxl-link" href="entregas.html"><span class="nxl-micon"><i class="feather-check-square"></i></span><span class="nxl-mtext">Entregas</span></a></li>
-                    <li class="nxl-item nxl-caption"><label>Herramientas</label></li>
-                    <li class="nxl-item"><a class="nxl-link" href="buscador-precios.html"><span class="nxl-micon"><i class="feather-tag"></i></span><span class="nxl-mtext">Buscador de Precios</span></a></li>
                 </ul>
             </div>
         </div>
@@ -273,10 +312,10 @@
                                 <input type="text" id="solCliente" placeholder="Buscar cliente..."
                                     autocomplete="off" style="padding-right:32px;"
                                     oninput="solAcFiltrar(this.value)"
-                                    onfocus="solAcFiltrar(this.value)"
-                                    onblur="setTimeout(solAcOcultar,180)">
+                                    onfocus="if(this.value.trim())solAcFiltrar(this.value)"
+                                    onblur="setTimeout(solAcOcultar,200)">
                                 <input type="hidden" id="solClienteId">
-                                <div id="solDrop" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:9999;
+                                <div id="solDrop" class="ac-drop" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:9999;
                                     background:#fff;border:1.5px solid #cbd5e1;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);
                                     max-height:220px;overflow-y:auto;margin-top:2px;"></div>
                             </div>
@@ -340,14 +379,8 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-2">
-                            <div class="cot-field">
-                                <label>OC Cliente</label>
-                                <input type="text" id="solOC" placeholder="Nº OC (opcional)">
-                            </div>
-                        </div>
                         <!-- Fila 3 -->
-                        <div class="col-md-5">
+                        <div class="col-md-6">
                             <div class="cot-field">
                                 <label>Lugar de Entrega</label>
                                 <input type="text" id="solFaena" list="solListaFaenas" placeholder="Para retiro en bodega" autocomplete="off">
@@ -362,7 +395,7 @@
                                 </datalist>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="cot-field">
                                 <label>Tiempo de Entrega</label>
                                 <select id="solTiempo">
@@ -372,12 +405,6 @@
                                     <option>45 días hábiles</option>
                                     <option>A coordinar con cliente</option>
                                 </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="cot-field">
-                                <label>Referencia interna</label>
-                                <input type="text" id="solRef" placeholder="Referencia opcional...">
                             </div>
                         </div>
                         <!-- Fila 4 -->
@@ -392,11 +419,8 @@
 
                 <!-- Ítems -->
                 <div class="pi-sec">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="mb-3">
                         <div class="pi-sec-title mb-0">Ítems Solicitados</div>
-                        <button class="btn btn-sm btn-outline-primary" onclick="agregarItem()">
-                            <i class="feather-plus me-1"></i>Agregar Ítem
-                        </button>
                     </div>
                     <div class="table-responsive">
                         <table class="pi-tbl">
@@ -412,9 +436,10 @@
                             <tbody id="tbodyItems"></tbody>
                         </table>
                     </div>
-                    <div id="emptyItems" class="text-center py-4 text-muted fs-13">
-                        <i class="feather-inbox" style="font-size:28px;display:block;margin-bottom:8px;opacity:.35;"></i>
-                        Sin ítems. Haz clic en "Agregar Ítem".
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-outline-primary" onclick="agregarItem()">
+                            <i class="feather-plus me-1"></i>Agregar Ítem
+                        </button>
                     </div>
                 </div>
 
@@ -427,8 +452,11 @@
                         <button class="btn btn-outline-secondary btn-sm" onclick="nuevaSolicitud()">
                             <i class="feather-refresh-cw me-1"></i>Nueva
                         </button>
-                        <button class="btn btn-primary" onclick="guardarSolicitud()">
+                        <button class="btn btn-outline-primary" onclick="guardarSolicitud()">
                             <i class="feather-save me-1"></i>Guardar Solicitud
+                        </button>
+                        <button class="btn btn-primary" onclick="guardarYSiguiente()">
+                            <i class="feather-arrow-right me-1"></i>Guardar y continuar
                         </button>
                     </div>
                 </div>
@@ -442,43 +470,40 @@
             <div class="pi-panel" id="panel2">
               <div class="card-body">
 
-                <!-- Resumen cabecera (readonly) -->
-                <div class="pi-sec" style="padding:12px 20px;">
+                <!-- Cabecera compacta + Ganancia + Zona -->
+                <div class="pi-sec" style="padding:9px 16px;margin-bottom:12px;">
                     <div class="d-flex flex-wrap gap-3 align-items-center">
                         <div><span class="text-muted fs-11 fw-600 text-uppercase">Cliente:</span>&nbsp;<span id="pptoCliente" class="fw-semibold fs-13">—</span></div>
                         <span class="text-muted">·</span>
                         <div><span class="text-muted fs-11 fw-600 text-uppercase">Faena:</span>&nbsp;<span id="pptoFaena" class="fw-semibold fs-13">—</span></div>
                         <span class="text-muted">·</span>
                         <div><span class="text-muted fs-11 fw-600 text-uppercase">Fecha:</span>&nbsp;<span id="pptoFecha" class="fw-semibold fs-13">—</span></div>
+                        <span class="text-muted">·</span>
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="text-muted fs-11 fw-600 text-uppercase">Ganancia:</span>
+                            <input type="number" id="margenGlobal" value="30" min="0" max="500"
+                                style="border:1.5px solid #e2e8f0;border-radius:7px;padding:3px 7px;font-size:13px;width:54px;font-family:'DM Sans',sans-serif;text-align:center;">
+                            <span class="text-muted fs-12">%</span>
+                            <button class="btn btn-xs btn-outline-secondary" style="font-size:11px;padding:3px 9px;" onclick="aplicarMargenGlobal()">Aplicar</button>
+                        </div>
+                        <span class="text-muted">·</span>
+                        <div class="d-flex align-items-center gap-1" style="position:relative;">
+                            <span class="text-muted fs-11 fw-600 text-uppercase">Zona:</span>
+                            <button type="button" id="zonaBtnToggle" onclick="toggleZonaMenu()" style="border:1.5px solid #e2e8f0;border-radius:7px;padding:3px 10px;font-size:12px;font-family:'DM Sans',sans-serif;background:#fff;cursor:pointer;display:flex;align-items:center;gap:5px;">
+                                <span id="zonaBtnLabel">Antofagasta</span>
+                                <i class="feather-chevron-down" style="font-size:11px;"></i>
+                            </button>
+                            <div id="zonaMenu" style="display:none;position:absolute;top:calc(100% + 4px);left:0;background:#fff;border:1.5px solid #e2e8f0;border-radius:9px;box-shadow:0 4px 18px rgba(0,0,0,.10);z-index:9999;min-width:170px;padding:6px 0;">
+                                <label class="zona-opt"><input type="checkbox" value="Antofagasta" checked onchange="zonaChanged()"> Antofagasta</label>
+                                <label class="zona-opt"><input type="checkbox" value="Calama" onchange="zonaChanged()"> Calama</label>
+                                <label class="zona-opt"><input type="checkbox" value="Sierra Gorda" onchange="zonaChanged()"> Sierra Gorda</label>
+                                <label class="zona-opt"><input type="checkbox" value="Tocopilla" onchange="zonaChanged()"> Tocopilla</label>
+                                <label class="zona-opt"><input type="checkbox" value="María Elena" onchange="zonaChanged()"> María Elena</label>
+                            </div>
+                        </div>
                         <div class="ms-auto">
                             <button class="btn btn-xs btn-outline-secondary fs-12" onclick="irTab(1)">
                                 <i class="feather-edit-2 me-1"></i>Editar cabecera
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Configuración global -->
-                <div class="pi-sec" style="padding:14px 20px;">
-                    <div class="row g-3 align-items-end">
-                        <div class="col-md-3">
-                            <label class="fs-12 fw-600 text-muted d-block mb-1">% Ganancia global</label>
-                            <div class="d-flex align-items-center gap-2">
-                                <input type="number" id="margenGlobal" value="30" min="0" max="500"
-                                    style="border:1.5px solid #e2e8f0;border-radius:8px;padding:7px 10px;font-size:13px;width:80px;font-family:'DM Sans',sans-serif;">
-                                <span class="text-muted fs-12">%</span>
-                                <button class="btn btn-sm btn-outline-secondary" onclick="aplicarMargenGlobal()">Aplicar a todos</button>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="fs-12 fw-600 text-muted d-block mb-1">API Key Claude (búsqueda IA)</label>
-                            <input type="password" id="claudeKey" placeholder="sk-ant-..."
-                                style="border:1.5px solid #e2e8f0;border-radius:8px;padding:7px 10px;font-size:13px;width:100%;font-family:'DM Sans',sans-serif;"
-                                oninput="localStorage.setItem('vx_claude_key',this.value)">
-                        </div>
-                        <div class="col-md-5 d-flex align-items-end justify-content-end">
-                            <button id="btnBuscarTodos" class="btn-ia" onclick="buscarTodosIA()">
-                                🤖 Buscar todos con IA
                             </button>
                         </div>
                     </div>
@@ -510,17 +535,29 @@
                 </div>
 
                 <!-- Acciones Tab2 -->
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    <span id="pptoSavedMsg" class="text-success fs-12" style="display:none;">
-                        <i class="feather-check-circle me-1"></i>Presupuesto guardado
-                    </span>
-                    <div class="ms-auto d-flex gap-2">
-                        <button class="btn btn-outline-secondary" onclick="guardarPresupuesto()">
-                            <i class="feather-save me-1"></i>Guardar Presupuesto
-                        </button>
-                        <button id="btnEmitir" class="btn btn-success" onclick="irTab(3)" disabled>
-                            <i class="feather-send me-1"></i>Emitir Cotización
-                        </button>
+                <div class="pi-sec" style="padding:12px 18px;margin-top:4px;">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                        <div>
+                            <span id="pptoSavedMsg" class="text-success fs-12" style="display:none;">
+                                <i class="feather-check-circle me-1"></i>Presupuesto guardado
+                            </span>
+                            <!-- Checkbox propuesta para revisión -->
+                            <label id="chkPropuestaWrap" class="d-flex align-items-center gap-2 fs-13" style="cursor:pointer;">
+                                <input type="checkbox" id="chkPropuesta" style="width:15px;height:15px;cursor:pointer;">
+                                <span style="color:#92400e;font-weight:600;"><i class="feather-shield me-1" style="font-size:12px;"></i>Enviar como propuesta para autorización del Administrador</span>
+                            </label>
+                            <div id="msgAutorizacion" style="display:none;font-size:11px;color:#b45309;margin-top:4px;">
+                                <i class="feather-clock me-1"></i>Pendiente de autorización — un Administrador debe aprobar antes de emitir la cotización.
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 flex-shrink-0">
+                            <button class="btn btn-outline-secondary" onclick="guardarPresupuesto()">
+                                <i class="feather-save me-1"></i>Guardar Presupuesto Interno
+                            </button>
+                            <button id="btnPasarCot" class="btn btn-primary" onclick="pasarACotizacion()">
+                                <i class="feather-arrow-right me-1"></i>Siguiente: Cotización
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -574,12 +611,6 @@
                                 <input type="text" id="cotVigencia" readonly style="background:#f8fafc;">
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="cot-field">
-                                <label>OC Cliente</label>
-                                <input type="text" id="cotOC" readonly style="background:#f8fafc;">
-                            </div>
-                        </div>
                         <div class="col-12">
                             <div class="cot-field">
                                 <label>Nota para el cliente</label>
@@ -628,12 +659,18 @@
                     <span id="cotSavedMsg" class="text-success fs-12" style="display:none;">
                         <i class="feather-check-circle me-1"></i>Cotización emitida correctamente
                     </span>
+                    <!-- Panel aprobada -->
+                    <div id="panelAprobada" style="display:none;flex:1;background:#d1fae5;border:1.5px solid #6ee7b7;border-radius:10px;padding:10px 16px;font-size:13px;color:#065f46;">
+                        <strong><i class="feather-check-circle me-1"></i>Aprobada y bloqueada</strong>
+                        <span id="infoFolioPed" style="margin-left:12px;"></span>
+                        <span id="infoFolioOC"  style="margin-left:8px;"></span>
+                    </div>
                     <div class="ms-auto d-flex gap-2">
-                        <button class="btn btn-outline-secondary" onclick="irTab(2)">
+                        <button id="btnVolverCot" class="btn btn-outline-secondary" onclick="irTab(2)">
                             <i class="feather-arrow-left me-1"></i>Volver
                         </button>
-                        <button class="btn btn-success" onclick="confirmarEmision()">
-                            <i class="feather-send me-1"></i>Confirmar y Emitir
+                        <button id="btnEmitirCot" class="btn btn-primary" onclick="emitirCotizacion()">
+                            <i class="feather-file-text me-1"></i>Emitir Cotización
                         </button>
                     </div>
                 </div>
@@ -643,6 +680,47 @@
 
           </div><!-- /card -->
         </div><!-- /main-content -->
+
+        <!-- ── MODAL EMITIR COTIZACIÓN ── -->
+        <div id="modalEmitirCot" style="display:none;position:fixed;inset:0;z-index:14000;background:rgba(10,20,40,0.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
+            <div style="width:92%;max-width:1080px;height:88vh;background:#fff;border-radius:20px;box-shadow:0 24px 80px rgba(0,0,0,.3);display:flex;overflow:hidden;">
+
+                <!-- Izquierda: preview PDF -->
+                <div style="flex:1;background:#3d3d3d;display:flex;flex-direction:column;border-radius:20px 0 0 20px;overflow:hidden;">
+                    <div style="background:#2a2a2a;padding:10px 16px;display:flex;align-items:center;gap:8px;">
+                        <span style="color:#aaa;font-size:12px;font-family:sans-serif;"><i class="feather-file-text" style="margin-right:6px;"></i>Vista previa — Cotización</span>
+                    </div>
+                    <iframe id="pdfPreviewIframe" style="flex:1;width:100%;border:none;" allowfullscreen></iframe>
+                </div>
+
+                <!-- Derecha: acciones -->
+                <div style="flex:0 0 300px;width:300px;padding:32px 28px;display:flex;flex-direction:column;border-left:1px solid #e8edf3;background:#fff;">
+                    <div style="display:flex;justify-content:flex-end;margin-bottom:4px;">
+                        <button onclick="cerrarModalEmitir()" style="background:none;border:none;cursor:pointer;color:#94a3b8;font-size:26px;line-height:1;">×</button>
+                    </div>
+                    <img src="assets/images/valtrax-logo.svg" style="width:130px;margin-bottom:16px;" alt="Valtrax" />
+                    <div id="emitFolioLabel" style="font-size:16px;font-weight:700;color:#1e293b;margin-bottom:3px;">COTIZACIÓN</div>
+                    <div id="emitClienteLabel" style="font-size:12px;color:#64748b;margin-bottom:20px;"></div>
+                    <hr style="margin:0 0 20px;border-color:#e2e8f0;">
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                        <button onclick="descargarPDF()" class="btn btn-success w-100">
+                            <i class="feather-download me-2"></i>Descargar PDF
+                        </button>
+                        <button onclick="imprimirPDF()" class="btn btn-outline-secondary w-100">
+                            <i class="feather-printer me-2"></i>Imprimir
+                        </button>
+                        <hr style="margin:4px 0;border-color:#e2e8f0;">
+                        <button onclick="nuevaSolicitud()" class="btn btn-outline-primary w-100">
+                            <i class="feather-plus-circle me-2"></i>Nueva Solicitud
+                        </button>
+                    </div>
+                    <div style="margin-top:auto;padding-top:24px;font-size:10.5px;color:#cbd5e1;text-align:center;line-height:1.6;">
+                        Documento generado por<br><strong style="color:#b0bec5;">VALTRAX Industrial SPA</strong>
+                    </div>
+                </div>
+
+            </div>
+        </div>
 
         <!-- ── MODAL NUEVO CLIENTE ── -->
         <div id="modalNuevoClienteSol" style="display:none;position:fixed;inset:0;z-index:13000;background:rgba(15,23,42,0.5);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
@@ -672,7 +750,7 @@
                         <div class="col-6">
                             <div class="cot-field">
                                 <label>RUT <span class="req">*</span></label>
-                                <input type="text" id="snc_rut" required placeholder="76.234.567-8" maxlength="12" style="width:100%;border:1.5px solid #d1d5db;border-radius:10px;padding:10px 13px;font-size:13px;font-family:'DM Sans',sans-serif;">
+                                <input type="text" id="snc_rut" required placeholder="76.234.567-8" maxlength="12" oninput="formatRut(this)" style="width:100%;border:1.5px solid #d1d5db;border-radius:10px;padding:10px 13px;font-size:13px;font-family:'DM Sans',sans-serif;">
                             </div>
                         </div>
                         <div class="col-6">
@@ -777,8 +855,11 @@
     // ═══════════════════════════════════════════════════════════
 
     var _pID    = null;           // ID del registro activo
+    var _folio  = null;           // Folio COT-XXXXXX (fijo desde primer guardado)
     var _estado = 'solicitud';
-    var _items  = [];             // [{id,desc,subItems:[{id,texto}],cant,unidad}]
+    var _bloqueado = false;        // true cuando estado=aprobada
+    function itemVacio(){ return {id:uid(),desc:'',subItems:[],cant:1,unidad:'unid'}; }
+    var _items  = [itemVacio(),itemVacio(),itemVacio(),itemVacio()]; // 4 filas predeterminadas
     var _ppto   = {};             // {itemId:{opciones:[{lugar,url,precio,margen,ventaUnit,seleccionada}],iaCache:[]}}
     var _iaItemActual = null;
 
@@ -790,10 +871,13 @@
 
     // ── Tabs ────────────────────────────────────────────────────
     function irTab(n){
-        if(n===2&&!_items.length){ toast('Guarda la solicitud con al menos un ítem primero','#dc2626'); return; }
+        if(n===2&&!_items.some(it=>it.desc&&it.desc.trim())){ toast('Guarda la solicitud con al menos un ítem primero','#dc2626'); return; }
         if(n===3){
             var ok=_items.some(it=>(_ppto[it.id]||{opciones:[]}).opciones.some(o=>o.seleccionada));
             if(!ok){ toast('Selecciona al menos una opción de precio en el Presupuesto Interno','#dc2626'); return; }
+            if(!esAdmin()&&_estado==='pendiente'){
+                toast('⏳ Esperando autorización del Administrador para continuar','#f59e0b'); return;
+            }
         }
         ['1','2','3'].forEach(i=>{
             document.getElementById('panel'+i).classList.toggle('active',i==n);
@@ -807,36 +891,108 @@
     function setEstado(e){
         _estado=e;
         var b=document.getElementById('estadoBadge');
-        var map={solicitud:['e-sol','● Solicitud'],presupuesto:['e-ppto','● Presupuesto'],emitido:['e-emit','✔ Emitido']};
+        var map={
+            solicitud:         ['e-sol',  '● Solicitud'],
+            presupuesto:       ['e-ppto', '● Presupuesto Interno'],
+            pendiente:         ['e-pendiente', '⏳ Pendiente de Autorización'],
+            cotizacion:        ['e-cot',  '● Cotización'],
+            aprobada:          ['e-aprobada', '✔ Aprobada']
+        };
         var d=map[e]||map.solicitud;
         b.className='e-badge '+d[0]; b.textContent=d[1];
-        var noItems=!_items.length;
+        var noItems=!_items.some(it=>it.desc&&it.desc.trim());
         document.getElementById('tabBtn2').classList.toggle('disabled',noItems);
         document.getElementById('tabBtn3').classList.toggle('disabled',noItems);
     }
 
+    // ── Modal Nuevo Cliente ─────────────────────────────────────
+    function abrirModalNuevoClienteSol(){
+        document.getElementById('modalNuevoClienteSol').style.display='flex';
+    }
+    function cerrarModalNuevoClienteSol(){
+        document.getElementById('modalNuevoClienteSol').style.display='none';
+        document.getElementById('formNuevoClienteSol').reset();
+    }
+    document.getElementById('modalNuevoClienteSol').addEventListener('click', function(e){
+        if(e.target===this) cerrarModalNuevoClienteSol();
+    });
+    async function guardarNuevoClienteSol(e){
+        e.preventDefault();
+        var tipo   = document.getElementById('snc_tipo').value;
+        var nombre = document.getElementById('snc_nombre').value.trim();
+        var rut    = document.getElementById('snc_rut').value.trim();
+        var tel    = document.getElementById('snc_tel').value.trim();
+        var correo = document.getElementById('snc_correo').value.trim();
+        if(!tipo||!nombre||!rut){ toast('Complete Tipo, Nombre y RUT','#dc2626'); return; }
+        var btn = document.querySelector('#formNuevoClienteSol button[type="submit"]');
+        btn.disabled=true; btn.textContent='Guardando...';
+        try {
+            // 1. Guardar en MySQL
+            var r = await fetch('/api/clientes', {
+                method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({ nombre, rut, giro: tipo, contacto: nombre, email: correo, telefono: tel, direccion:'', datos_extra: JSON.stringify({tipo}) })
+            });
+            var data = r.ok ? await r.json() : null;
+            var clienteId = data ? (data.id || data.insertId) : null;
+            // 2. Guardar en ValtraxDB localStorage para autocomplete inmediato
+            if(typeof ValtraxDB !== 'undefined'){
+                ValtraxDB.saveEntidad({ nombre, tipo, rut, tel, correo, estado:'Activo', ciudad:'', giro:tipo, contacto:nombre, cargo:'', pago:'Contado', moneda:'CLP', credito:0, descuento:0, obs:'' });
+            }
+            // 3. Seleccionar en el campo cliente
+            document.getElementById('solCliente').value = nombre;
+            if(clienteId) document.getElementById('solClienteId').value = clienteId;
+            cerrarModalNuevoClienteSol();
+            toast('✔ Cliente "'+nombre+'" creado y seleccionado','#059669');
+        } catch(err){
+            toast('Error al guardar cliente: '+err.message,'#dc2626');
+        } finally {
+            btn.disabled=false; btn.innerHTML='<i class="feather-save" style="margin-right:6px;"></i>Guardar y seleccionar';
+        }
+    }
+
     // ── Autocomplete cliente ────────────────────────────────────
-    function acFiltrar(q){
+    function solAcFiltrar(q){
         var drop=document.getElementById('solDrop');
-        var cl=(typeof ValtraxDB!=='undefined')?ValtraxDB.getClientes():[];
-        var f=cl.filter(c=>(c.nombre||'').toLowerCase().includes((q||'').toLowerCase())).slice(0,8);
-        if(!f.length){drop.style.display='none';return;}
-        drop.innerHTML=f.map(c=>`<div class="ac-it" onmousedown="acSel('${esc(c.nombre)}','${c.id||''}')"> ${esc(c.nombre)}</div>`).join('');
+        if(!q || !q.trim()){ drop.style.display='none'; return; }
+        var cl=(typeof ValtraxDB!=='undefined')?ValtraxDB.getEntidades():[];
+        // También cargar desde API si está disponible (merge rápido)
+        var f=cl.filter(c=>(c.nombre||'').toLowerCase().includes(q.toLowerCase())).slice(0,12);
+        var exacto=cl.some(c=>(c.nombre||'').toLowerCase()===q.toLowerCase());
+        var items=f.map(c=>`<div class="ac-it" onmousedown="solAcSel('${esc(c.nombre)}','${c.id||''}','${esc(c.ciudad||c.dir||'')}')">${esc(c.nombre)}</div>`).join('');
+        if(f.length===0){
+            var qEsc=esc(q);
+            items+=`<div class="ac-it" onmousedown="solAcNuevo(document.getElementById('solCliente').value)"
+                style="color:#2563eb;font-weight:600;display:flex;align-items:center;gap:6px;">
+                <i class="feather-user-plus" style="font-size:11px;"></i>Crear cliente &ldquo;${qEsc}&rdquo;</div>`;
+        }
+        drop.innerHTML=items;
         drop.style.display='block';
     }
-    function acOcultar(){ document.getElementById('solDrop').style.display='none'; }
-    function acSel(n,id){ document.getElementById('solCliente').value=n; document.getElementById('solClienteId').value=id; acOcultar(); }
+    function solAcOcultar(){ document.getElementById('solDrop').style.display='none'; }
+    function solAcSel(n,id,faena){
+        document.getElementById('solCliente').value=n;
+        document.getElementById('solClienteId').value=id;
+        if(faena && !document.getElementById('solFaena').value) document.getElementById('solFaena').value=faena;
+        solAcOcultar();
+    }
+    function solAcNuevo(nombre){
+        solAcOcultar();
+        abrirModalNuevoClienteSol();
+        setTimeout(function(){
+            var inp=document.getElementById('snc_nombre');
+            if(inp){ inp.value=nombre||''; inp.dispatchEvent(new Event('input')); }
+        },150);
+    }
 
     // ── Ítems Tab 1 ─────────────────────────────────────────────
     function agregarItem(){
-        var it={id:uid(),desc:'',subItems:[],cant:1,unidad:'unid'};
+        var it=itemVacio();
         _items.push(it);
         renderItems();
         setTimeout(()=>{ var inp=document.getElementById('desc_'+it.id); if(inp)inp.focus(); },50);
     }
 
     function eliminarItem(id){
-        if(!confirm('¿Eliminar este ítem?')) return;
         _items=_items.filter(i=>i.id!==id); delete _ppto[id];
         renderItems();
     }
@@ -855,13 +1011,11 @@
 
     function renderItems(){
         var tbody=document.getElementById('tbodyItems');
-        var empty=document.getElementById('emptyItems');
-        if(!_items.length){ tbody.innerHTML=''; empty.style.display='block'; updBadges(); return; }
-        empty.style.display='none';
         tbody.innerHTML=_items.map((it,idx)=>{
             var subs=(it.subItems||[]).map(s=>`
                 <tr class="sub-row">
-                    <td colspan="2">
+                    <td style="width:34px;"></td>
+                    <td>
                         <div class="d-flex align-items-center gap-2">
                             <i class="feather-corner-down-right text-muted" style="font-size:11px;flex-shrink:0;"></i>
                             <input type="text" value="${esc(s.texto)}" placeholder="Detalle / especificación del sub-ítem..."
@@ -873,15 +1027,20 @@
                             style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:15px;padding:0 6px;">×</button>
                     </td>
                 </tr>`).join('');
+            var addSubRow = `<tr class="sub-row">
+                <td style="width:34px;"></td>
+                <td colspan="4" style="padding:2px 0 6px 0;">
+                    <button class="btn-addsub" onclick="agregarSubItem('${it.id}')">
+                        <i class="feather-plus" style="font-size:10px;"></i> sub-ítem
+                    </button>
+                </td>
+            </tr>`;
             return `<tr>
                 <td style="color:#94a3b8;font-size:12px;font-weight:700;text-align:center;">${idx+1}</td>
                 <td>
                     <input type="text" id="desc_${it.id}" value="${esc(it.desc)}"
                         placeholder="Descripción del ítem requerido..."
                         oninput="updItem('${it.id}','desc',this.value)">
-                    <button class="btn-addsub" onclick="agregarSubItem('${it.id}')">
-                        <i class="feather-plus" style="font-size:10px;"></i> sub-ítem
-                    </button>
                 </td>
                 <td><input type="number" value="${it.cant}" min="0.001" step="any" style="text-align:center;"
                     oninput="updItem('${it.id}','cant',this.value)"></td>
@@ -897,7 +1056,7 @@
                         <i class="feather-trash-2"></i>
                     </button>
                 </td>
-            </tr>${subs}`;
+            </tr>${subs}${addSubRow}`;
         }).join('');
         updBadges();
     }
@@ -913,16 +1072,17 @@
     }
 
     // ── Guardar Solicitud ───────────────────────────────────────
-    function guardarSolicitud(){
+    async function guardarSolicitud(){
         var cliente=document.getElementById('solCliente').value.trim();
         if(!cliente){ toast('Ingresa el nombre del cliente','#dc2626'); return; }
-        if(!_items.length){ toast('Agrega al menos un ítem','#dc2626'); return; }
-        // Capturar descripciones actuales de los inputs
         _items.forEach(it=>{ var inp=document.getElementById('desc_'+it.id); if(inp) it.desc=inp.value.trim(); });
+        var itemsValidos=_items.filter(it=>it.desc.trim());
+        if(!itemsValidos.length){ toast('Ingresa la descripción de al menos un ítem','#dc2626'); return; }
         if(!_pID) _pID=uid();
-        var prev=getPresupuestos().find(x=>x.id===_pID);
+        if(!_folio) _folio=nextFolio();
         var obj={
             id:_pID,
+            folio:_folio,
             estado:'solicitud',
             cabecera:{
                 cliente,
@@ -936,44 +1096,106 @@
                 garantia:document.getElementById('solGarantia').value,
                 faena:document.getElementById('solFaena').value.trim(),
                 tiempo:document.getElementById('solTiempo').value,
-                oc:document.getElementById('solOC').value.trim(),
-                ref:document.getElementById('solRef').value.trim(),
                 obs:document.getElementById('solObs').value.trim()
             },
             items:_items,
-            ppto:_ppto,
-            creadoEn:prev?prev.creadoEn:new Date().toISOString().slice(0,10),
-            actualizadoEn:new Date().toISOString().slice(0,10)
+            ppto:_ppto
         };
-        savePresupuesto(obj);
-        setEstado('solicitud');
-        var m=document.getElementById('solSavedMsg'); m.style.display='inline-flex'; setTimeout(()=>m.style.display='none',3000);
-        toast('✓ Solicitud guardada','#059669');
-        updBadges();
+        try {
+            await savePresupuesto(obj);
+            setEstado('solicitud');
+            var m=document.getElementById('solSavedMsg'); m.style.display='inline-flex'; setTimeout(()=>m.style.display='none',3000);
+            toast('✓ Solicitud guardada','#059669');
+            updBadges();
+        } catch(e){ toast('Error al guardar: '+e.message,'#dc2626'); }
     }
 
     // ── Guardar Presupuesto ─────────────────────────────────────
-    function guardarPresupuesto(){
+    async function guardarPresupuesto(){
         if(!_pID){ toast('Guarda primero la solicitud','#dc2626'); return; }
-        var obj=cargarPresupuesto(); if(!obj) return;
+        var obj=await cargarPresupuesto(); if(!obj) return;
         obj.ppto=_ppto;
-        obj.estado='presupuesto';
-        obj.actualizadoEn=new Date().toISOString().slice(0,10);
-        savePresupuesto(obj);
-        setEstado('presupuesto');
-        var m=document.getElementById('pptoSavedMsg'); m.style.display='inline-flex'; setTimeout(()=>m.style.display='none',3000);
-        toast('✓ Presupuesto guardado','#059669');
+        var chk=document.getElementById('chkPropuesta');
+        if(!esAdmin()&&chk&&chk.checked){
+            obj.estado='pendiente';
+        } else if(obj.estado!=='cotizacion'&&obj.estado!=='aprobada'){
+            obj.estado='presupuesto';
+        }
+        try {
+            await savePresupuesto(obj);
+            setEstado(obj.estado);
+            if(obj.estado==='pendiente'){
+                document.getElementById('msgAutorizacion').style.display='block';
+                toast('⏳ Propuesta guardada — esperando autorización','#f59e0b');
+            } else {
+                var m=document.getElementById('pptoSavedMsg'); m.style.display='inline-flex'; setTimeout(()=>m.style.display='none',3000);
+                toast('✓ Presupuesto Interno guardado','#059669');
+            }
+        } catch(e){ toast('Error al guardar: '+e.message,'#dc2626'); }
     }
 
-    // ── Storage ─────────────────────────────────────────────────
-    function getPresupuestos(){ return JSON.parse(localStorage.getItem('vx_presupuestos')||'[]'); }
-    function savePresupuesto(obj){
-        var list=getPresupuestos();
-        var idx=list.findIndex(x=>x.id===obj.id);
-        if(idx>-1) list[idx]=obj; else list.push(obj);
-        localStorage.setItem('vx_presupuestos',JSON.stringify(list));
+    // ── Storage → API MySQL ──────────────────────────────────────
+
+    /* Roles: 'admin' pasa todo directo; 'vendedor' necesita autorización */
+    function esAdmin(){ return localStorage.getItem('vx_rol')==='admin'; }
+
+    async function guardarYSiguiente(){
+        // Descartar ítems sin descripción antes de guardar
+        _items = _items.filter(it => it.desc && it.desc.trim());
+        if(!_items.length){ _items=[itemVacio()]; renderItems(); toast('Agrega al menos un ítem con descripción','#dc2626'); return; }
+        await guardarSolicitud();
+        if(_pID) irTab(2);
     }
-    function cargarPresupuesto(){ return getPresupuestos().find(x=>x.id===_pID)||null; }
+
+    async function pasarACotizacion(){
+        if(esAdmin()){
+            // admin siempre pasa directo
+            irTab(3);
+            return;
+        }
+        var chk=document.getElementById('chkPropuesta');
+        if(chk&&chk.checked){
+            // vendedor marcó "enviar a autorización"
+            var obj=await cargarPresupuesto(); if(!obj) return;
+            obj.ppto=_ppto;
+            obj.estado='pendiente';
+            await savePresupuesto(obj);
+            setEstado('pendiente');
+            document.getElementById('msgAutorizacion').style.display='block';
+            toast('⏳ Propuesta enviada — esperando autorización del Administrador','#f59e0b');
+        } else {
+            // Guardar estado cotizacion antes de ir al tab 3
+            var obj2=await cargarPresupuesto();
+            if(obj2&&obj2.estado!=='cotizacion'&&obj2.estado!=='aprobada'){
+                obj2.ppto=_ppto; obj2.estado='cotizacion';
+                await savePresupuesto(obj2); setEstado('cotizacion');
+            }
+            irTab(3);
+        }
+    }
+
+    async function getPresupuestos(){
+        var r=await fetch('/api/presupuestos'); return await r.json();
+    }
+    async function savePresupuesto(obj){
+        var r=await fetch('/api/presupuestos',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify(obj)
+        });
+        if(!r.ok){var e=await r.json().catch(()=>({}));throw new Error(e.error||'HTTP '+r.status);}
+        return await r.json();
+    }
+    async function cargarPresupuesto(){
+        if(!_pID) return null;
+        var r=await fetch('/api/presupuestos/'+_pID);
+        if(!r.ok) return null;
+        var data=await r.json();
+        if(typeof data.cabecera==='string') data.cabecera=JSON.parse(data.cabecera);
+        if(typeof data.items==='string') data.items=JSON.parse(data.items);
+        if(typeof data.ppto==='string') data.ppto=JSON.parse(data.ppto);
+        return data;
+    }
 
     // ── Presupuesto render ──────────────────────────────────────
     function sincPpto(){ _items.forEach(it=>{ if(!_ppto[it.id]) _ppto[it.id]={opciones:[]}; }); }
@@ -981,7 +1203,83 @@
     function syncResumen(){
         document.getElementById('pptoCliente').textContent=document.getElementById('solCliente').value||'—';
         document.getElementById('pptoFaena').textContent=document.getElementById('solFaena').value||'—';
-        document.getElementById('pptoFecha').textContent=document.getElementById('solFecha').value||'—';
+        var f=document.getElementById('solFecha').value;
+        document.getElementById('pptoFecha').textContent=f?f.split('-').reverse().join('/'):'—';
+    }
+
+    /* ── Zona multi-selección ── */
+    function toggleZonaMenu(){
+        var m=document.getElementById('zonaMenu');
+        m.style.display=m.style.display==='none'?'block':'none';
+    }
+    document.addEventListener('click',function(e){
+        if(!e.target.closest('#zonaBtnToggle')&&!e.target.closest('#zonaMenu')){
+            var m=document.getElementById('zonaMenu');
+            if(m) m.style.display='none';
+        }
+    });
+    function zonaChanged(){
+        var checks=[...document.querySelectorAll('#zonaMenu input[type=checkbox]:checked')];
+        var vals=checks.map(c=>c.value);
+        if(!vals.length){
+            // al menos una debe estar marcada
+            document.querySelectorAll('#zonaMenu input[type=checkbox]')[0].checked=true;
+            vals=['Antofagasta'];
+        }
+        var lbl=vals.length===1?vals[0]:vals.length+' zonas';
+        document.getElementById('zonaBtnLabel').textContent=lbl;
+    }
+    function getZonas(){
+        return [...document.querySelectorAll('#zonaMenu input[type=checkbox]:checked')].map(c=>c.value);
+    }
+
+    /* ── Mapa de tiendas físicas por zona ──
+       Clave: nombre exacto como llega de Serper (case-insensitive match parcial)
+       Valor: { zona: 'Dirección, Ciudad' }
+    */
+    var DIRS_TIENDAS = {
+        'Sodimac': {
+            'Antofagasta': 'Av. El Toro 1252, Antofagasta',
+            'Calama':      'Av. Granaderos 2201, Calama'
+        },
+        'Easy': {
+            'Antofagasta': 'Av. Argentina 1451, Antofagasta'
+        },
+        'Construmart': {
+            'Antofagasta': 'Av. Pedro Aguirre Cerda 9050, Antofagasta',
+            'Calama':      'Av. OHiggins 2701, Calama'
+        },
+        'MTS': {
+            'Antofagasta': 'Av. El Toro 1370, Antofagasta',
+            'Calama':      'Av. Amunategui 2510, Calama'
+        },
+        'Ferrenet': {
+            'Antofagasta': 'Av. Salvador Allende 8690, Antofagasta'
+        },
+        'Betek': {
+            'Antofagasta': 'Cerro Paranal 1337, Antofagasta',
+            'Calama':      'Espinoza 2375, Calama'
+        },
+        'Aceros Chile': {
+            'Antofagasta': 'Barros Arana 1100, Antofagasta'
+        },
+        'Dimac': {
+            'Calama': 'Av. Granaderos 3050, Calama'
+        }
+    };
+
+    /* Aliases: Serper devuelve "Sodimac.cl", "Easy.cl", etc.
+       getDirTienda hace includes case-insensitive:
+       "Sodimac.cl" → match "Sodimac" ✓  |  tienda online sin match → devuelve tal cual */
+    function getDirTienda(storeName, zonas){
+        if(!storeName||storeName==='Tienda') return storeName||'';
+        if(storeName.includes('/')) return storeName; // ya tiene dirección
+        var sLow=storeName.toLowerCase();
+        var key=Object.keys(DIRS_TIENDAS).find(k=>sLow.includes(k.toLowerCase()));
+        if(!key) return storeName;
+        var dirs=zonas.map(z=>DIRS_TIENDAS[key][z]).filter(Boolean);
+        if(!dirs.length) return key+' / '+zonas.join(', ');
+        return key+' / '+dirs.join(' · ');
     }
 
     function renderPpto(){
@@ -997,15 +1295,26 @@
             var subTxt=(it.subItems||[]).filter(s=>s.texto).map(s=>`<span class="me-2 fs-11 text-muted">↳ ${esc(s.texto)}</span>`).join('');
 
             var optRows=opts.map((op,oi)=>{
+                // Enriquecer lugar con dirección si aún no la tiene (datos legacy de BD)
+                if(op.lugar && !op.lugar.includes('/'))
+                    op.lugar = getDirTienda(op.lugar, getZonas());
+                // También el iaCache legacy
+                var cache=p.iaCache||[];
+                cache.forEach(c=>{ if(c.tienda&&!c.tienda.includes('/')) c.tienda=getDirTienda(c.tienda,getZonas()); });
                 var venta=op.precio>0?Math.round(op.precio*(1+(parseFloat(op.margen)!==undefined?parseFloat(op.margen):mg)/100)):0;
                 return `<tr class="${op.seleccionada?'opt-sel':''}">
                     <td style="width:24px;text-align:center;"><span class="opt-num${op.seleccionada?' s':''}">${oi+1}</span></td>
-                    <td style="min-width:140px;"><input type="text" value="${esc(op.lugar)}" placeholder="Tienda / proveedor / lugar físico..."
+                    <td><input type="text" value="${esc(op.lugar)}" placeholder="Ej: Sodimac, Av. El Toro 1234"
                         oninput="updOpt('${it.id}',${oi},'lugar',this.value)"></td>
-                    <td style="min-width:160px;"><input type="text" value="${esc(op.url)}" placeholder="URL del producto (opcional)..."
-                        oninput="updOpt('${it.id}',${oi},'url',this.value)"></td>
-                    <td style="width:130px;"><input type="number" value="${op.precio||''}" min="0" step="1" placeholder="0"
-                        style="text-align:right;" oninput="updOpt('${it.id}',${oi},'precio',+this.value);rfila('${it.id}',${oi})"></td>
+                    <td style="width:200px;">
+                        <div style="display:flex;align-items:center;gap:4px;">
+                            <input type="text" value="${esc(op.url)}" placeholder="https://..." style="min-width:0;flex:1;"
+                                oninput="updOpt('${it.id}',${oi},'url',this.value);var a=this.nextElementSibling;if(a){a.href=this.value;a.style.display=this.value?'inline':'none';}">
+                            <a href="${esc(op.url)||'#'}" target="_blank" title="Abrir enlace" style="flex-shrink:0;color:#2563eb;font-size:15px;line-height:1;display:${op.url?'inline':'none'};" onclick="event.stopPropagation()"><i class='feather-external-link'></i></a>
+                        </div>
+                    </td>
+                    <td style="width:140px;"><div class="money-wrap"><input type="number" value="${op.precio||''}" min="0" step="1" placeholder="0"
+                        oninput="updOpt('${it.id}',${oi},'precio',+this.value);rfila('${it.id}',${oi})"></div></td>
                     <td style="width:80px;"><input type="number" value="${op.margen!==undefined?op.margen:mg}" min="0" max="999" step="1"
                         style="text-align:center;" placeholder="${mg}"
                         oninput="updOpt('${it.id}',${oi},'margen',+this.value);rfila('${it.id}',${oi})"></td>
@@ -1032,7 +1341,7 @@
                     </div>
                     <div class="d-flex align-items-center gap-2 flex-shrink-0">
                         ${selLabel}
-                        <button class="btn-ia" id="btnIA_${it.id}" onclick="event.stopPropagation();abrirModalIA('${it.id}')">🤖 IA</button>
+                        <button class="btn-ia" id="btnIA_${it.id}" onclick="event.stopPropagation();abrirModalIA('${it.id}')" title="Buscar precios online (Google Shopping)"><i class="feather-search" style="font-size:11px;"></i> Buscar online</button>
                         <i class="feather-chevron-down text-muted" id="ch_${it.id}" style="font-size:14px;transition:transform .2s;"></i>
                     </div>
                 </div>
@@ -1041,7 +1350,7 @@
                         <table class="opt-tbl">
                             <thead><tr>
                                 <th style="width:24px;">#</th>
-                                <th>Lugar / Proveedor</th>
+                                <th>Tienda / Dir. Física</th>
                                 <th>URL del Producto</th>
                                 <th style="text-align:right;">Precio Costo ($)</th>
                                 <th style="text-align:center;">% Ganancia</th>
@@ -1153,7 +1462,6 @@
         document.getElementById('cotFaena').textContent=document.getElementById('solFaena').value||'—';
         document.getElementById('cotFecha').textContent=document.getElementById('solFecha').value||'—';
         document.getElementById('cotVigencia').value=document.getElementById('solVigencia').value||'';
-        document.getElementById('cotOC').value=document.getElementById('solOC').value||'';
         document.getElementById('cotFolio').value=nextFolio();
         // Tabla ítems
         var tbody=document.getElementById('tbodyCot');
@@ -1195,55 +1503,54 @@
     }
 
     // ── Emitir ──────────────────────────────────────────────────
-    function nextFolio(){ var l=JSON.parse(localStorage.getItem('vx_cotizaciones')||'[]'); return 'COT'+String(l.length+100).padStart(5,'0'); }
-
-    function abrirModalEmitir(){
-        document.getElementById('emFolio').value=nextFolio();
-        document.getElementById('modalEmitir').style.display='flex';
+    function nextFolio(){
+        // Usar folio existente si el registro ya tiene uno, o generar COT-XXXXXX
+        if(_pID){
+            var n=parseInt(_pID.replace(/[^0-9]/g,'').slice(-6))||Math.floor(Math.random()*900000+100000);
+            return 'COT-'+String(n).padStart(6,'0');
+        }
+        return 'COT-'+String(Math.floor(Math.random()*900000+100000));
     }
 
-    function confirmarEmision(){
-        var folio=document.getElementById('cotFolio').value;
-        var iva=parseInt(document.getElementById('cotIva').value)||0;
-        var nota=document.getElementById('cotNota').value.trim();
-        var cliente=document.getElementById('solCliente').value.trim();
-        var faena=document.getElementById('solFaena').value.trim();
-        var fecha=document.getElementById('solFecha').value;
+    async function pasarAPedido(){
+        if(!_pID){ toast('Guarda primero la solicitud','#dc2626'); return; }
+        if(_estado==='aprobada'){ toast('Esta cotización ya fue aprobada','#2563eb'); return; }
+        var ok=_items.some(it=>(_ppto[it.id]||{opciones:[]}).opciones.some(o=>o.seleccionada));
+        if(!ok){ toast('Selecciona al menos una opción de precio primero','#dc2626'); return; }
+        if(!confirm('¿Aprobar la cotización y generar Pedido + Orden de Compra?\nEsta acción bloquea la edición.')) return;
         var mg=parseInt(document.getElementById('margenGlobal').value)||30;
-        var com=window._comPct||4;
-
-        var items=_items.map(it=>{
-            var p=_ppto[it.id]; if(!p) return null;
-            var sel=p.opciones.find(o=>o.seleccionada); if(!sel||!sel.precio) return null;
-            var margen=parseFloat(sel.margen)!==undefined?parseFloat(sel.margen):mg;
-            var ventaSin=Math.round(sel.precio*(1+margen/100));
-            var venta=Math.round(ventaSin*(1+com/100));
-            var subs=(it.subItems||[]).filter(s=>s.texto).map(s=>s.texto).join(' | ');
-            return {desc:it.desc+(subs?' — '+subs:''), cant:parseFloat(it.cant)||1, unidad:it.unidad,
-                    costoUnit:sel.precio, margen, ventaUnit:venta, url:sel.url||''};
-        }).filter(Boolean);
-
-        if(!items.length){ toast('Selecciona al menos una opción por ítem','#dc2626'); return; }
-        var subtotal=items.reduce((s,i)=>s+i.ventaUnit*i.cant,0);
-        var ivaAmt=Math.round(subtotal*iva/100);
-        var total=subtotal+ivaAmt;
-
-        var cot={folio,cliente,faena,fecha,obs:nota,iva,items,total,estado:'Pendiente'};
-        var saved=ValtraxDB.saveCotizacion(cot);
-
-        if(_pID){
-            var obj=cargarPresupuesto();
-            if(obj){ obj.estado='emitido'; obj.folioEmitido=folio; savePresupuesto(obj); }
+        var btn=document.getElementById('btnEmitirCot');
+        btn.disabled=true; btn.innerHTML='<span class="spin"></span> Procesando...';
+        try {
+            var r=await fetch('/api/presupuestos/'+_pID+'/aprobar',{
+                method:'POST', headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({margen:mg})
+            });
+            if(!r.ok){ var e=await r.json(); throw new Error(e.error||'Error'); }
+            var data=await r.json();
+            setEstado('aprobada');
+            _bloqueado=true;
+            bloquearUI();
+            document.getElementById('panelAprobada').style.display='flex';
+            document.getElementById('infoFolioPed').innerHTML='<strong>Pedido:</strong> '+data.folioPed;
+            document.getElementById('infoFolioOC').innerHTML ='<strong>OC:</strong> '+data.folioOC;
+            btn.style.display='none';
+            toast('✔ Cotización aprobada — '+data.folioPed+' / '+data.folioOC+' generados','#059669');
+        } catch(err){
+            toast('Error: '+err.message,'#dc2626');
+            btn.disabled=false; btn.innerHTML='<i class="feather-file-text me-1"></i>Emitir Cotización';
         }
-        setEstado('emitido');
-        var ms=document.getElementById('cotSavedMsg'); if(ms) ms.style.display='inline-flex';
-        toast('✔ Cotización '+folio+' emitida','#059669');
-        setTimeout(()=>{
-            if(confirm('Cotización '+folio+' emitida correctamente.\n\n¿Abrir visor de PDF?')){
-                sessionStorage.setItem('vx_cot_pdf',JSON.stringify(saved));
-                window.open('cotizaciones-crear.html?folio='+folio,'_blank');
-            }
-        },400);
+    }
+
+    function bloquearUI(){
+        // Bloquear todos los inputs/textareas/selects del formulario
+        document.querySelectorAll('#panel1 input, #panel1 textarea, #panel1 select, #panel2 input, #panel2 textarea, #panel2 select')
+            .forEach(el=>{ el.disabled=true; el.style.background='#f8fafc'; });
+        document.querySelectorAll('.btn-sel, .btn-ia, #btnPasarCot, #btnEmitirCot').forEach(el=>el.disabled=true);
+        var aviso=document.createElement('div');
+        aviso.style.cssText='background:#fef9c3;border:1.5px solid #fcd34d;border-radius:10px;padding:8px 14px;font-size:12px;color:#92400e;margin-bottom:10px;';
+        aviso.innerHTML='<i class="feather-lock" style="margin-right:6px;"></i><strong>Registro bloqueado</strong> — Esta cotización fue aprobada y no puede editarse. Para modificarla, duplique la cotización.';
+        var c=document.getElementById('containerPpto'); if(c&&c.parentNode) c.parentNode.insertBefore(aviso,c);
     }
 
     // ── Modal IA ────────────────────────────────────────────────
@@ -1264,52 +1571,31 @@
     function rebuscarIA(){ if(_iaItemActual){ var it=_items.find(i=>i.id===_iaItemActual); if(it) ejecutarIA(_iaItemActual,it,true); } }
 
     async function ejecutarIA(itemId,it,forzar){
-        var key=localStorage.getItem('vx_claude_key');
-        if(!key){ showMiaErr('Ingresa tu API Key de Claude en la sección de configuración.'); return; }
         var cache=(_ppto[itemId]||{}).iaCache;
         if(cache&&!forzar){ renderMiaOpts(cache,itemId); return; }
 
         document.getElementById('miaLoading').style.display='block';
-        document.getElementById('miaLoadMsg').textContent='Buscando "'+it.desc+'" en tiendas chilenas...';
+        document.getElementById('miaLoadMsg').textContent='Buscando "'+it.desc+'" en Google Shopping Chile...';
         document.getElementById('miaLista').innerHTML='';
         document.getElementById('miaError').style.display='none';
         var btn=document.getElementById('btnIA_'+itemId);
         if(btn){btn.disabled=true;btn.innerHTML='<span class="spin"></span>';}
 
-        var prompt=`Busca en tiendas chilenas el precio de: "${it.desc}" (${it.cant} ${it.unidad}). Fecha: ${new Date().toLocaleDateString('es-CL')}.
-
-Responde ÚNICAMENTE con JSON, sin texto antes ni después:
-{"opciones":[{"tienda":"Falabella","producto":"nombre exacto","precio":14990,"url":"https://www.falabella.com/...","condicion":"nuevo"}]}
-
-REGLAS: precio=entero CLP sin puntos, url empieza con https://, mínimo 3 opciones de distintas tiendas chilenas, ordenado de menor a mayor precio.`;
-
         try {
-            var res=await fetch('https://api.anthropic.com/v1/messages',{
-                method:'POST',
-                headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-                body:JSON.stringify({model:'claude-haiku-4-5',max_tokens:900,
-                    system:'Responde ÚNICAMENTE con JSON válido, sin texto adicional, sin markdown.',
-                    tools:[{type:'web_search_20250305',name:'web_search',max_uses:3}],
-                    messages:[{role:'user',content:prompt}]})
-            });
-            if(!res.ok){var e=await res.json().catch(()=>({}));throw new Error(e.error?.message||'HTTP '+res.status);}
+            var zonas=getZonas();
+            var zona=zonas.join(' OR ');
+            var res=await fetch('/api/serper-shopping?q='+encodeURIComponent(it.desc+' '+zona));
+            if(!res.ok){var e=await res.json().catch(()=>({}));throw new Error(e.error||'HTTP '+res.status);}
             var data=await res.json();
-            var allText=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();
-            if(!allText) throw new Error('Sin respuesta de texto');
-            var js=allText;
-            var m=js.match(/```(?:json)?\s*([\s\S]*?)```/);if(m)js=m[1].trim();
-            var obj=js.match(/\{[\s\S]*\}/);if(!obj) throw new Error('La IA no devolvió JSON. Respuesta: '+allText.slice(0,100));
-            js=obj[0];
-            var parsed=JSON.parse(js);
-            var opts=(parsed.opciones||[]).map(o=>({
-                tienda:o.tienda||'Tienda',producto:o.producto||it.desc,
-                precio:parseFloat(String(o.precio).replace(/[^0-9.]/g,''))||0,
-                url:o.url?(o.url.startsWith('http')?o.url:'https://'+o.url):'',
-                condicion:o.condicion||'nuevo'
-            })).filter(o=>o.precio>0)
-            .map(o=>({...o,url:o.url||`https://www.google.com/search?q=${encodeURIComponent(o.tienda+' '+o.producto+' Chile')}`}))
-            .sort((a,b)=>a.precio-b.precio).slice(0,10);
-            if(!opts.length) throw new Error('La IA no encontró precios. Intenta reformular el nombre del ítem.');
+            var opts=(data.results||[]).map(o=>({
+                tienda:getDirTienda(o.store||'Tienda', zonas),
+                producto:o.name||it.desc,
+                precio:o.price||0,
+                url:o.url||'',
+                imagen:o.image_url||'',
+                condicion:'nuevo'
+            })).filter(o=>o.precio>0).sort((a,b)=>a.precio-b.precio).slice(0,10);
+            if(!opts.length) throw new Error('Sin resultados para "'+it.desc+'". Intenta con otra descripción.');
             if(!_ppto[itemId]) _ppto[itemId]={opciones:[]};
             _ppto[itemId].iaCache=opts;
             document.getElementById('miaLoading').style.display='none';
@@ -1328,22 +1614,18 @@ REGLAS: precio=entero CLP sin puntos, url empieza con https://, mínimo 3 opcion
         var rk=['g','s','b'];
         document.getElementById('miaLista').innerHTML=opts.map((op,i)=>{
             var venta=Math.round(op.precio*(1+mg/100));
+            var imgHtml=op.imagen
+                ?`<img class="ia-card-img" src="${esc(op.imagen)}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="ia-card-img-ph" style="display:none;"><i class='feather-package'></i></div>`
+                :`<div class="ia-card-img-ph"><i class='feather-package'></i></div>`;
             return `<div class="ia-card" onclick="selOptIA('${itemId}',${i})">
-                <div class="ia-rk ${rk[i]||''}">${i+1}</div>
-                <div style="flex:1;">
-                    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
-                        <div>
-                            <div style="font-size:12px;font-weight:700;color:#1e293b;">${esc(op.tienda)}</div>
-                            <div style="font-size:11px;color:#64748b;margin-top:2px;">${esc(op.producto)}</div>
-                            ${op.url?`<a href="${esc(op.url)}" target="_blank" style="font-size:10px;color:#2563eb;" onclick="event.stopPropagation()">Ver producto ↗</a>`:''}
-                        </div>
-                        <div style="text-align:right;flex-shrink:0;">
-                            <div style="font-size:17px;font-weight:800;color:#2563eb;">${fmtCLP(op.precio)}</div>
-                            <div style="font-size:10px;color:#94a3b8;">precio costo</div>
-                            <div style="font-size:12px;font-weight:700;color:#059669;">${fmtCLP(venta)}</div>
-                            <div style="font-size:10px;color:#94a3b8;">con +${mg}% ganancia</div>
-                        </div>
-                    </div>
+                <div class="ia-card-rank ${rk[i]||''}">${i+1}</div>
+                ${imgHtml}
+                <div class="ia-card-body">
+                    <div class="ia-card-store">${esc(op.tienda)}</div>
+                    <div class="ia-card-name">${esc(op.producto)}</div>
+                    <div class="ia-card-price">${fmtCLP(op.precio)}</div>
+                    <div class="ia-card-venta">+${mg}% → ${fmtCLP(venta)}</div>
+                    ${op.url?`<a href="${esc(op.url)}" target="_blank" style="font-size:10px;color:#94a3b8;margin-top:2px;display:block;" onclick="event.stopPropagation()">Ver &#8599;</a>`:''}
                 </div>
             </div>`;
         }).join('');
@@ -1362,13 +1644,11 @@ REGLAS: precio=entero CLP sin puntos, url empieza con https://, mínimo 3 opcion
         toast('✔ Opción IA agregada y seleccionada','#059669');
     }
 
-    // ── Buscar todos IA ─────────────────────────────────────────
+    // ── Buscar todos Serper ──────────────────────────────────────
     async function buscarTodosIA(){
         var btn=document.getElementById('btnBuscarTodos');
-        var key=localStorage.getItem('vx_claude_key');
-        if(!key){toast('Ingresa tu API Key de Claude','#dc2626');return;}
         var pend=_items.filter(it=>!(_ppto[it.id]||{}).iaCache);
-        if(!pend.length){toast('Todos los ítems ya tienen caché IA','#2563eb');return;}
+        if(!pend.length){toast('Todos los ítems ya tienen precios cargados','#2563eb');return;}
         btn.disabled=true;
         for(var i=0;i<pend.length;i++){
             btn.innerHTML=`<span class="spin"></span> Ítem ${i+1}/${pend.length}`;
@@ -1376,29 +1656,19 @@ REGLAS: precio=entero CLP sin puntos, url empieza con https://, mínimo 3 opcion
             renderPpto();
         }
         btn.disabled=false;btn.innerHTML='🤖 Buscar todos con IA';
-        toast('✓ Búsqueda IA completada para '+pend.length+' ítems','#059669');
+        toast('✓ Búsqueda completada para '+pend.length+' ítems','#059669');
     }
 
     async function ejecutarIASil(it){
-        var key=localStorage.getItem('vx_claude_key');if(!key)return;
-        var prompt=`Busca precio en tiendas chilenas de: "${it.desc}" (${it.cant} ${it.unidad}).
-JSON ÚNICO: {"opciones":[{"tienda":"","producto":"","precio":0,"url":"https://...","condicion":"nuevo"}]}
-precio=entero CLP, mínimo 3 opciones, orden menor a mayor.`;
         try {
-            var res=await fetch('https://api.anthropic.com/v1/messages',{
-                method:'POST',
-                headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-                body:JSON.stringify({model:'claude-haiku-4-5',max_tokens:900,system:'Solo JSON válido.',tools:[{type:'web_search_20250305',name:'web_search',max_uses:3}],messages:[{role:'user',content:prompt}]})
-            });
+            var zonas=getZonas();
+            var zona=zonas.join(' OR ');
+            var res=await fetch('/api/serper-shopping?q='+encodeURIComponent(it.desc+' '+zona));
             if(!res.ok)return;
             var data=await res.json();
-            var allText=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();
-            var js=allText;var m=js.match(/```(?:json)?\s*([\s\S]*?)```/);if(m)js=m[1].trim();
-            var obj=js.match(/\{[\s\S]*\}/);if(!obj)return;js=obj[0];
-            var parsed=JSON.parse(js);
-            var opts=(parsed.opciones||[]).map(o=>({tienda:o.tienda||'Tienda',producto:o.producto||it.desc,
-                precio:parseFloat(String(o.precio).replace(/[^0-9.]/g,''))||0,
-                url:o.url?(o.url.startsWith('http')?o.url:'https://'+o.url):'',condicion:o.condicion||'nuevo'
+            var opts=(data.results||[]).map(o=>({
+                tienda:getDirTienda(o.store||'Tienda', zonas),producto:o.name||it.desc,
+                precio:o.price||0,url:o.url||'',imagen:o.image_url||'',condicion:'nuevo'
             })).filter(o=>o.precio>0).sort((a,b)=>a.precio-b.precio).slice(0,10);
             if(!opts.length)return;
             if(!_ppto[it.id])_ppto[it.id]={opciones:[]};
@@ -1409,8 +1679,8 @@ precio=entero CLP, mínimo 3 opciones, orden menor a mayor.`;
     // ── Nueva solicitud ─────────────────────────────────────────
     function nuevaSolicitud(){
         if(_items.length&&!confirm('¿Crear nueva solicitud?\nSe perderán los cambios no guardados.'))return;
-        _pID=null;_estado='solicitud';_items=[];_ppto={};
-        ['solCliente','solClienteId','solFaena','solOC','solRef','solObs','solFechaSol'].forEach(id=>document.getElementById(id).value='');
+        _pID=null;_folio=null;_estado='solicitud';_items=[itemVacio(),itemVacio(),itemVacio(),itemVacio()];_ppto={};
+        ['solCliente','solClienteId','solFaena','solObs','solFechaSol'].forEach(id=>document.getElementById(id).value='');
         document.getElementById('solFecha').value=new Date().toISOString().slice(0,10);
         document.getElementById('solVigencia').value='30';
         document.getElementById('solMoneda').value='CLP';
@@ -1419,19 +1689,27 @@ precio=entero CLP, mínimo 3 opciones, orden menor a mayor.`;
     }
 
     // ── Init ────────────────────────────────────────────────────
-    document.addEventListener('DOMContentLoaded',function(){
+    document.addEventListener('DOMContentLoaded',async function(){
         document.getElementById('solFecha').value=new Date().toISOString().slice(0,10);
         document.getElementById('solResponsable').value=localStorage.getItem('vx_usuario')||'VALTRAX';
-        var k=localStorage.getItem('vx_claude_key');if(k)document.getElementById('claudeKey').value=k;
+        // Admin no necesita autorización: ocultar checkbox desde el inicio
+        var chkWrap=document.getElementById('chkPropuestaWrap');
+        if(chkWrap) chkWrap.style.display=esAdmin()?'none':'flex';
         // Cargar registro si viene de listado
         var pid=sessionStorage.getItem('vx_ppto_id');
-        if(pid){ sessionStorage.removeItem('vx_ppto_id'); var obj=getPresupuestos().find(x=>x.id===pid); if(obj) loadForm(obj); else renderItems(); }
+        if(pid){
+            sessionStorage.removeItem('vx_ppto_id');
+            _pID=pid;
+            var obj=await cargarPresupuesto();
+            if(obj) loadForm(obj); else renderItems();
+        }
         else renderItems();
         setEstado(_estado);
     });
 
     function loadForm(obj){
-        _pID=obj.id;_estado=obj.estado||'solicitud';_items=obj.items||[];_ppto=obj.ppto||{};
+        _pID=obj.id;_folio=obj.folio||null;_estado=obj.estado||'solicitud';_items=obj.items||[];_ppto=obj.ppto||{};
+        _bloqueado=!!(obj.bloqueado);
         var c=obj.cabecera||{};
         document.getElementById('solCliente').value=c.cliente||'';
         document.getElementById('solClienteId').value=c.clienteId||'';
@@ -1444,11 +1722,370 @@ precio=entero CLP, mínimo 3 opciones, orden menor a mayor.`;
         document.getElementById('solGarantia').value=c.garantia||'';
         document.getElementById('solFaena').value=c.faena||'';
         document.getElementById('solTiempo').value=c.tiempo||'';
-        document.getElementById('solOC').value=c.oc||'';
-        document.getElementById('solRef').value=c.ref||'';
         document.getElementById('solObs').value=c.obs||'';
-        renderItems();setEstado(_estado);
+        renderItems();setEstado(_estado);syncResumen();
+        // Admin no necesita autorización: ocultar checkbox
+        var chkWrap=document.getElementById('chkPropuestaWrap');
+        if(chkWrap) chkWrap.style.display=esAdmin()?'none':'flex';
+        // Restaurar estado bloqueado si ya fue aprobada
+        if(_bloqueado){
+            bloquearUI();
+            document.getElementById('panelAprobada').style.display='flex';
+            var f=obj.financiero||{};
+            document.getElementById('infoFolioPed').innerHTML=obj.pedido_folio?'<strong>Pedido:</strong> '+obj.pedido_folio:'';
+            document.getElementById('infoFolioOC').innerHTML =obj.oc_folio   ?'<strong>OC:</strong> '    +obj.oc_folio   :'';
+            var btn=document.getElementById('btnEmitirCot'); if(btn) btn.style.display='none';
+        }
     }
+
+    // ══════════════════════════════════════════════════════════════
+    // EMITIR COTIZACIÓN — Generador PDF con membrete VALTRAX
+    // ══════════════════════════════════════════════════════════════
+    var _pdfBlob    = null;
+    var _pdfBlobURL = null;
+
+    function cerrarModalEmitir() {
+        document.getElementById('modalEmitirCot').style.display = 'none';
+        var ifrm = document.getElementById('pdfPreviewIframe');
+        if (ifrm) ifrm.src = 'about:blank';
+        if (_pdfBlobURL) { URL.revokeObjectURL(_pdfBlobURL); _pdfBlobURL = null; }
+    }
+
+    function descargarPDF() {
+        if (!_pdfBlob) return;
+        var folio = (document.getElementById('cotFolio').value || 'cotizacion').replace(/[^a-zA-Z0-9\-]/g,'');
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(_pdfBlob);
+        a.download = 'Cotizacion-' + folio + '.pdf';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    }
+
+    function imprimirPDF() {
+        var iframe = document.getElementById('pdfPreviewIframe');
+        if (iframe && iframe.contentWindow) {
+            iframe.focus();
+            iframe.contentWindow.print();
+        }
+    }
+
+    // Convierte el SVG del logo a PNG dataURL para usar en jsPDF
+    async function vxLogoDataURL(w, h) {
+        try {
+            var resp = await fetch('assets/images/valtrax-logo.svg');
+            var txt  = await resp.text();
+            var blob = new Blob([txt], {type:'image/svg+xml'});
+            var url  = URL.createObjectURL(blob);
+            return await new Promise(function(resolve) {
+                var img = new Image();
+                img.onload = function() {
+                    var c = document.createElement('canvas');
+                    c.width = w || 620; c.height = h || 136;
+                    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+                    URL.revokeObjectURL(url);
+                    try { resolve(c.toDataURL('image/png')); } catch(e) { resolve(null); }
+                };
+                img.onerror = function() { URL.revokeObjectURL(url); resolve(null); };
+                img.src = url;
+            });
+        } catch(e) { return null; }
+    }
+
+    function fmtCLP(n) {
+        return '$ ' + Math.round(n||0).toLocaleString('es-CL');
+    }
+
+    async function emitirCotizacion() {
+        if (!_pID) { toast('Guarda primero la solicitud','#dc2626'); return; }
+
+        // Mostrar modal con spinner
+        var modal = document.getElementById('modalEmitirCot');
+        var ifrm  = document.getElementById('pdfPreviewIframe');
+        modal.style.display = 'flex';
+        ifrm.srcdoc = '<html><body style="margin:0;display:flex;align-items:center;justify-content:center;height:100vh;background:#3d3d3d;color:#ccc;font-family:sans-serif;font-size:14px;"><span>⏳ Generando PDF...</span></body></html>';
+
+        var folio   = document.getElementById('cotFolio').value   || generarFolio();
+        var cliente = document.getElementById('cotCliente').textContent || '—';
+        var faena   = document.getElementById('cotFaena').textContent   || '';
+        var fecha   = document.getElementById('cotFecha').textContent   || new Date().toLocaleDateString('es-CL');
+        var nota    = (document.getElementById('cotNota').value || '').trim();
+        var vigencia = (document.getElementById('cotVigencia').value || '').trim();
+        var useIva  = document.getElementById('cotIva').value === 'si';
+
+        document.getElementById('emitFolioLabel').textContent  = folio;
+        document.getElementById('emitClienteLabel').textContent = cliente;
+
+        try {
+            // ── Cargar jsPDF ──────────────────────────────────────
+            if (!window.jspdf) throw new Error('jsPDF no cargó. Verificá conexión a internet.');
+            var jsPDF = window.jspdf.jsPDF;
+            var doc   = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+            var PW = 210, PH = 297;
+
+            // ── Logo PNG ──────────────────────────────────────────
+            var logoImg = await vxLogoDataURL(620, 136);
+
+            // ════════════════════════════════════════════════════
+            //   MEMBRETE — función para dibujar en cada página
+            // ════════════════════════════════════════════════════
+            function dibujarMembrete() {
+                // Fondo blanco (por defecto en jsPDF)
+
+                // ── Franja curva azul marino superior-izquierda ──
+                doc.setFillColor(29, 67, 112);
+                doc.lines(
+                    [
+                        [68, 0],                          // línea derecha hasta (68, 0)
+                        [-8, 5, -42, 42, -68, 58]         // bezier curva hasta (0, 58)
+                    ],
+                    0, 0, [1,1], 'F', true
+                );
+
+                // ── Logo VALTRAX superior-derecha ─────────────────
+                if (logoImg) {
+                    doc.addImage(logoImg, 'PNG', PW - 78, 7, 70, 15);
+                } else {
+                    doc.setFont('helvetica','bold');
+                    doc.setFontSize(16);
+                    doc.setTextColor(29,67,112);
+                    doc.text('VALTRAX', PW - 10, 16, {align:'right'});
+                    doc.setFont('helvetica','normal');
+                    doc.setFontSize(7);
+                    doc.setTextColor(104,108,119);
+                    doc.text('— INDUSTRIAL SPA —', PW - 10, 21, {align:'right'});
+                }
+
+                // ── Franja inferior — capa navy ───────────────────
+                doc.setFillColor(29, 67, 112);
+                doc.lines(
+                    [
+                        [105, -10, 105, -10, PW, 0],  // bezier onda superior
+                        [0, 28],                       // baja al borde
+                        [-PW, 0]                       // vuelve izq
+                    ],
+                    0, PH - 28, [1,1], 'F', true
+                );
+
+                // ── Franja inferior — capa azul grisácea ─────────
+                doc.setFillColor(138, 154, 176);
+                doc.lines(
+                    [
+                        [105, -9, 105, -9, PW, 0],
+                        [0, 17],
+                        [-PW, 0]
+                    ],
+                    0, PH - 17, [1,1], 'F', true
+                );
+
+                // ── Pie de página (sobre franja) ──────────────────
+                doc.setFont('helvetica','normal');
+                doc.setFontSize(6.5);
+                doc.setTextColor(255,255,255);
+                doc.text('VALTRAX Industrial SPA  ·  Antofagasta, Chile  ·  contacto@valtrax.cl  ·  www.valtrax.cl', PW/2, PH-19, {align:'center'});
+                doc.text('Documento generado por VALTRAX Industrial SPA', PW/2, PH-14, {align:'center'});
+
+                // ── Línea separadora header ───────────────────────
+                doc.setDrawColor(29,67,112);
+                doc.setLineWidth(0.4);
+                doc.line(16, 32, PW-12, 32);
+            }
+
+            // Dibujar membrete en página 1
+            dibujarMembrete();
+
+            // ════════════════════════════════════════════════════
+            //   CONTENIDO
+            // ════════════════════════════════════════════════════
+            var ML = 18, MR = PW - 14;  // márgenes izq/der en mm
+            var y  = 38;                // posición Y actual
+
+            // ── Encabezado documento ──────────────────────────────
+            doc.setFont('helvetica','bold');
+            doc.setFontSize(15);
+            doc.setTextColor(29,67,112);
+            doc.text('COTIZACIÓN', ML, y);
+
+            doc.setFont('helvetica','normal');
+            doc.setFontSize(8.5);
+            doc.setTextColor(80,80,80);
+            doc.text('N°  ' + folio, MR, y, {align:'right'});
+            y += 5;
+            doc.text('Fecha:  ' + fecha, MR, y, {align:'right'});
+            if (vigencia) {
+                y += 4.5;
+                doc.text('Vigencia:  ' + vigencia, MR, y, {align:'right'});
+            }
+            y += 6;
+
+            // Línea separadora
+            doc.setDrawColor(220,220,220); doc.setLineWidth(0.25);
+            doc.line(ML, y, MR, y);
+            y += 6;
+
+            // ── Datos emisor / cliente (dos columnas) ─────────────
+            var colW = (MR - ML - 8) / 2;
+            var xCli = ML + colW + 8;
+
+            // Columna izquierda — VALTRAX
+            doc.setFont('helvetica','bold');
+            doc.setFontSize(7.5);
+            doc.setTextColor(29,67,112);
+            doc.text('VALTRAX INDUSTRIAL SPA', ML, y);
+            doc.setFont('helvetica','normal');
+            doc.setTextColor(55,55,55);
+            doc.setFontSize(7.5);
+            var yE = y + 4;
+            doc.text('Antofagasta, Chile', ML, yE); yE += 3.8;
+            doc.text('Giro: Comercialización de insumos industriales', ML, yE); yE += 3.8;
+            doc.text('contacto@valtrax.cl', ML, yE);
+
+            // Columna derecha — CLIENTE
+            doc.setFont('helvetica','bold');
+            doc.setFontSize(7.5);
+            doc.setTextColor(29,67,112);
+            doc.text('CLIENTE / RECEPTOR', xCli, y);
+            doc.setFont('helvetica','normal');
+            doc.setTextColor(55,55,55);
+            var yC = y + 4;
+            doc.text(cliente, xCli, yC); yC += 3.8;
+            if (faena && faena !== '—' && faena !== '') {
+                doc.text('Faena: ' + faena, xCli, yC); yC += 3.8;
+            }
+
+            y = Math.max(yE, yC) + 6;
+
+            doc.setDrawColor(220,220,220); doc.setLineWidth(0.25);
+            doc.line(ML, y, MR, y);
+            y += 7;
+
+            // ── Tabla de ítems ────────────────────────────────────
+            var TW  = MR - ML; // ancho total tabla
+            var ROW = 6.5;     // alto de fila
+            var cols = {
+                n:    {x: ML,              w: 8},
+                desc: {x: ML + 8,          w: 80},
+                cant: {x: ML + 88,         w: 14},
+                unid: {x: ML + 102,        w: 20},
+                pu:   {x: ML + 122,        w: 30},
+                sub:  {x: ML + 152,        w: TW - 152}
+            };
+
+            var yTbl = y;
+
+            // Header
+            doc.setFillColor(29,67,112);
+            doc.rect(ML, yTbl, TW, 7, 'F');
+            doc.setFont('helvetica','bold');
+            doc.setFontSize(7.5);
+            doc.setTextColor(255,255,255);
+            var hY = yTbl + 5;
+            doc.text('#',           cols.n.x + 1, hY);
+            doc.text('Descripción', cols.desc.x + 1, hY);
+            doc.text('Cant.',       cols.cant.x + 1, hY);
+            doc.text('Unidad',      cols.unid.x + 1, hY);
+            doc.text('P. Unitario', cols.pu.x + 1,   hY);
+            doc.text('Subtotal',    MR,               hY, {align:'right'});
+            yTbl += 7;
+
+            // Filas
+            doc.setFont('helvetica','normal');
+            doc.setFontSize(7.5);
+            var rowNum = 0;
+            _items.forEach(function(it, idx) {
+                if (!it.desc || !it.desc.trim()) return;
+                var pObj   = _ppto[it.id] || {};
+                var opSel  = (pObj.opciones||[]).find(function(o){ return o.seleccionada; });
+                var pu     = opSel ? (parseFloat(opSel.precio)||0) : 0;
+                var sub    = pu * (parseFloat(it.cant)||1);
+
+                // Fondo alterno
+                if (rowNum % 2 === 0) {
+                    doc.setFillColor(245,248,252);
+                    doc.rect(ML, yTbl, TW, ROW, 'F');
+                }
+                doc.setTextColor(35,35,35);
+                var rY = yTbl + ROW - 1.8;
+                doc.text(String(idx+1), cols.n.x + 1, rY);
+                var desc = String(it.desc || '');
+                if (desc.length > 46) desc = desc.substring(0,44)+'…';
+                doc.text(desc, cols.desc.x + 1, rY);
+                doc.text(String(it.cant||1), cols.cant.x + 1, rY);
+                doc.text(it.unidad||'un', cols.unid.x + 1, rY);
+                doc.text(fmtCLP(pu),  cols.pu.x + cols.pu.w - 1, rY, {align:'right'});
+                doc.text(fmtCLP(sub), MR, rY, {align:'right'});
+                yTbl += ROW;
+                rowNum++;
+
+                // Salto de página si se llena
+                if (yTbl > PH - 55) {
+                    doc.addPage();
+                    dibujarMembrete();
+                    yTbl = 40;
+                }
+            });
+
+            // Borde tabla
+            doc.setDrawColor(200,210,225); doc.setLineWidth(0.25);
+            doc.rect(ML, y, TW, yTbl - y, 'S');
+
+            y = yTbl + 5;
+
+            // ── Totales ───────────────────────────────────────────
+            var neto = 0;
+            _items.forEach(function(it) {
+                var pObj  = _ppto[it.id]||{};
+                var opSel = (pObj.opciones||[]).find(function(o){ return o.seleccionada; });
+                if (opSel) neto += (parseFloat(opSel.precio)||0) * (parseFloat(it.cant)||1);
+            });
+            var ivaAmt = useIva ? Math.round(neto * 0.19) : 0;
+            var total  = neto + ivaAmt;
+
+            var totW = 72, totX = MR - totW;
+            doc.setFont('helvetica','normal');
+            doc.setFontSize(8);
+            doc.setTextColor(55,55,55);
+            doc.text('Neto:', totX, y + 4);
+            doc.text(fmtCLP(neto), MR, y + 4, {align:'right'});
+            y += 5.5;
+            if (useIva) {
+                doc.text('IVA (19%):', totX, y + 4);
+                doc.text(fmtCLP(ivaAmt), MR, y + 4, {align:'right'});
+                y += 5.5;
+            }
+            // Fila TOTAL
+            doc.setFillColor(29,67,112);
+            doc.rect(totX - 2, y, MR - totX + 2, 8, 'F');
+            doc.setFont('helvetica','bold');
+            doc.setFontSize(9);
+            doc.setTextColor(255,255,255);
+            doc.text('TOTAL:', totX, y + 5.5);
+            doc.text(fmtCLP(total), MR, y + 5.5, {align:'right'});
+            y += 12;
+
+            // ── Observaciones ─────────────────────────────────────
+            if (nota) {
+                doc.setFont('helvetica','bold');
+                doc.setFontSize(8);
+                doc.setTextColor(55,55,55);
+                doc.text('Observaciones:', ML, y);
+                y += 4.5;
+                doc.setFont('helvetica','normal');
+                doc.setFontSize(7.5);
+                var ls = doc.splitTextToSize(nota, MR - ML);
+                doc.text(ls, ML, y);
+            }
+
+            // ── Exportar como blob ────────────────────────────────
+            _pdfBlob    = doc.output('blob');
+            _pdfBlobURL = URL.createObjectURL(_pdfBlob);
+            ifrm.src    = _pdfBlobURL;
+
+        } catch(err) {
+            console.error('Error generando PDF:', err);
+            ifrm.srcdoc = '<html><body style="padding:20px;font-family:sans-serif;color:#dc2626;">Error generando PDF: ' + err.message + '</body></html>';
+        }
+    }
+    // ══════════════════════════════════════════════════════════════
+
     </script>
     <script src="assets/js/common-init.min.js"></script>
 </body>
