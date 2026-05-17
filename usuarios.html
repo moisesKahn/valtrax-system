@@ -1,142 +1,316 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="zxx">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Usuarios — VALTRAX</title>
-<link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
-<link rel="stylesheet" href="assets/css/theme.min.css"/>
-<link rel="stylesheet" href="assets/vendors/fonts/feather.css"/>
-<style>
-  body{background:#f1f5f9;}
-  .page-header{background:#fff;border-bottom:1px solid #e2e8f0;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
-  .page-title{font-size:20px;font-weight:700;color:#0f172a;margin:0;}
-  .card-wrap{background:#fff;border-radius:14px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid #e2e8f0;overflow:hidden;margin:24px;}
-  .card-head{padding:16px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
-  .card-title{font-size:14px;font-weight:700;color:#0f172a;margin:0;}
-  table{width:100%;border-collapse:collapse;}
-  thead th{padding:10px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;background:#f8fafc;border-bottom:1px solid #e2e8f0;}
-  tbody td{padding:12px 14px;font-size:13px;color:#334155;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
-  tbody tr:hover td{background:#f8fafc;}
-  .badge-rol{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;}
-  .rol-admin{background:#ede9fe;color:#6d28d9;}
-  .rol-vendedor{background:#dbeafe;color:#1d4ed8;}
-  .badge-activo{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
-  .act-si{background:#dcfce7;color:#15803d;}
-  .act-no{background:#fee2e2;color:#b91c1c;}
-  .btn-act{padding:5px 11px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:5px;transition:opacity .15s;}
-  .btn-act:hover{opacity:.8;}
-  .btn-edit{background:#eff6ff;color:#2563eb;}
-  .btn-del{background:#fef2f2;color:#dc2626;}
-  .btn-toggle{background:#f0fdf4;color:#16a34a;}
-  /* Modal */
-  #overlay{display:none;position:fixed;inset:0;z-index:9000;background:rgba(15,23,42,.55);backdrop-filter:blur(6px);align-items:center;justify-content:center;}
-  #overlay.show{display:flex;}
-  .modal-box{background:#fff;border-radius:18px;padding:32px 28px;width:90%;max-width:440px;box-shadow:0 24px 60px rgba(0,0,0,.18);}
-  .modal-title{font-size:17px;font-weight:700;color:#0f172a;margin:0 0 20px;}
-  .form-label{font-size:12px;font-weight:600;color:#64748b;margin-bottom:4px;display:block;}
-  .form-ctrl{width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:9px;font-size:13px;outline:none;transition:border-color .15s;box-sizing:border-box;}
-  .form-ctrl:focus{border-color:#2563eb;}
-  .form-group{margin-bottom:14px;}
-  .modal-btns{display:flex;gap:10px;margin-top:20px;}
-  .btn-cancel{flex:1;padding:10px;background:#f1f5f9;border:none;border-radius:50px;font-size:13px;font-weight:600;color:#64748b;cursor:pointer;}
-  .btn-save{flex:1;padding:10px;background:#2563eb;border:none;border-radius:50px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;}
-  .btn-save:hover{background:#1d4ed8;}
-  .err-msg{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 12px;font-size:12px;color:#dc2626;margin-bottom:14px;display:none;}
-  #emptyState{display:none;text-align:center;padding:48px;color:#94a3b8;font-size:14px;}
-  .search-wrap{position:relative;}
-  .search-wrap input{padding-left:34px;}
-  .search-wrap i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:14px;pointer-events:none;}
-  .hint-clave{font-size:11px;color:#94a3b8;margin-top:3px;}
-</style>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VALTRAX · Usuarios</title>
+    <script id="valtrax-theme-pre-init">
+    (function(){
+        var h=document.documentElement;
+        var m=localStorage.getItem('nexel-classic-dashboard-menu-mini-theme');
+        if(m==='menu-mini-theme') h.classList.add('minimenu');
+    })();
+    </script>
+    <link rel="shortcut icon" type="image/svg+xml" href="assets/images/valtrax-icono.svg" />
+    <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="assets/vendors/css/vendors.min.css" />
+    <link rel="stylesheet" type="text/css" href="assets/css/theme.min.css" />
+    <link rel="stylesheet" type="text/css" href="assets/css/sidebar-glass.css" />
+    <link rel="stylesheet" type="text/css" href="assets/css/valtrax-dashboard.css" />
+    <style id="valtrax-nav-pre-init">.nxl-navbar .nxl-submenu{display:none}
+    html.valtrax-loading .nxl-navigation,html.valtrax-loading .nxl-navigation *{transition:none!important;animation:none!important}</style>
+    <style>
+    .badge-rol{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;white-space:nowrap;}
+    .rol-admin   {background:#ede9fe;color:#6d28d9;}
+    .rol-vendedor{background:#dbeafe;color:#1d4ed8;}
+    .rol-bodega  {background:#fef3c7;color:#92400e;}
+    .rol-compras {background:#d1fae5;color:#065f46;}
+    .badge-activo{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
+    .act-si{background:#dcfce7;color:#15803d;}
+    .act-no{background:#fee2e2;color:#b91c1c;}
+    .btn-act{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid transparent;transition:all .15s;}
+    .btn-act:hover{opacity:.85;}
+    .btn-edit  {background:#eff6ff;color:#2563eb;border-color:#bfdbfe;}
+    .btn-del   {background:#fef2f2;color:#dc2626;border-color:#fecaca;}
+    .btn-toggle{background:#f0fdf4;color:#16a34a;border-color:#bbf7d0;}
+    #overlay{display:none;position:fixed;inset:0;z-index:9000;background:rgba(15,23,42,.55);backdrop-filter:blur(6px);align-items:center;justify-content:center;}
+    #overlay.show{display:flex;}
+    .modal-box{background:#fff;border-radius:18px;padding:32px 28px;width:90%;max-width:440px;box-shadow:0 24px 60px rgba(0,0,0,.18);}
+    .modal-title{font-size:17px;font-weight:700;color:#0f172a;margin:0 0 20px;}
+    .form-lbl{font-size:12px;font-weight:600;color:#64748b;margin-bottom:4px;display:block;}
+    .form-ctrl-u{width:100%;padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:9px;font-size:13px;outline:none;transition:border-color .15s;box-sizing:border-box;font-family:'DM Sans',sans-serif;}
+    .form-ctrl-u:focus{border-color:#2563eb;}
+    .form-group-u{margin-bottom:14px;}
+    .modal-btns{display:flex;gap:10px;margin-top:20px;}
+    .btn-cancel{flex:1;padding:10px;background:#f1f5f9;border:none;border-radius:50px;font-size:13px;font-weight:600;color:#64748b;cursor:pointer;}
+    .btn-save{flex:1;padding:10px;background:#2563eb;border:none;border-radius:50px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;}
+    .btn-save:hover{background:#1d4ed8;}
+    .err-msg{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 12px;font-size:12px;color:#dc2626;margin-bottom:14px;display:none;}
+    .hint-clave{font-size:11px;color:#94a3b8;margin-top:3px;}
+    </style>
 </head>
 <body>
 
-<div class="page-header">
-  <div style="display:flex;align-items:center;gap:12px;">
-    <a href="index.html" style="color:#94a3b8;text-decoration:none;font-size:13px;"><i class="feather-arrow-left me-1"></i>Volver</a>
-    <span style="color:#e2e8f0;">|</span>
-    <h1 class="page-title"><i class="feather-user-check me-2" style="color:#6d28d9;"></i>Usuarios del Sistema</h1>
-  </div>
-  <button onclick="abrirNuevo()" style="padding:9px 20px;background:#2563eb;border:none;border-radius:50px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;display:flex;align-items:center;gap:7px;">
-    <i class="feather-plus"></i> Nuevo Usuario
-  </button>
-</div>
-
-<div class="card-wrap">
-  <div class="card-head">
-    <span class="card-title" id="countLabel">Usuarios</span>
-    <div class="search-wrap">
-      <i class="feather-search"></i>
-      <input id="buscar" class="form-ctrl" style="width:220px;" placeholder="Buscar usuario..." oninput="renderTabla()"/>
+<nav class="nxl-navigation">
+    <div class="navbar-wrapper">
+        <div class="m-header">
+            <a href="index.html" class="b-brand" style="display:flex;align-items:center;text-decoration:none;">
+                <img src="assets/images/valtrax-logo.svg" alt="VALTRAX" class="logo logo-lg" style="height:34px;width:auto;display:block;" />
+                <img src="assets/images/valtrax-icono.svg" alt="VX" class="logo logo-sm" style="height:38px;width:38px;display:none;" />
+            </a>
+        </div>
+        <div class="navbar-content">
+            <ul class="nxl-navbar">
+                <li class="nxl-item">
+                    <a class="nxl-link" href="index.html">
+                        <span class="nxl-micon"><i class="feather-grid"></i></span>
+                        <span class="nxl-mtext">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nxl-item nxl-caption"><label>Area Comercial</label></li>
+                <li class="nxl-item nxl-hasmenu">
+                    <a href="javascript:void(0);" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-file-text"></i></span>
+                        <span class="nxl-mtext">Cotizaciones</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                    </a>
+                    <ul class="nxl-submenu">
+                        <li class="nxl-item"><a class="nxl-link" href="cotizaciones.html">Listado</a></li>
+                        <li class="nxl-item"><a class="nxl-link" href="presupuesto-interno.html">Nueva Cotizacion</a></li>
+                    </ul>
+                </li>
+                <li class="nxl-item nxl-hasmenu">
+                    <a href="javascript:void(0);" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-users"></i></span>
+                        <span class="nxl-mtext">Clientes</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                    </a>
+                    <ul class="nxl-submenu">
+                        <li class="nxl-item"><a class="nxl-link" href="customers.html">Listado de Clientes</a></li>
+                        <li class="nxl-item"><a class="nxl-link" href="customers-create.html">Nuevo Cliente</a></li>
+                    </ul>
+                </li>
+                <li class="nxl-item nxl-caption"><label>Area Operacional</label></li>
+                <li class="nxl-item">
+                    <a class="nxl-link" href="pedidos.html">
+                        <span class="nxl-micon"><i class="feather-package"></i></span>
+                        <span class="nxl-mtext">Pedidos</span>
+                    </a>
+                </li>
+                <li class="nxl-item">
+                    <a class="nxl-link" href="ordenes-compra.html">
+                        <span class="nxl-micon"><i class="feather-shopping-bag"></i></span>
+                        <span class="nxl-mtext">Ordenes de Compra</span>
+                    </a>
+                </li>
+                <li class="nxl-item">
+                    <a class="nxl-link" href="entregas.html">
+                        <span class="nxl-micon"><i class="feather-check-square"></i></span>
+                        <span class="nxl-mtext">Entregas</span>
+                    </a>
+                </li>
+                <li class="nxl-item nxl-caption vx-admin-only" style="display:none;"><label>Administracion</label></li>
+                <li class="nxl-item nxl-hasmenu vx-admin-only" style="display:none;">
+                    <a href="javascript:void(0);" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-user-check"></i></span>
+                        <span class="nxl-mtext">Usuarios</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                    </a>
+                    <ul class="nxl-submenu">
+                        <li class="nxl-item"><a class="nxl-link" href="usuarios.html">Lista de Usuarios</a></li>
+                        <li class="nxl-item"><a class="nxl-link" href="usuarios.html?nuevo=1">Nuevo Usuario</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
-  </div>
-  <table>
-    <thead>
-      <tr>
-        <th>NOMBRE</th>
-        <th>USUARIO</th>
-        <th>ROL</th>
-        <th>ESTADO</th>
-        <th>CREADO</th>
-        <th style="text-align:right;">ACCIONES</th>
-      </tr>
-    </thead>
-    <tbody id="tbody"></tbody>
-  </table>
-  <div id="emptyState">
-    <i class="feather-users" style="font-size:36px;display:block;margin-bottom:12px;"></i>
-    No hay usuarios registrados.
-  </div>
-</div>
-
-<!-- Modal Crear / Editar -->
-<div id="overlay">
-  <div class="modal-box">
-    <h4 class="modal-title" id="modalTitle">Nuevo Usuario</h4>
-    <div class="err-msg" id="errMsg"></div>
-    <input type="hidden" id="editId"/>
-    <div class="form-group">
-      <label class="form-label">Nombre completo *</label>
-      <input id="fNombre" class="form-ctrl" placeholder="Ej: Juan Pérez" maxlength="100"/>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Nombre de usuario *</label>
-      <input id="fUsuario" class="form-ctrl" placeholder="Ej: juan.perez" maxlength="60"/>
-    </div>
-    <div class="form-group">
-      <label class="form-label" id="claveLabel">Contraseña *</label>
-      <input id="fClave" class="form-ctrl" type="password" placeholder="Mínimo 6 caracteres" maxlength="100"/>
-      <p class="hint-clave" id="claveHint">Deja en blanco para mantener la contraseña actual.</p>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Rol</label>
-      <select id="fRol" class="form-ctrl">
-        <option value="vendedor">Vendedor</option>
-        <option value="administrador">Administrador</option>
-        <option value="bodega">Bodega</option>
-        <option value="compras">Compras</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Estado</label>
-      <select id="fActivo" class="form-ctrl">
-        <option value="1">Activo</option>
-        <option value="0">Inactivo</option>
-      </select>
-    </div>
-    <div class="modal-btns">
-      <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
-      <button class="btn-save" id="btnGuardar" onclick="guardar()"><i class="feather-save me-1"></i>Guardar</button>
-    </div>
-  </div>
-</div>
+</nav>
 
 <script>
-var _datos = [];
+(function(){
+    document.documentElement.classList.add('valtrax-loading');
+    var s=document.querySelectorAll('.nxl-navbar .nxl-submenu');
+    for(var j=0;j<s.length;j++) s[j].style.display='none';
+    var page=location.pathname.split('/').pop()||'index.html';
+    var links=document.querySelectorAll('.nxl-navbar a.nxl-link');
+    for(var i=0;i<links.length;i++){
+        var h=links[i].getAttribute('href');
+        if(h&&h!=='javascript:void(0);'&&h.split('?')[0]===page){
+            var it=links[i].closest('.nxl-item');
+            if(it) it.classList.add('active');
+            var hm=links[i].closest('.nxl-hasmenu');
+            if(hm){hm.classList.add('active');var sub=hm.querySelector('.nxl-submenu');if(sub)sub.style.display='block';}
+        }
+    }
+    if(localStorage.getItem('vx_rol')==='administrador'){
+        document.querySelectorAll('.vx-admin-only').forEach(function(el){el.style.display='';});
+    }
+})();
+</script>
+
+<header class="nxl-header">
+    <div class="header-wrapper">
+        <div class="header-left d-flex align-items-center gap-4">
+            <div class="nxl-navigation-toggle">
+                <a href="javascript:void(0);" id="menu-mini-button"><i class="feather-align-left"></i></a>
+                <a href="javascript:void(0);" id="menu-expend-button" style="display:none"><i class="feather-arrow-right"></i></a>
+            </div>
+            <a href="javascript:void(0);" class="nxl-head-mobile-toggler" id="mobile-collapse">
+                <div class="hamburger hamburger--arrowturn"><div class="hamburger-box"><div class="hamburger-inner"></div></div></div>
+            </a>
+        </div>
+        <div class="header-right ms-auto">
+            <div class="d-flex align-items-center">
+                <div class="dropdown nxl-h-item">
+                    <a href="javascript:void(0);" class="nxl-head-link me-0 p-1" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                        <div id="vx-avatar" style="width:36px;height:36px;border-radius:50%;background:#2563eb;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;user-select:none;">VX</div>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end" style="min-width:200px;border-radius:12px;padding:8px 0;box-shadow:0 8px 28px rgba(0,0,0,0.13);">
+                        <div class="px-3 py-2 mb-1 border-bottom">
+                            <p class="mb-0 fw-semibold fs-13" id="vx-nombre-header">VALTRAX</p>
+                            <p class="mb-0 text-muted fs-11" id="vx-rol-header">Administrador</p>
+                        </div>
+                        <a href="auth-login-cover.html" class="dropdown-item text-danger fw-semibold" style="padding:9px 16px;font-size:13px;">
+                            <i class="feather-log-out me-2"></i>Cerrar sesion
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<script>
+(function(){
+    var nombre=localStorage.getItem('vx_usuario')||'Valtrax User';
+    var partes=nombre.trim().split(/\s+/);
+    var iniciales=partes.length>=2?(partes[0][0]+partes[partes.length-1][0]).toUpperCase():nombre.slice(0,2).toUpperCase();
+    var av=document.getElementById('vx-avatar');
+    var nh=document.getElementById('vx-nombre-header');
+    if(av) av.textContent=iniciales;
+    if(nh) nh.textContent=nombre;
+})();
+</script>
+
+<main class="nxl-container">
+    <div class="nxl-content">
+        <div class="page-header">
+            <div class="page-header-left d-flex align-items-center">
+                <div class="page-header-title"><h5 class="m-b-10">Usuarios</h5></div>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Inicio</a></li>
+                    <li class="breadcrumb-item">Administracion</li>
+                    <li class="breadcrumb-item">Usuarios</li>
+                </ul>
+            </div>
+            <div class="page-header-right ms-auto">
+                <button onclick="abrirNuevo()" class="btn btn-sm btn-primary">
+                    <i class="feather-plus me-1"></i> Nuevo Usuario
+                </button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="card stretch stretch-full">
+                <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2" style="padding:10px 20px;border-bottom:1px solid rgba(148,163,184,0.15);">
+                    <span style="font-size:13px;font-weight:600;color:#1e293b;" id="countLabel">Lista de Usuarios</span>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <div class="d-flex gap-1 flex-wrap" id="tabsRol">
+                            <button class="btn btn-sm btn-primary tab-rol active"    data-rol="">Todos</button>
+                            <button class="btn btn-sm btn-outline-secondary tab-rol" data-rol="administrador">Administradores</button>
+                            <button class="btn btn-sm btn-outline-secondary tab-rol" data-rol="vendedor">Vendedores</button>
+                            <button class="btn btn-sm btn-outline-secondary tab-rol" data-rol="bodega">Bodega</button>
+                            <button class="btn btn-sm btn-outline-secondary tab-rol" data-rol="compras">Compras</button>
+                        </div>
+                        <div style="display:flex;align-items:center;height:32px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;overflow:hidden;width:200px;">
+                            <span style="padding:0 10px;color:#94a3b8;"><i class="feather-search" style="font-size:12px;"></i></span>
+                            <input type="text" id="buscar" placeholder="Buscar usuario..." oninput="renderTabla()"
+                                style="border:none;outline:none;font-size:12.5px;width:100%;color:#334155;background:transparent;padding:0 8px 0 0;">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table mb-0" style="font-size:13px;border-collapse:collapse;">
+                            <thead>
+                                <tr style="background:rgba(248,250,252,0.9);border-bottom:1px solid rgba(148,163,184,0.15);">
+                                    <th style="padding:7px 12px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;">NOMBRE</th>
+                                    <th style="padding:7px 12px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;">USUARIO</th>
+                                    <th style="padding:7px 12px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;">ROL</th>
+                                    <th style="padding:7px 12px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;">ESTADO</th>
+                                    <th style="padding:7px 12px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;">CREADO</th>
+                                    <th style="padding:7px 16px 7px 12px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;text-align:right;">ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody"></tbody>
+                        </table>
+                        <div id="emptyState" style="text-align:center;padding:60px 20px;color:#94a3b8;display:none;">
+                            <i class="feather-users" style="font-size:40px;display:block;margin-bottom:10px;"></i>
+                            No hay usuarios en esta categoria.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p class="fs-11 text-muted fw-medium text-uppercase mb-0 copyright">
+                <span>Copyright </span>
+                <a href="javascript:void(0);" class="ms-1"><span class="fw-bold">VALTRAX</span></a>
+            </p>
+        </footer>
+    </div>
+</main>
+
+<!-- Modal crear/editar -->
+<div id="overlay" onclick="if(event.target===this)cerrarModal()">
+    <div class="modal-box">
+        <h4 class="modal-title" id="modalTitle">Nuevo Usuario</h4>
+        <div class="err-msg" id="errMsg"></div>
+        <input type="hidden" id="editId"/>
+        <div class="form-group-u">
+            <label class="form-lbl">Nombre completo *</label>
+            <input id="fNombre" class="form-ctrl-u" placeholder="Ej: Juan Perez" maxlength="100"/>
+        </div>
+        <div class="form-group-u">
+            <label class="form-lbl">Nombre de usuario *</label>
+            <input id="fUsuario" class="form-ctrl-u" placeholder="Ej: juan.perez" maxlength="60"/>
+        </div>
+        <div class="form-group-u">
+            <label class="form-lbl" id="claveLabel">Contrasena *</label>
+            <input id="fClave" class="form-ctrl-u" type="password" placeholder="Minimo 6 caracteres" maxlength="100"/>
+            <p class="hint-clave" id="claveHint" style="display:none;">Deja en blanco para mantener la contrasena actual.</p>
+        </div>
+        <div class="form-group-u">
+            <label class="form-lbl">Rol</label>
+            <select id="fRol" class="form-ctrl-u">
+                <option value="vendedor">Vendedor</option>
+                <option value="administrador">Administrador</option>
+                <option value="bodega">Bodega</option>
+                <option value="compras">Compras</option>
+            </select>
+        </div>
+        <div class="form-group-u">
+            <label class="form-lbl">Estado</label>
+            <select id="fActivo" class="form-ctrl-u">
+                <option value="1">Activo</option>
+                <option value="0">Inactivo</option>
+            </select>
+        </div>
+        <div class="modal-btns">
+            <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+            <button class="btn-save" id="btnGuardar" onclick="guardar()"><i class="feather-save me-1"></i>Guardar</button>
+        </div>
+    </div>
+</div>
+
+<script src="assets/vendors/js/vendors.min.js"></script>
+<script src="assets/js/common-init.min.js"></script>
+<script>
+var _datos=[];
+var _tabRol='';
+const ROL_LABELS={administrador:'Administrador',vendedor:'Vendedor',bodega:'Bodega',compras:'Compras'};
+const ROL_CSS={administrador:'rol-admin',vendedor:'rol-vendedor',bodega:'rol-bodega',compras:'rol-compras'};
 
 function fmtFecha(f){
-    if(!f) return '—';
+    if(!f) return '--';
     var s=String(f);
     var d=new Date(s.includes('T')?s:s+'T12:00:00');
     return isNaN(d)?s.slice(0,10):d.toLocaleDateString('es-CL',{day:'2-digit',month:'short',year:'numeric'});
@@ -145,76 +319,88 @@ function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replac
 
 async function cargar(){
     try{
-        const r = await fetch('/api/usuarios');
-        if(r.ok) _datos = await r.json();
-        else _datos = [];
-    }catch(_){ _datos = []; }
+        const r=await fetch('/api/usuarios');
+        if(r.ok) _datos=await r.json(); else _datos=[];
+    }catch(_){_datos=[];}
+    renderTabla();
+}
+
+function setTab(rol){
+    _tabRol=rol;
+    document.querySelectorAll('.tab-rol').forEach(function(b){
+        b.classList.remove('btn-primary','active');
+        b.classList.add('btn-outline-secondary');
+    });
+    var act=document.querySelector('.tab-rol[data-rol="'+rol+'"]');
+    if(act){act.classList.add('btn-primary','active');act.classList.remove('btn-outline-secondary');}
     renderTabla();
 }
 
 function renderTabla(){
-    const q = (document.getElementById('buscar').value||'').toLowerCase();
-    let filas = _datos;
-    if(q) filas = filas.filter(u=>(u.nombre||'').toLowerCase().includes(q)||(u.usuario||'').toLowerCase().includes(q)||(u.rol||'').toLowerCase().includes(q));
-    document.getElementById('countLabel').textContent = filas.length + ' usuario' + (filas.length!==1?'s':'');
-    const tbody = document.getElementById('tbody');
-    const empty = document.getElementById('emptyState');
-    if(!filas.length){ tbody.innerHTML=''; empty.style.display='block'; return; }
+    var q=(document.getElementById('buscar').value||'').toLowerCase();
+    var filas=_datos.slice();
+    if(_tabRol) filas=filas.filter(function(u){return u.rol===_tabRol;});
+    if(q) filas=filas.filter(function(u){
+        return (u.nombre||'').toLowerCase().includes(q)||(u.usuario||'').toLowerCase().includes(q)||(u.rol||'').toLowerCase().includes(q);
+    });
+    var total=filas.length;
+    document.getElementById('countLabel').textContent=total+' usuario'+(total!==1?'s':'');
+    var tbody=document.getElementById('tbody');
+    var empty=document.getElementById('emptyState');
+    if(!filas.length){tbody.innerHTML='';empty.style.display='block';return;}
     empty.style.display='none';
-    tbody.innerHTML = filas.map(u=>{
-        const rolCss = u.rol==='administrador'?'rol-admin':'rol-vendedor';
-        const rolLbl = ({administrador:'Administrador',vendedor:'Vendedor',bodega:'Bodega',compras:'Compras'})[u.rol]||u.rol;
-        const actCss = u.activo?'act-si':'act-no';
-        const actLbl = u.activo?'Activo':'Inactivo';
-        return `<tr>
-            <td style="font-weight:600;">${esc(u.nombre)}</td>
-            <td><code style="background:#f1f5f9;padding:2px 7px;border-radius:5px;font-size:12px;">${esc(u.usuario)}</code></td>
-            <td><span class="badge-rol ${rolCss}">${rolLbl}</span></td>
-            <td><span class="badge-activo ${actCss}">${actLbl}</span></td>
-            <td style="font-size:12px;color:#94a3b8;">${fmtFecha(u.creado_en)}</td>
-            <td style="text-align:right;">
-                <div style="display:flex;gap:6px;justify-content:flex-end;">
-                    <button class="btn-act btn-edit" onclick="abrirEditar(${u.id})"><i class="feather-edit-2"></i> Editar</button>
-                    <button class="btn-act btn-toggle" onclick="toggleActivo(${u.id},${u.activo?0:1})">${u.activo?'<i class="feather-toggle-right"></i> Desactivar':'<i class="feather-toggle-left"></i> Activar'}</button>
-                    <button class="btn-act btn-del" onclick="eliminar(${u.id},'${esc(u.nombre)}')"><i class="feather-trash-2"></i></button>
-                </div>
-            </td>
-        </tr>`;
+    tbody.innerHTML=filas.map(function(u){
+        var rolCss=ROL_CSS[u.rol]||'rol-vendedor';
+        var rolLbl=ROL_LABELS[u.rol]||u.rol;
+        var actCss=u.activo?'act-si':'act-no';
+        var actLbl=u.activo?'Activo':'Inactivo';
+        return '<tr style="border-bottom:1px solid rgba(148,163,184,0.08);">'
+            +'<td style="padding:10px 12px;font-weight:600;">'+esc(u.nombre)+'</td>'
+            +'<td style="padding:10px 12px;"><code style="background:#f1f5f9;padding:3px 8px;border-radius:6px;font-size:12px;color:#334155;">'+esc(u.usuario)+'</code></td>'
+            +'<td style="padding:10px 12px;"><span class="badge-rol '+rolCss+'">'+rolLbl+'</span></td>'
+            +'<td style="padding:10px 12px;"><span class="badge-activo '+actCss+'">'+actLbl+'</span></td>'
+            +'<td style="padding:10px 12px;font-size:12px;color:#94a3b8;">'+fmtFecha(u.creado_en)+'</td>'
+            +'<td style="padding:10px 16px 10px 12px;text-align:right;">'
+            +'<div style="display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap;">'
+            +'<button class="btn-act btn-edit" onclick="abrirEditar('+u.id+')"><i class="feather-edit-2"></i> Editar</button>'
+            +'<button class="btn-act btn-toggle" onclick="toggleActivo('+u.id+','+(u.activo?0:1)+')">'+(u.activo?'<i class="feather-toggle-right"></i> Desactivar':'<i class="feather-toggle-left"></i> Activar')+'</button>'
+            +'<button class="btn-act btn-del" onclick="eliminar('+u.id+',\''+esc(u.nombre)+'\')"><i class="feather-trash-2"></i></button>'
+            +'</div></td></tr>';
     }).join('');
 }
 
 function abrirNuevo(){
-    document.getElementById('editId').value = '';
-    document.getElementById('modalTitle').textContent = 'Nuevo Usuario';
-    document.getElementById('fNombre').value = '';
-    document.getElementById('fUsuario').value = '';
-    document.getElementById('fClave').value = '';
-    document.getElementById('fClave').placeholder = 'Mínimo 6 caracteres';
-    document.getElementById('claveLabel').textContent = 'Contraseña *';
-    document.getElementById('claveHint').style.display = 'none';
-    document.getElementById('fRol').value = 'vendedor';
-    document.getElementById('fActivo').value = '1';
-    document.getElementById('errMsg').style.display = 'none';
+    document.getElementById('editId').value='';
+    document.getElementById('modalTitle').textContent='Nuevo Usuario';
+    document.getElementById('fNombre').value='';
+    document.getElementById('fUsuario').value='';
+    document.getElementById('fClave').value='';
+    document.getElementById('fClave').placeholder='Minimo 6 caracteres';
+    document.getElementById('claveLabel').textContent='Contrasena *';
+    document.getElementById('claveHint').style.display='none';
+    document.getElementById('fRol').value='vendedor';
+    document.getElementById('fActivo').value='1';
+    document.getElementById('errMsg').style.display='none';
     document.getElementById('overlay').classList.add('show');
-    document.getElementById('fNombre').focus();
+    setTimeout(function(){document.getElementById('fNombre').focus();},100);
 }
 
 function abrirEditar(id){
-    const u = _datos.find(x=>x.id===id);
+    var u=_datos.find(function(x){return x.id===id;});
     if(!u) return;
-    document.getElementById('editId').value = id;
-    document.getElementById('modalTitle').textContent = 'Editar Usuario';
-    document.getElementById('fNombre').value = u.nombre||'';
-    document.getElementById('fUsuario').value = u.usuario||'';
-    document.getElementById('fClave').value = '';
-    document.getElementById('fClave').placeholder = 'Dejar en blanco para no cambiar';
-    document.getElementById('claveLabel').textContent = 'Nueva contraseña';
-    document.getElementById('claveHint').style.display = 'block';
-    document.getElementById('fRol').value = u.rol||'vendedor';
-    document.getElementById('fActivo').value = u.activo?'1':'0';
-    document.getElementById('errMsg').style.display = 'none';
+    document.getElementById('editId').value=id;
+    document.getElementById('modalTitle').textContent='Editar Usuario';
+    document.getElementById('fNombre').value=u.nombre||'';
+    document.getElementById('fUsuario').value=u.usuario||'';
+    document.getElementById('fClave').value='';
+    document.getElementById('fClave').placeholder='Dejar en blanco para no cambiar';
+    document.getElementById('claveLabel').textContent='Nueva contrasena';
+    document.getElementById('claveHint').style.display='block';
+    document.getElementById('fRol').value=u.rol||'vendedor';
+    document.getElementById('fActivo').value=u.activo?'1':'0';
+    document.getElementById('errMsg').style.display='none';
     document.getElementById('overlay').classList.add('show');
-    document.getElementById('fNombre').focus();
+    setTimeout(function(){document.getElementById('fNombre').focus();},100);
 }
 
 function cerrarModal(){
@@ -222,66 +408,66 @@ function cerrarModal(){
 }
 
 async function guardar(){
-    const id = document.getElementById('editId').value;
-    const nombre = document.getElementById('fNombre').value.trim();
-    const usuario = document.getElementById('fUsuario').value.trim();
-    const clave = document.getElementById('fClave').value;
-    const rol = document.getElementById('fRol').value;
-    const activo = document.getElementById('fActivo').value === '1';
-    const errEl = document.getElementById('errMsg');
-    errEl.style.display = 'none';
-
-    if(!nombre){ errEl.textContent='El nombre es obligatorio.'; errEl.style.display='block'; return; }
-    if(!usuario){ errEl.textContent='El usuario es obligatorio.'; errEl.style.display='block'; return; }
-    if(!id && !clave){ errEl.textContent='La contraseña es obligatoria.'; errEl.style.display='block'; return; }
-    if(clave && clave.length < 6){ errEl.textContent='La contraseña debe tener al menos 6 caracteres.'; errEl.style.display='block'; return; }
-
-    const btn = document.getElementById('btnGuardar');
-    btn.disabled = true; btn.textContent = 'Guardando…';
-
+    var id=document.getElementById('editId').value;
+    var nombre=document.getElementById('fNombre').value.trim();
+    var usuario=document.getElementById('fUsuario').value.trim();
+    var clave=document.getElementById('fClave').value;
+    var rol=document.getElementById('fRol').value;
+    var activo=document.getElementById('fActivo').value==='1';
+    var errEl=document.getElementById('errMsg');
+    errEl.style.display='none';
+    if(!nombre){errEl.textContent='El nombre es obligatorio.';errEl.style.display='block';return;}
+    if(!usuario){errEl.textContent='El usuario es obligatorio.';errEl.style.display='block';return;}
+    if(!id&&!clave){errEl.textContent='La contrasena es obligatoria.';errEl.style.display='block';return;}
+    if(clave&&clave.length<6){errEl.textContent='La contrasena debe tener al menos 6 caracteres.';errEl.style.display='block';return;}
+    var btn=document.getElementById('btnGuardar');
+    btn.disabled=true;btn.textContent='Guardando...';
     try{
-        const body = { nombre, usuario, rol, activo };
-        if(clave) body.clave = clave;
-        const url = id ? '/api/usuarios/'+id : '/api/usuarios';
-        const method = id ? 'PUT' : 'POST';
-        const r = await fetch(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-        const data = await r.json();
-        if(!r.ok){ errEl.textContent = data.error||'Error al guardar'; errEl.style.display='block'; return; }
+        var body={nombre:nombre,usuario:usuario,rol:rol,activo:activo};
+        if(clave) body.clave=clave;
+        var url=id?'/api/usuarios/'+id:'/api/usuarios';
+        var method=id?'PUT':'POST';
+        var r=await fetch(url,{method:method,headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+        var data=await r.json();
+        if(!r.ok){errEl.textContent=data.error||'Error al guardar';errEl.style.display='block';return;}
         cerrarModal();
         await cargar();
     }catch(e){
-        errEl.textContent = 'Error: '+e.message; errEl.style.display='block';
+        errEl.textContent='Error: '+e.message;errEl.style.display='block';
     }finally{
-        btn.disabled=false; btn.innerHTML='<i class="feather-save me-1"></i>Guardar';
+        btn.disabled=false;btn.innerHTML='<i class="feather-save me-1"></i>Guardar';
     }
 }
 
-async function toggleActivo(id, nuevoActivo){
+async function toggleActivo(id,nuevoActivo){
     try{
-        const u = _datos.find(x=>x.id===id);
+        var u=_datos.find(function(x){return x.id===id;});
         if(!u) return;
-        const r = await fetch('/api/usuarios/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({activo:nuevoActivo})});
-        if(r.ok){ u.activo=nuevoActivo; renderTabla(); }
+        var r=await fetch('/api/usuarios/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({activo:nuevoActivo})});
+        if(r.ok){u.activo=nuevoActivo;renderTabla();}
     }catch(_){}
 }
 
-async function eliminar(id, nombre){
-    if(!confirm('¿Eliminar el usuario "'+nombre+'"? Esta acción no se puede deshacer.')) return;
+async function eliminar(id,nombre){
+    if(!confirm('Eliminar el usuario "'+nombre+'"? Esta accion no se puede deshacer.')) return;
     try{
-        const r = await fetch('/api/usuarios/'+id,{method:'DELETE'});
-        if(r.ok){ _datos = _datos.filter(u=>u.id!==id); renderTabla(); }
+        var r=await fetch('/api/usuarios/'+id,{method:'DELETE'});
+        if(r.ok){_datos=_datos.filter(function(u){return u.id!==id;});renderTabla();}
     }catch(_){}
 }
 
-// Verificar rol admin
-if(localStorage.getItem('vx_rol') !== 'administrador'){
-    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:12px;color:#64748b;"><i class="feather-lock" style="font-size:48px;"></i><p style="font-size:16px;font-weight:600;">Acceso restringido a administradores</p><a href="index.html" style="color:#2563eb;">Volver al inicio</a></div>';
+if(localStorage.getItem('vx_rol')!=='administrador'){
+    document.querySelector('main').innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:16px;color:#64748b;"><i class="feather-lock" style="font-size:48px;"></i><p style="font-size:16px;font-weight:600;">Acceso restringido a administradores</p><a href="index.html" style="color:#2563eb;font-weight:600;">Volver al inicio</a></div>';
+} else {
+    document.addEventListener('DOMContentLoaded',function(){
+        document.getElementById('tabsRol').addEventListener('click',function(e){
+            var btn=e.target.closest('.tab-rol');
+            if(btn) setTab(btn.dataset.rol);
+        });
+        if(location.search.includes('nuevo=1')) setTimeout(abrirNuevo,400);
+    });
+    cargar();
 }
-
-// Abrir modal nuevo si viene ?nuevo=1
-if(location.search.includes('nuevo=1')) setTimeout(abrirNuevo, 300);
-
-cargar();
 </script>
 </body>
 </html>

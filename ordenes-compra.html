@@ -310,8 +310,13 @@ function getHistorial(it){
 
 function getItems(oc){return Array.isArray(oc.items)?oc.items:(oc.items?JSON.parse(oc.items):[]);}
 
+var _loadError = '';
 async function cargar(){
-    try{const r=await fetch('/api/oc');if(r.ok)_datos=await r.json();}catch(_){_datos=[];}
+    try{
+        const r=await fetch('/api/oc');
+        if(r.ok){ _datos=await r.json(); _loadError=''; }
+        else { _datos=[]; _loadError='Error del servidor ('+r.status+')'; }
+    }catch(e){ _datos=[]; _loadError='No se pudo conectar al servidor'; }
     // Migrar Borrador → Pendiente en memoria
     _datos.forEach(o=>{if(o.estado==='Borrador')o.estado='Pendiente';});
     const params=new URLSearchParams(location.search);
@@ -335,8 +340,16 @@ function renderTabla(){
     if(q) filas=filas.filter(p=>(p.folio||'').toLowerCase().includes(q)||(p.cliente||'').toLowerCase().includes(q)||(p.pedido_folio||'').toLowerCase().includes(q)||(p.proveedor||'').toLowerCase().includes(q));
     const tbody=document.getElementById('tbody');
     const empty=document.getElementById('emptyState');
-    if(!filas.length){tbody.innerHTML='';empty.style.display='block';return;}
+    if(!filas.length){
+        tbody.innerHTML='';
+        empty.innerHTML = _loadError
+            ? `<i class="feather-alert-circle" style="font-size:40px;display:block;margin-bottom:10px;color:#ef4444;"></i>${_loadError}`
+            : `<i class="feather-shopping-bag" style="font-size:40px;display:block;margin-bottom:10px;"></i>No hay órdenes de compra en este estado`;
+        empty.style.display='block';
+        return;
+    }
     empty.style.display='none';
+    try{
     tbody.innerHTML=filas.map(oc=>{
         const e=EST_OC[oc.estado]||{css:'oc-pendiente',lbl:oc.estado};
         const pedLink=oc.pedido_folio?`<a href="pedidos.html" style="font-size:12px;color:#2563eb;font-weight:600;text-decoration:none;">${esc(oc.pedido_folio)}</a>`:'<span style="color:#cbd5e1;">—</span>';
@@ -354,6 +367,7 @@ function renderTabla(){
             <td style="padding:10px 16px 10px 12px;text-align:right;"><div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">${buildBtnsTabla(oc)}</div></td>
         </tr>`;
     }).join('');
+    }catch(err){ console.error('renderTabla error:',err); empty.innerHTML=`<i class="feather-alert-circle" style="font-size:40px;display:block;margin-bottom:10px;color:#ef4444;"></i>Error al mostrar datos: `+err.message; empty.style.display='block'; tbody.innerHTML=''; }
 }
 
 function buildBtnsTabla(oc){
