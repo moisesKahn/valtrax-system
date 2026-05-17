@@ -7,58 +7,46 @@
   <link rel="icon" href="assets/images/valtrax-icono.svg" type="image/svg+xml" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      height: 100%;
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      overflow: hidden;
+    html, body { height: 100%; font-family: 'Segoe UI', system-ui, sans-serif; overflow: hidden; }
+
+    /* ── Fondo degradado animado ── */
+    body {
+      background: #020b18;
     }
 
-    /* ── Fondo animado azul oscuro ── */
     .vx-bg {
-      position: fixed; inset: 0;
+      position: fixed; inset: 0; z-index: 0;
       background:
-        radial-gradient(ellipse 90% 70% at 20% 30%, rgba(29,99,196,.45) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 80% 70%, rgba(13,47,90,.6) 0%, transparent 55%),
-        linear-gradient(160deg, #020d1f 0%, #051428 40%, #0a1f3d 70%, #061020 100%);
-      z-index: 0;
+        radial-gradient(ellipse 80% 80% at 10% 20%, #0d2a52 0%, transparent 55%),
+        radial-gradient(ellipse 70% 60% at 90% 80%, #071a36 0%, transparent 55%),
+        radial-gradient(ellipse 60% 50% at 50% 50%, #0a2040 0%, transparent 60%),
+        #020b18;
+      animation: vxBgMove 12s ease-in-out infinite alternate;
+    }
+    @keyframes vxBgMove {
+      0%   { background:
+               radial-gradient(ellipse 80% 80% at 10% 20%, #0d2a52 0%, transparent 55%),
+               radial-gradient(ellipse 70% 60% at 90% 80%, #071a36 0%, transparent 55%),
+               radial-gradient(ellipse 60% 50% at 50% 50%, #0a2040 0%, transparent 60%),
+               #020b18; }
+      33%  { background:
+               radial-gradient(ellipse 80% 80% at 80% 10%, #0a2245 0%, transparent 55%),
+               radial-gradient(ellipse 70% 60% at 20% 90%, #061530 0%, transparent 55%),
+               radial-gradient(ellipse 60% 50% at 60% 40%, #0d2a52 0%, transparent 60%),
+               #020b18; }
+      66%  { background:
+               radial-gradient(ellipse 80% 80% at 50% 80%, #091e3e 0%, transparent 55%),
+               radial-gradient(ellipse 70% 60% at 10% 10%, #0d2a52 0%, transparent 55%),
+               radial-gradient(ellipse 60% 50% at 80% 50%, #071a36 0%, transparent 60%),
+               #020b18; }
+      100% { background:
+               radial-gradient(ellipse 80% 80% at 30% 60%, #0b2347 0%, transparent 55%),
+               radial-gradient(ellipse 70% 60% at 70% 20%, #061530 0%, transparent 55%),
+               radial-gradient(ellipse 60% 50% at 20% 40%, #0d2a52 0%, transparent 60%),
+               #020b18; }
     }
 
-    /* partículas / noise */
-    .vx-bg::before {
-      content: '';
-      position: absolute; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
-      background-size: 250px;
-      opacity: 1;
-    }
-
-    /* halo pulsante */
-    .vx-halo {
-      position: fixed;
-      width: 700px; height: 700px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(29,99,196,.18) 0%, transparent 70%);
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      animation: vxPulse 5s ease-in-out infinite alternate;
-      z-index: 0;
-      pointer-events: none;
-    }
-    @keyframes vxPulse {
-      from { transform: translate(-50%,-50%) scale(.9); opacity: .7; }
-      to   { transform: translate(-50%,-50%) scale(1.15); opacity: 1; }
-    }
-
-    /* líneas de cuadrícula decorativas */
-    .vx-grid {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      background-image:
-        linear-gradient(rgba(29,99,196,.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(29,99,196,.05) 1px, transparent 1px);
-      background-size: 56px 56px;
-    }
-
-    /* ── Contenedor centrado ── */
+    /* ── Centrar card ── */
     .vx-center {
       position: relative; z-index: 1;
       min-height: 100vh;
@@ -68,163 +56,143 @@
       padding: 20px;
     }
 
-    /* ── Card glass ── */
+    /* ── Card vidrio ── */
     .vx-card {
       width: 100%;
-      max-width: 430px;
-      background: rgba(8, 22, 48, 0.55);
-      backdrop-filter: blur(28px) saturate(1.4);
-      -webkit-backdrop-filter: blur(28px) saturate(1.4);
-      border: 1px solid rgba(255,255,255,.1);
-      border-radius: 22px;
-      padding: 44px 40px 38px;
-      box-shadow:
-        0 8px 32px rgba(0,0,0,.45),
-        0 2px 0 rgba(255,255,255,.06) inset;
-      animation: vxCardIn .4s cubic-bezier(.4,0,.2,1) both;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(24px) saturate(1.2);
+      -webkit-backdrop-filter: blur(24px) saturate(1.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 42px 38px 36px;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+      animation: vxIn .45s cubic-bezier(.4,0,.2,1) both;
     }
-    @keyframes vxCardIn {
-      from { opacity:0; transform: translateY(20px) scale(.97); }
-      to   { opacity:1; transform: translateY(0)    scale(1);   }
+    @keyframes vxIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     /* Logo */
-    .vx-logo-wrap {
-      text-align: center;
-      margin-bottom: 28px;
-    }
+    .vx-logo-wrap { text-align: center; margin-bottom: 24px; }
     .vx-logo-wrap img {
-      width: 150px;
+      width: 145px;
       filter: brightness(0) invert(1);
-      opacity: .92;
+      opacity: .88;
     }
 
     /* Divisor */
-    .vx-divider {
+    .vx-hr {
       border: none;
-      border-top: 1px solid rgba(255,255,255,.1);
-      margin: 0 0 28px;
+      border-top: 1px solid rgba(255,255,255,.09);
+      margin: 0 0 26px;
     }
 
     /* Título */
     .vx-title {
       text-align: center;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-weight: 700;
       color: #fff;
-      margin-bottom: 6px;
-      letter-spacing: -.01em;
+      margin-bottom: 4px;
     }
     .vx-sub {
       text-align: center;
-      font-size: .82rem;
-      color: rgba(255,255,255,.45);
-      margin-bottom: 28px;
+      font-size: .8rem;
+      color: rgba(255,255,255,.4);
+      margin-bottom: 26px;
     }
 
     /* Inputs */
-    .vx-field { margin-bottom: 14px; position: relative; }
+    .vx-field { margin-bottom: 13px; position: relative; }
     .vx-field input {
       width: 100%;
-      padding: 13px 18px;
+      padding: 12px 18px;
       background: rgba(255,255,255,.07);
-      border: 1.5px solid rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.11);
       border-radius: 50px;
-      font-size: .93rem;
+      font-size: .91rem;
       color: #fff;
       outline: none;
       transition: border-color .18s, background .18s;
       font-family: inherit;
     }
-    .vx-field input::placeholder { color: rgba(255,255,255,.38); }
+    .vx-field input::placeholder { color: rgba(255,255,255,.35); }
     .vx-field input:focus {
-      border-color: rgba(29,99,196,.8);
-      background: rgba(29,99,196,.12);
+      border-color: rgba(80,140,220,.6);
+      background: rgba(20,60,120,.2);
     }
-    .vx-field input.error {
-      border-color: rgba(239,68,68,.7);
-    }
+    .vx-field input.vx-err { border-color: rgba(239,68,68,.55); }
 
-    /* Toggle ojo */
+    /* Ojo */
     .vx-eye {
-      position: absolute; right: 16px; top: 50%;
+      position: absolute; right: 15px; top: 50%;
       transform: translateY(-50%);
       background: none; border: none; cursor: pointer;
-      color: rgba(255,255,255,.35); padding: 0; display: flex;
+      color: rgba(255,255,255,.3); padding: 0; display: flex;
     }
-    .vx-eye:hover { color: rgba(255,255,255,.75); }
+    .vx-eye:hover { color: rgba(255,255,255,.65); }
 
     /* Alerta */
     .vx-alert {
       display: none;
-      background: rgba(239,68,68,.15);
-      border: 1px solid rgba(239,68,68,.35);
+      background: rgba(239,68,68,.12);
+      border: 1px solid rgba(239,68,68,.3);
       border-radius: 10px;
-      padding: 9px 14px;
-      font-size: .82rem;
+      padding: 8px 14px;
+      font-size: .8rem;
       color: #fca5a5;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       text-align: center;
     }
 
-    /* Botón LOGIN */
+    /* Botón */
     .vx-btn {
       width: 100%;
-      padding: 13px;
-      margin-top: 6px;
-      background: linear-gradient(135deg, #1d4370 0%, #1d6fc4 100%);
+      padding: 12px;
+      margin-top: 4px;
+      background: rgba(29, 99, 196, 0.7);
       color: #fff;
-      border: none;
+      border: 1px solid rgba(29,99,196,.5);
       border-radius: 50px;
-      font-size: .97rem;
-      font-weight: 700;
-      letter-spacing: .12em;
+      font-size: .93rem;
+      font-weight: 600;
+      letter-spacing: .1em;
       text-transform: uppercase;
       cursor: pointer;
-      transition: opacity .18s, transform .12s, box-shadow .18s;
-      box-shadow: 0 4px 18px rgba(29,99,196,.45);
+      transition: background .18s, transform .1s;
     }
-    .vx-btn:hover {
-      opacity: .9;
-      box-shadow: 0 6px 28px rgba(29,99,196,.6);
-    }
-    .vx-btn:active { transform: scale(.97); }
-    .vx-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    .vx-btn:hover { background: rgba(29,99,196,.88); }
+    .vx-btn:active { transform: scale(.98); }
+    .vx-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
 
     /* Spinner */
     @keyframes vxSpin { to { transform: rotate(360deg); } }
     .vx-spinner {
-      display: inline-block;
-      width: 14px; height: 14px;
-      border: 2px solid rgba(255,255,255,.3);
-      border-top-color: #fff;
-      border-radius: 50%;
+      display: inline-block; width: 13px; height: 13px;
+      border: 2px solid rgba(255,255,255,.25);
+      border-top-color: #fff; border-radius: 50%;
       animation: vxSpin .7s linear infinite;
-      vertical-align: middle;
-      margin-right: 7px;
+      vertical-align: middle; margin-right: 6px;
     }
 
     /* Footer */
     .vx-footer {
-      text-align: center;
-      margin-top: 26px;
-      font-size: .75rem;
-      color: rgba(255,255,255,.22);
+      text-align: center; margin-top: 24px;
+      font-size: .73rem; color: rgba(255,255,255,.18);
     }
 
-    /* Fade-out al redirigir */
+    /* Fade out al redirigir */
     body.vx-out .vx-card {
-      opacity: 0;
-      transform: translateY(-8px) scale(.98);
-      transition: opacity .25s ease, transform .25s ease;
+      opacity: 0; transform: translateY(-6px);
+      transition: opacity .22s ease, transform .22s ease;
     }
   </style>
 </head>
 <body>
 
   <div class="vx-bg"></div>
-  <div class="vx-halo"></div>
-  <div class="vx-grid"></div>
 
   <div class="vx-center">
     <div class="vx-card">
@@ -232,21 +200,19 @@
       <div class="vx-logo-wrap">
         <img src="assets/images/valtrax-logo.svg" alt="Valtrax" />
       </div>
-      <hr class="vx-divider" />
+      <hr class="vx-hr" />
 
       <h1 class="vx-title">Bienvenido</h1>
       <p class="vx-sub">Ingresá tus credenciales para continuar</p>
 
       <form id="loginForm" onsubmit="return false;" autocomplete="off">
-
         <div class="vx-field">
           <input id="vxUser" type="text" placeholder="Usuario" autocomplete="username" />
         </div>
-
         <div class="vx-field">
           <input id="vxPass" type="password" placeholder="Contraseña" autocomplete="current-password" style="padding-right:42px;" />
           <button type="button" class="vx-eye" id="vxEyeBtn" aria-label="Ver contraseña">
-            <svg id="vxEyeIcon" xmlns="http://www.w3.org/2000/svg" width="17" height="17"
+            <svg id="vxEyeIco" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                  viewBox="0 0 24 24" fill="none" stroke="currentColor"
                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -254,11 +220,8 @@
             </svg>
           </button>
         </div>
-
         <div class="vx-alert" id="vxAlert"></div>
-
-        <button type="submit" class="vx-btn" id="vxBtn">INICIAR SESIÓN</button>
-
+        <button type="submit" class="vx-btn" id="vxBtn">Iniciar Sesión</button>
       </form>
 
       <p class="vx-footer">VALTRAX Industrial SPA &copy; 2025</p>
@@ -269,13 +232,11 @@
 (function () {
   'use strict';
 
-  /* ── Usuarios ───────────────────────────────────────────────── */
   var USUARIOS = [
-    { usuario: 'valtrax.admin', clave: 'Vx@2025!',  rol: 'administrador', nombre: 'Administrador' },
-    { usuario: 'vendedor',      clave: 'venta123',   rol: 'vendedor',      nombre: 'Vendedor'      }
+    { usuario: 'valtrax.admin', clave: 'Vx@2025!', rol: 'administrador', nombre: 'Administrador' },
+    { usuario: 'vendedor',      clave: 'venta123',  rol: 'vendedor',      nombre: 'Vendedor'      }
   ];
 
-  /* Sesión activa → directo a index */
   if (localStorage.getItem('vx_usuario') && localStorage.getItem('vx_rol')) {
     location.replace('index.html');
   }
@@ -284,64 +245,53 @@
   var inpPass = document.getElementById('vxPass');
   var alertEl = document.getElementById('vxAlert');
   var btn     = document.getElementById('vxBtn');
-  var eyeBtn  = document.getElementById('vxEyeBtn');
 
-  /* Toggle contraseña */
-  eyeBtn.addEventListener('click', function () {
+  document.getElementById('vxEyeBtn').addEventListener('click', function () {
     var show = inpPass.type === 'password';
     inpPass.type = show ? 'text' : 'password';
-    document.getElementById('vxEyeIcon').innerHTML = show
+    document.getElementById('vxEyeIco').innerHTML = show
       ? '<line x1="1" y1="1" x2="23" y2="23"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 11 7 11 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 1 12s4 7 11 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="1" y1="1" x2="23" y2="23"/>'
       : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
   });
 
-  /* Enter en campos */
   [inpUser, inpPass].forEach(function (el) {
     el.addEventListener('keydown', function (e) { if (e.key === 'Enter') btn.click(); });
-    el.addEventListener('input',   function ()  {
-      el.classList.remove('error');
+    el.addEventListener('input', function () {
+      el.classList.remove('vx-err');
       alertEl.style.display = 'none';
     });
   });
 
-  /* Login */
   btn.addEventListener('click', function () {
-    var u = inpUser.value.trim();
-    var p = inpPass.value;
-
+    var u = inpUser.value.trim(), p = inpPass.value;
     alertEl.style.display = 'none';
-    inpUser.classList.remove('error');
-    inpPass.classList.remove('error');
+    inpUser.classList.remove('vx-err');
+    inpPass.classList.remove('vx-err');
 
-    if (!u) { inpUser.classList.add('error'); inpUser.focus(); return; }
-    if (!p) { inpPass.classList.add('error'); inpPass.focus(); return; }
+    if (!u) { inpUser.classList.add('vx-err'); inpUser.focus(); return; }
+    if (!p) { inpPass.classList.add('vx-err'); inpPass.focus(); return; }
 
     var match = USUARIOS.find(function (x) { return x.usuario === u && x.clave === p; });
-
     if (!match) {
       alertEl.textContent = 'Usuario o contraseña incorrectos.';
       alertEl.style.display = 'block';
-      inpUser.classList.add('error');
-      inpPass.classList.add('error');
+      inpUser.classList.add('vx-err');
+      inpPass.classList.add('vx-err');
       inpPass.value = '';
       inpUser.focus();
       return;
     }
 
-    /* OK — animación y redirect */
     btn.disabled = true;
     btn.innerHTML = '<span class="vx-spinner"></span>Ingresando...';
     localStorage.setItem('vx_usuario', match.nombre);
-    localStorage.setItem('vx_rol',     match.rol);
-
+    localStorage.setItem('vx_rol', match.rol);
     setTimeout(function () {
       document.body.classList.add('vx-out');
-      setTimeout(function () { location.href = 'index.html'; }, 270);
-    }, 350);
+      setTimeout(function () { location.href = 'index.html'; }, 240);
+    }, 320);
   });
-
 })();
 </script>
-
 </body>
 </html>
