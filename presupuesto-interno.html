@@ -713,63 +713,55 @@
         </div><!-- /main-content -->
 
         <!-- ── MODAL EMITIR COTIZACIÓN ── -->
-        <div id="modalEmitirCot" style="display:none;position:fixed;inset:0;z-index:14000;background:rgba(5,12,28,0.78);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);align-items:center;justify-content:center;">
-            <div style="width:92%;max-width:1080px;height:88vh;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:22px;box-shadow:0 32px 80px rgba(0,0,0,0.55);display:flex;overflow:hidden;">
+        <div id="modalEmitirCot" style="display:none;position:fixed;inset:0;z-index:14000;background:rgba(100,116,139,0.25);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);align-items:center;justify-content:center;">
+            <div style="width:92%;max-width:340px;background:rgba(255,255,255,0.82);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.9);border-radius:20px;box-shadow:0 8px 40px rgba(30,41,59,0.18);padding:28px 26px;position:relative;">
 
-                <!-- Izquierda: estado PDF -->
-                <div style="flex:1;background:#1e2a3a;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:22px 0 0 22px;padding:40px;">
-                    <div id="pdfEstado" style="text-align:center;">
-                        <!-- spinner mientras genera -->
-                        <div id="pdfSpinner" style="margin-bottom:20px;">
-                            <div style="width:48px;height:48px;border:3px solid rgba(255,255,255,0.1);border-top-color:rgba(255,255,255,0.6);border-radius:50%;animation:vxSpin .8s linear infinite;margin:0 auto 16px;"></div>
-                            <p style="color:rgba(255,255,255,0.5);font-size:13px;margin:0;">Generando PDF...</p>
+                <!-- Cerrar -->
+                <button onclick="cerrarModalEmitir()" style="position:absolute;top:12px;right:14px;background:none;border:none;cursor:pointer;color:#94a3b8;font-size:22px;line-height:1;" onmouseover="this.style.color='#1e293b'" onmouseout="this.style.color='#94a3b8'">&#215;</button>
+
+                <!-- Logo + folio -->
+                <div style="text-align:center;margin-bottom:20px;">
+                    <img src="assets/images/valtrax-logo.svg" style="width:110px;margin-bottom:12px;" alt="Valtrax" />
+                    <div id="emitFolioLabel" style="font-size:15px;font-weight:700;color:#1e293b;margin-bottom:2px;">COTIZACIÓN</div>
+                    <div id="emitClienteLabel" style="font-size:12px;color:#64748b;"></div>
+                </div>
+
+                <!-- Estado PDF -->
+                <div id="pdfEstado" style="text-align:center;margin-bottom:18px;">
+                    <div id="pdfSpinner">
+                        <div style="width:40px;height:40px;border:3px solid #e2e8f0;border-top-color:#2563eb;border-radius:50%;animation:vxSpin .8s linear infinite;margin:0 auto 10px;"></div>
+                        <p style="color:#64748b;font-size:12px;margin:0;">Generando PDF...</p>
+                    </div>
+                    <div id="pdfListo" style="display:none;">
+                        <div style="width:52px;height:52px;background:#dcfce7;border:2px solid #86efac;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">
+                            <i class="feather-check" style="font-size:24px;color:#16a34a;"></i>
                         </div>
-                        <!-- éxito -->
-                        <div id="pdfListo" style="display:none;">
-                            <div style="width:72px;height:72px;background:rgba(22,163,74,0.15);border:2px solid rgba(22,163,74,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
-                                <i class="feather-check" style="font-size:32px;color:#4ade80;"></i>
-                            </div>
-                            <p style="color:#fff;font-size:16px;font-weight:700;margin:0 0 6px;">PDF generado</p>
-                            <p style="color:rgba(255,255,255,0.4);font-size:12px;margin:0 0 16px;">Listo para descargar o imprimir</p>
-                            <button onclick="verPDFNuevaPestana()" style="padding:9px 20px;background:rgba(37,99,235,0.25);border:1px solid rgba(37,99,235,0.5);border-radius:50px;font-size:12px;font-weight:600;color:#93c5fd;cursor:pointer;">
-                                <i class="feather-eye" style="margin-right:6px;"></i>Ver PDF
-                            </button>
+                        <p style="color:#1e293b;font-size:14px;font-weight:600;margin:0 0 3px;">PDF listo</p>
+                        <p style="color:#94a3b8;font-size:11px;margin:0;">Listo para descargar o imprimir</p>
+                    </div>
+                    <div id="pdfError" style="display:none;">
+                        <div style="width:52px;height:52px;background:#fee2e2;border:2px solid #fca5a5;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">
+                            <i class="feather-x" style="font-size:24px;color:#dc2626;"></i>
                         </div>
-                        <!-- error -->
-                        <div id="pdfError" style="display:none;">
-                            <div style="width:72px;height:72px;background:rgba(239,68,68,0.15);border:2px solid rgba(239,68,68,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
-                                <i class="feather-x" style="font-size:32px;color:#f87171;"></i>
-                            </div>
-                            <p style="color:#f87171;font-size:14px;font-weight:600;margin:0 0 8px;">Error al generar PDF</p>
-                            <p id="pdfErrorMsg" style="color:rgba(255,255,255,0.4);font-size:11px;margin:0;max-width:300px;"></p>
-                        </div>
+                        <p style="color:#dc2626;font-size:13px;font-weight:600;margin:0 0 4px;">Error al generar PDF</p>
+                        <p id="pdfErrorMsg" style="color:#94a3b8;font-size:11px;margin:0;"></p>
                     </div>
                 </div>
 
-                <!-- Derecha: acciones glass -->
-                <div style="flex:0 0 300px;width:300px;padding:32px 28px;display:flex;flex-direction:column;border-left:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.07);">
-                    <div style="display:flex;justify-content:flex-end;margin-bottom:4px;">
-                        <button onclick="cerrarModalEmitir()" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.4);font-size:26px;line-height:1;transition:color .15s;" onmouseover="this.style.color='rgba(255,255,255,0.8)'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">&#215;</button>
-                    </div>
-                    <img src="assets/images/valtrax-logo.svg" style="width:130px;margin-bottom:16px;filter:brightness(0) invert(1);opacity:.85;" alt="Valtrax" />
-                    <div id="emitFolioLabel" style="font-size:16px;font-weight:700;color:#fff;margin-bottom:3px;">COTIZACIÓN</div>
-                    <div id="emitClienteLabel" style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:20px;"></div>
-                    <hr style="margin:0 0 20px;border-color:rgba(255,255,255,0.1);">
-                    <div style="display:flex;flex-direction:column;gap:10px;">
-                        <button onclick="descargarPDF()" style="width:100%;padding:11px;background:rgba(22,163,74,0.75);border:1px solid rgba(22,163,74,0.5);border-radius:50px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;letter-spacing:.04em;">
-                            <i class="feather-download me-2"></i>Descargar PDF
-                        </button>
-                        <button onclick="imprimirPDF()" style="width:100%;padding:11px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:50px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.8);cursor:pointer;">
-                            <i class="feather-printer me-2"></i>Imprimir
-                        </button>
-                        <hr style="margin:4px 0;border-color:rgba(255,255,255,0.1);">
-                        <button onclick="nuevaSolicitud()" style="width:100%;padding:11px;background:rgba(37,99,235,0.2);border:1px solid rgba(37,99,235,0.35);border-radius:50px;font-size:13px;font-weight:600;color:rgba(147,197,253,0.9);cursor:pointer;">
-                            <i class="feather-plus-circle me-2"></i>Nueva Solicitud
-                        </button>
-                    </div>
-                    <div style="margin-top:auto;padding-top:24px;font-size:10.5px;color:rgba(255,255,255,0.2);text-align:center;line-height:1.6;">
-                        Documento generado por<br><strong style="color:rgba(255,255,255,0.3);">VALTRAX Industrial SPA</strong>
-                    </div>
+                <!-- Botones -->
+                <div style="display:flex;flex-direction:column;gap:9px;">
+                    <button onclick="descargarPDF()" style="width:100%;padding:10px;background:#16a34a;border:none;border-radius:50px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;">
+                        <i class="feather-download me-2"></i>Descargar PDF
+                    </button>
+                    <button onclick="verPDFNuevaPestana()" style="width:100%;padding:10px;background:#2563eb;border:none;border-radius:50px;font-size:13px;font-weight:600;color:#fff;cursor:pointer;">
+                        <i class="feather-eye me-2"></i>Ver PDF
+                    </button>
+                    <button onclick="imprimirPDF()" style="width:100%;padding:10px;background:#f1f5f9;border:1.5px solid #e2e8f0;border-radius:50px;font-size:13px;font-weight:600;color:#475569;cursor:pointer;">
+                        <i class="feather-printer me-2"></i>Imprimir
+                    </button>
+                    <button onclick="nuevaSolicitud()" style="width:100%;padding:10px;background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:50px;font-size:13px;font-weight:600;color:#2563eb;cursor:pointer;">
+                        <i class="feather-plus-circle me-2"></i>Nueva Solicitud
+                    </button>
                 </div>
 
             </div>
