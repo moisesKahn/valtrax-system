@@ -232,10 +232,6 @@
     <!--! [Inicio] Contenido Principal — Dashboard Ejecutivo VALTRAX !-->
     <!--! ================================================================ !-->
 
-    <!-- Leaflet CSS para el mapa operacional -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-
     <main class="nxl-container">
         <div class="nxl-content">
 
@@ -243,510 +239,235 @@
             <div class="page-header">
                 <div class="page-header-left d-flex align-items-center">
                     <div class="page-header-title">
-                        <h5 class="m-b-10">Centro de Operaciones</h5>
+                        <h5 class="m-b-10">Dashboard Financiero</h5>
                     </div>
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html">Inicio</a></li>
-                        <li class="breadcrumb-item">Dashboard Ejecutivo</li>
+                        <li class="breadcrumb-item">Dashboard Financiero</li>
                     </ul>
                 </div>
                 <div class="page-header-right ms-auto">
                     <div class="page-header-right-items">
                         <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
-                            <span class="badge bg-danger-subtle text-danger fs-12 px-3 py-2">
-                                <i class="feather-alert-triangle me-1"></i>4 Pedidos críticos
-                            </span>
+                            <a href="cotizaciones.html" class="btn btn-sm btn-outline-secondary">
+                                <i class="feather-file-text me-1"></i>Cotizaciones
+                            </a>
                             <a href="pedidos.html" class="btn btn-md btn-primary">
-                                <i class="feather-plus me-2"></i>Nuevo Pedido
+                                <i class="feather-package me-1"></i>Pedidos
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
-
             <!-- ── CONTENIDO PRINCIPAL ──────────────────────────────── -->
+            <style>
+            .vxd-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;}
+            .vxd-grow{background:#dcfce7;color:#166534;}
+            .vxd-warn{background:#fff7ed;color:#c2410c;}
+            .vxd-blue{background:#dbeafe;color:#1d4ed8;}
+            .kpi-num{font-size:26px;font-weight:800;color:#0f172a;line-height:1.1;}
+            .kpi-sub{font-size:11.5px;color:#64748b;margin-top:3px;}
+            .vxd-prog{height:5px;background:#e2e8f0;border-radius:3px;overflow:hidden;margin-top:8px;}
+            .vxd-prog-fill{height:100%;border-radius:3px;transition:width .6s ease;}
+            .vxd-tbl{width:100%;border-collapse:collapse;}
+            .vxd-tbl th{padding:8px 12px;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.4px;background:rgba(248,250,252,0.9);border-bottom:1px solid #f1f5f9;}
+            .vxd-tbl td{padding:9px 12px;font-size:12.5px;color:#334155;border-bottom:1px solid rgba(241,245,249,0.8);vertical-align:middle;}
+            .vxd-tbl tbody tr:last-child td{border-bottom:none;}
+            .vxd-tbl tbody tr:hover td{background:rgba(248,250,252,0.5);}
+            .vxd-rank{width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;background:#f1f5f9;color:#64748b;}
+            .vxd-rank.r1{background:#fef9c3;color:#92400e;}
+            .vxd-rank.r2{background:#f1f5f9;color:#475569;}
+            .vxd-rank.r3{background:#fff7ed;color:#c2410c;}
+            </style>
             <div class="main-content">
 
-                <!-- ╔════════ FILA 1 — KPIs OPERACIONALES ════════╗ -->
-                <div class="row valtrax-kpi-row">
-
-                    <div class="col-xxl-3 col-md-6">
-                        <div class="card stretch stretch-full valtrax-kpi-card">
-                            <div class="card-body">
-                                <div class="d-flex align-items-start justify-content-between mb-4">
-                                    <div class="d-flex gap-3 align-items-center">
-                                        <div class="avatar-text avatar-lg bg-primary-subtle text-primary"><i class="feather-package"></i></div>
-                                        <div>
-                                            <h6 class="fw-bold mb-1 text-truncate-1-line">Pedidos Activos</h6>
-                                            <span class="fs-12 text-muted">En curso operacional</span>
-                                        </div>
-                                    </div>
+                <!-- ╔═ ROW 1: KPIs Comerciales ═╗ -->
+                <div class="row g-3 mb-2">
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card valtrax-kpi-card stretch stretch-full">
+                            <div class="card-body p-3">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="fs-11 fw-semibold text-muted text-uppercase">Cotizaciones</span>
+                                    <div class="avatar-text avatar-sm bg-primary-subtle text-primary"><i class="feather-file-text" style="font-size:13px;"></i></div>
                                 </div>
-                                <div class="pt-4">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <div><div class="fs-20 fw-bold text-dark">14</div></div>
-                                        <span class="fs-12 fw-semibold text-success"><i class="feather-arrow-up"></i> +3 hoy</span>
-                                    </div>
+                                <div class="kpi-num" id="kpi-cot-total">—</div>
+                                <div class="kpi-sub">Total procesadas</div>
+                                <div class="d-flex gap-1 flex-wrap mt-2">
+                                    <span class="vxd-pill vxd-grow" id="kpi-cot-apr">— aprobadas</span>
+                                    <span class="vxd-pill vxd-warn" id="kpi-cot-pen">— pendientes</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="col-xxl-3 col-md-6">
-                        <div class="card stretch stretch-full valtrax-kpi-card valtrax-critical">
-                            <div class="card-body">
-                                <div class="d-flex align-items-start justify-content-between mb-4">
-                                    <div class="d-flex gap-3 align-items-center">
-                                        <div class="avatar-text avatar-lg bg-danger-subtle text-danger"><i class="feather-alert-octagon"></i></div>
-                                        <div>
-                                            <h6 class="fw-bold mb-1 text-truncate-1-line">Pedidos Críticos</h6>
-                                            <span class="fs-12 text-muted">Requieren atención inmediata</span>
-                                        </div>
-                                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card valtrax-kpi-card stretch stretch-full">
+                            <div class="card-body p-3">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="fs-11 fw-semibold text-muted text-uppercase">Conversión</span>
+                                    <div class="avatar-text avatar-sm bg-success-subtle text-success"><i class="feather-trending-up" style="font-size:13px;"></i></div>
                                 </div>
-                                <div class="pt-4">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <div><div class="fs-20 fw-bold text-danger">4</div></div>
-                                        <span class="fs-12 fw-semibold text-danger valtrax-pulse">● URGENTE</span>
-                                    </div>
+                                <div class="kpi-num" id="kpi-conv">—%</div>
+                                <div class="kpi-sub">Cotizaciones → Pedido</div>
+                                <div class="vxd-prog mt-2"><div class="vxd-prog-fill bg-success" id="kpi-conv-bar" style="width:0%"></div></div>
+                                <div class="fs-11 text-muted mt-1" id="kpi-conv-lbl">— de — cotizaciones</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card valtrax-kpi-card stretch stretch-full">
+                            <div class="card-body p-3">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="fs-11 fw-semibold text-muted text-uppercase">Pedidos Totales</span>
+                                    <div class="avatar-text avatar-sm bg-info-subtle text-info"><i class="feather-package" style="font-size:13px;"></i></div>
+                                </div>
+                                <div class="kpi-num" id="kpi-ped-total">—</div>
+                                <div class="kpi-sub">Pedidos registrados</div>
+                                <div class="d-flex gap-1 flex-wrap mt-2">
+                                    <span class="vxd-pill vxd-grow" id="kpi-ped-ent">— entregados</span>
+                                    <span class="vxd-pill vxd-blue" id="kpi-ped-pro">— en proceso</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="col-xxl-3 col-md-6">
-                        <div class="card stretch stretch-full valtrax-kpi-card">
-                            <div class="card-body">
-                                <div class="d-flex align-items-start justify-content-between mb-4">
-                                    <div class="d-flex gap-3 align-items-center">
-                                        <div class="avatar-text avatar-lg bg-warning-subtle text-warning"><i class="feather-clock"></i></div>
-                                        <div>
-                                            <h6 class="fw-bold mb-1 text-truncate-1-line">Pedidos Atrasados</h6>
-                                            <span class="fs-12 text-muted">Fuera de fecha comprometida</span>
-                                        </div>
-                                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card valtrax-kpi-card stretch stretch-full">
+                            <div class="card-body p-3">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="fs-11 fw-semibold text-muted text-uppercase">Valor Total Ventas</span>
+                                    <div class="avatar-text avatar-sm bg-warning-subtle text-warning"><i class="feather-dollar-sign" style="font-size:13px;"></i></div>
                                 </div>
-                                <div class="pt-4">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <div><div class="fs-20 fw-bold text-dark">1</div></div>
-                                        <span class="fs-12 fw-semibold text-warning"><i class="feather-trending-up"></i> Atención</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-xxl-3 col-md-6">
-                        <div class="card stretch stretch-full valtrax-kpi-card">
-                            <div class="card-body">
-                                <div class="d-flex align-items-start justify-content-between mb-4">
-                                    <div class="d-flex gap-3 align-items-center">
-                                        <div class="avatar-text avatar-lg bg-info-subtle text-info"><i class="feather-truck"></i></div>
-                                        <div>
-                                            <h6 class="fw-bold mb-1 text-truncate-1-line">En Ruta</h6>
-                                            <span class="fs-12 text-muted">Despachados / en tránsito</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="pt-4">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <div><div class="fs-20 fw-bold text-dark">5</div></div>
-                                        <span class="fs-12 fw-semibold text-info"><i class="feather-map-pin"></i> 3 zonas</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- ╔════════ FILA 2 — KPIs COMERCIALES ════════╗ -->
-                <div class="row">
-                    <div class="col-xxl-3 col-md-6">
-                        <div class="card stretch stretch-full valtrax-kpi-card">
-                            <div class="card-body">
-                                <div class="d-flex align-items-start justify-content-between mb-3">
-                                    <div>
-                                        <span class="fs-12 text-muted fw-medium">Cotizaciones Pendientes</span>
-                                        <h3 class="fw-bold mt-1 mb-0">2</h3>
-                                    </div>
-                                    <div class="avatar-text bg-soft-primary text-primary"><i class="feather-file-text"></i></div>
-                                </div>
-                                <span class="fs-11 text-muted">2 enviadas · 1 borrador</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-xxl-3 col-md-6">
-                        <div class="card stretch stretch-full valtrax-kpi-card">
-                            <div class="card-body">
-                                <div class="d-flex align-items-start justify-content-between mb-3">
-                                    <div>
-                                        <span class="fs-12 text-muted fw-medium">Órdenes de Compra</span>
-                                        <h3 class="fw-bold mt-1 mb-0">3</h3>
-                                    </div>
-                                    <div class="avatar-text bg-soft-warning text-warning"><i class="feather-shopping-bag"></i></div>
-                                </div>
-                                <span class="fs-11 text-muted">2 confirmadas · 1 parcial</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-xxl-3 col-md-6">
-                        <div class="card stretch stretch-full valtrax-kpi-card">
-                            <div class="card-body">
-                                <div class="d-flex align-items-start justify-content-between mb-3">
-                                    <div>
-                                        <span class="fs-12 text-muted fw-medium">Ventas del Mes</span>
-                                        <h3 class="fw-bold mt-1 mb-0">$ 156,8M</h3>
-                                    </div>
-                                    <div class="avatar-text bg-soft-success text-success"><i class="feather-dollar-sign"></i></div>
-                                </div>
-                                <span class="fs-11 text-success fw-semibold"><i class="feather-arrow-up"></i> +18% vs mes anterior</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-xxl-3 col-md-6">
-                        <div class="card stretch stretch-full valtrax-kpi-card">
-                            <div class="card-body">
-                                <div class="d-flex align-items-start justify-content-between mb-3">
-                                    <div>
-                                        <span class="fs-12 text-muted fw-medium">Cobertura Activa</span>
-                                        <h3 class="fw-bold mt-1 mb-0">3 / 4</h3>
-                                    </div>
-                                    <div class="avatar-text bg-soft-info text-info"><i class="feather-globe"></i></div>
-                                </div>
-                                <span class="fs-11 text-muted">Norte Grande · Norte Chico · RM</span>
+                                <div class="kpi-num" id="kpi-valor" style="font-size:22px;">—</div>
+                                <div class="kpi-sub">Suma acumulada pedidos</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- ╔════════ FILA 3 — MAPA + PEDIDOS CRÍTICOS ════════╗ -->
-                <div class="row">
+                <!-- ╔═ ROW 2: KPIs Rentabilidad ═╗ -->
+                <div class="row g-3 mb-3">
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card valtrax-kpi-card stretch stretch-full">
+                            <div class="card-body p-3">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="fs-11 fw-semibold text-muted text-uppercase">Ganancia Total</span>
+                                    <div class="avatar-text avatar-sm bg-success-subtle text-success"><i class="feather-bar-chart-2" style="font-size:13px;"></i></div>
+                                </div>
+                                <div class="kpi-num" id="kpi-gan" style="font-size:22px;color:#16a34a;">—</div>
+                                <div class="kpi-sub" id="kpi-gan-sub">Sobre — vendidos</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card valtrax-kpi-card stretch stretch-full">
+                            <div class="card-body p-3">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="fs-11 fw-semibold text-muted text-uppercase">Margen Promedio</span>
+                                    <div class="avatar-text avatar-sm bg-primary-subtle text-primary"><i class="feather-percent" style="font-size:13px;"></i></div>
+                                </div>
+                                <div class="kpi-num" id="kpi-margen">—%</div>
+                                <div class="kpi-sub">Ganancia / Venta</div>
+                                <div class="vxd-prog mt-2"><div class="vxd-prog-fill bg-primary" id="kpi-margen-bar" style="width:0%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card valtrax-kpi-card stretch stretch-full">
+                            <div class="card-body p-3">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="fs-11 fw-semibold text-muted text-uppercase">Pedidos Facturados</span>
+                                    <div class="avatar-text avatar-sm bg-success-subtle text-success"><i class="feather-check-circle" style="font-size:13px;"></i></div>
+                                </div>
+                                <div class="kpi-num" id="kpi-fact">—</div>
+                                <div class="kpi-sub" id="kpi-fact-sub">— de — con factura</div>
+                                <div class="vxd-prog mt-2"><div class="vxd-prog-fill bg-success" id="kpi-fact-bar" style="width:0%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card valtrax-kpi-card stretch stretch-full" style="border-left:3px solid #f97316 !important;">
+                            <div class="card-body p-3">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="fs-11 fw-semibold text-muted text-uppercase">Por Facturar</span>
+                                    <div class="avatar-text avatar-sm bg-danger-subtle text-danger"><i class="feather-alert-circle" style="font-size:13px;"></i></div>
+                                </div>
+                                <div class="kpi-num" id="kpi-sinfact" style="color:#c2410c;">—</div>
+                                <div class="kpi-sub">Pedidos sin N° de factura</div>
+                                <div class="mt-2"><span class="vxd-pill vxd-warn"><i class="feather-alert-triangle" style="font-size:9px;"></i> Atención requerida</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                    <!-- Mapa operacional -->
-                    <div class="col-xxl-8">
+                <!-- ╔═ ROW 3: Gráficos ═╗ -->
+                <div class="row g-3 mb-3">
+                    <div class="col-xl-8">
                         <div class="card stretch stretch-full">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h5 class="card-title">Mapa Operacional</h5>
+                                <h6 class="card-title mb-0 fw-bold">Ventas vs Costos Mensuales</h6>
                                 <div class="d-flex gap-2">
-                                    <span class="badge bg-danger-subtle text-danger"><i class="feather-circle me-1"></i>Crítico</span>
-                                    <span class="badge bg-warning-subtle text-warning"><i class="feather-circle me-1"></i>Alta</span>
-                                    <span class="badge bg-info-subtle text-info"><i class="feather-circle me-1"></i>En Ruta</span>
-                                    <span class="badge bg-success-subtle text-success"><i class="feather-circle me-1"></i>Entregado</span>
-                                    <a href="logistica-mapa.html" class="btn btn-sm btn-light-brand ms-2">Vista Completa</a>
+                                    <span class="vxd-pill vxd-blue"><span style="width:7px;height:7px;border-radius:50%;background:#2563eb;display:inline-block;"></span> Ventas</span>
+                                    <span class="vxd-pill" style="background:#fef3c7;color:#92400e;"><span style="width:7px;height:7px;border-radius:50%;background:#f59e0b;display:inline-block;"></span> Costos</span>
                                 </div>
                             </div>
-                            <div class="card-body p-0">
-                                <div id="valtraxMap" style="height: 480px; width: 100%; border-radius: 0 0 12px 12px;"></div>
+                            <div class="card-body pt-2 pb-3">
+                                <div id="chartVentas" style="min-height:260px;"></div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Pedidos críticos -->
-                    <div class="col-xxl-4">
-                        <div class="card stretch stretch-full">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <h5 class="card-title">Pedidos Críticos</h5>
-                                <a href="pedidos.html" class="fs-11 fw-semibold text-primary">Ver todos</a>
-                            </div>
-                            <div class="card-body p-0">
-                                <div class="valtrax-critical-list">
-
-                                    <div class="valtrax-critical-item">
-                                        <div class="d-flex align-items-start gap-3">
-                                            <div class="valtrax-prio-dot critica"></div>
-                                            <div class="flex-grow-1">
-                                                <div class="d-flex justify-content-between align-items-start">
-                                                    <div>
-                                                        <div class="fw-semibold text-dark fs-13">PED-2026-1450</div>
-                                                        <div class="fs-11 text-muted">BHP Escondida · Faena Escondida</div>
-                                                    </div>
-                                                    <span class="badge bg-info-subtle text-info">En Ruta</span>
-                                                </div>
-                                                <div class="d-flex justify-content-between mt-2">
-                                                    <span class="fs-11 text-muted"><i class="feather-map-pin me-1"></i>Norte Grande</span>
-                                                    <span class="fs-11 fw-semibold text-danger">Hoy 18:00</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="valtrax-critical-item">
-                                        <div class="d-flex align-items-start gap-3">
-                                            <div class="valtrax-prio-dot critica"></div>
-                                            <div class="flex-grow-1">
-                                                <div class="d-flex justify-content-between align-items-start">
-                                                    <div>
-                                                        <div class="fw-semibold text-dark fs-13">PED-2026-1451</div>
-                                                        <div class="fs-11 text-muted">Collahuasi · Pozo Almonte</div>
-                                                    </div>
-                                                    <span class="badge bg-primary-subtle text-primary">Despachado</span>
-                                                </div>
-                                                <div class="d-flex justify-content-between mt-2">
-                                                    <span class="fs-11 text-muted"><i class="feather-map-pin me-1"></i>Norte Grande</span>
-                                                    <span class="fs-11 fw-semibold text-danger">Hoy</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="valtrax-critical-item">
-                                        <div class="d-flex align-items-start gap-3">
-                                            <div class="valtrax-prio-dot critica"></div>
-                                            <div class="flex-grow-1">
-                                                <div class="d-flex justify-content-between align-items-start">
-                                                    <div>
-                                                        <div class="fw-semibold text-dark fs-13">PED-2026-1453</div>
-                                                        <div class="fs-11 text-muted">Spence BHP · Sierra Gorda</div>
-                                                    </div>
-                                                    <span class="badge bg-warning-subtle text-warning">En Compra</span>
-                                                </div>
-                                                <div class="d-flex justify-content-between mt-2">
-                                                    <span class="fs-11 text-muted"><i class="feather-map-pin me-1"></i>Norte Grande</span>
-                                                    <span class="fs-11 fw-semibold text-danger">Hoy</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="valtrax-critical-item">
-                                        <div class="d-flex align-items-start gap-3">
-                                            <div class="valtrax-prio-dot critica"></div>
-                                            <div class="flex-grow-1">
-                                                <div class="d-flex justify-content-between align-items-start">
-                                                    <div>
-                                                        <div class="fw-semibold text-dark fs-13">PED-2026-1459</div>
-                                                        <div class="fs-11 text-muted">Centinela · Sierra Gorda</div>
-                                                    </div>
-                                                    <span class="badge bg-info-subtle text-info">En Ruta</span>
-                                                </div>
-                                                <div class="d-flex justify-content-between mt-2">
-                                                    <span class="fs-11 text-muted"><i class="feather-truck me-1"></i>Camión propio</span>
-                                                    <span class="fs-11 fw-semibold text-danger">Hoy</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- ╔════════ FILA 4 — DISTRIBUCIÓN POR ZONA + ÚLTIMAS ENTREGAS ════════╗ -->
-                <div class="row">
-
-                    <!-- Distribución por zona operacional -->
-                    <div class="col-xxl-5">
+                    <div class="col-xl-4">
                         <div class="card stretch stretch-full">
                             <div class="card-header">
-                                <h5 class="card-title">Distribución por Zona Operacional</h5>
+                                <h6 class="card-title mb-0 fw-bold">Estado de Pedidos</h6>
                             </div>
-                            <div class="card-body">
-                                <div class="valtrax-zone-list">
-
-                                    <div class="valtrax-zone-item">
-                                        <div class="d-flex align-items-center justify-content-between mb-2">
-                                            <div class="d-flex align-items-center gap-2">
-                                                <span class="valtrax-zone-color" style="background:#dc2626"></span>
-                                                <span class="fw-semibold text-dark">Norte Grande</span>
-                                            </div>
-                                            <span class="fs-13 fw-bold">9 pedidos</span>
-                                        </div>
-                                        <div class="progress" style="height:6px;">
-                                            <div class="progress-bar bg-danger" style="width:64%"></div>
-                                        </div>
-                                        <div class="fs-11 text-muted mt-1">Arica · Iquique · Antofagasta · Calama</div>
-                                    </div>
-
-                                    <div class="valtrax-zone-item">
-                                        <div class="d-flex align-items-center justify-content-between mb-2">
-                                            <div class="d-flex align-items-center gap-2">
-                                                <span class="valtrax-zone-color" style="background:#f59e0b"></span>
-                                                <span class="fw-semibold text-dark">Norte Chico</span>
-                                            </div>
-                                            <span class="fs-13 fw-bold">3 pedidos</span>
-                                        </div>
-                                        <div class="progress" style="height:6px;">
-                                            <div class="progress-bar bg-warning" style="width:21%"></div>
-                                        </div>
-                                        <div class="fs-11 text-muted mt-1">Copiapó · La Serena · Ovalle</div>
-                                    </div>
-
-                                    <div class="valtrax-zone-item">
-                                        <div class="d-flex align-items-center justify-content-between mb-2">
-                                            <div class="d-flex align-items-center gap-2">
-                                                <span class="valtrax-zone-color" style="background:#2563eb"></span>
-                                                <span class="fw-semibold text-dark">Región Metropolitana</span>
-                                            </div>
-                                            <span class="fs-13 fw-bold">2 pedidos</span>
-                                        </div>
-                                        <div class="progress" style="height:6px;">
-                                            <div class="progress-bar bg-primary" style="width:14%"></div>
-                                        </div>
-                                        <div class="fs-11 text-muted mt-1">Santiago — operaciones administrativas</div>
-                                    </div>
-
-                                    <div class="valtrax-zone-item">
-                                        <div class="d-flex align-items-center justify-content-between mb-2">
-                                            <div class="d-flex align-items-center gap-2">
-                                                <span class="valtrax-zone-color" style="background:#10b981"></span>
-                                                <span class="fw-semibold text-dark">Centro Sur</span>
-                                            </div>
-                                            <span class="fs-13 fw-bold text-muted">0 pedidos</span>
-                                        </div>
-                                        <div class="progress" style="height:6px;">
-                                            <div class="progress-bar bg-success" style="width:0%"></div>
-                                        </div>
-                                        <div class="fs-11 text-muted mt-1">Sin operaciones activas</div>
-                                    </div>
-
-                                </div>
+                            <div class="card-body d-flex flex-column align-items-center pt-2">
+                                <div id="chartDonut" style="min-height:200px;width:100%;"></div>
+                                <div id="donutLegend" class="w-100 mt-1"></div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Últimas entregas -->
-                    <div class="col-xxl-7">
-                        <div class="card stretch stretch-full">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <h5 class="card-title">Últimas Entregas</h5>
-                                <a href="entregas.html" class="fs-11 fw-semibold text-primary">Ver todas</a>
-                            </div>
-                            <div class="card-body p-0">
-                                <div class="table-responsive">
-                                    <table class="table table-hover mb-0 valtrax-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Pedido</th>
-                                                <th>Cliente / Faena</th>
-                                                <th>Conductor</th>
-                                                <th>Estado</th>
-                                                <th>Fecha</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td class="fw-semibold">PED-2026-1450</td>
-                                                <td><div class="fw-medium">BHP Escondida</div><div class="fs-11 text-muted">Faena Escondida</div></td>
-                                                <td>Hugo Carrasco</td>
-                                                <td><span class="badge bg-info-subtle text-info">En Ruta</span></td>
-                                                <td class="fs-12">Hoy 14:30</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="fw-semibold">PED-2026-1451</td>
-                                                <td><div class="fw-medium">Collahuasi</div><div class="fs-11 text-muted">Pozo Almonte</div></td>
-                                                <td>Luis Vergara</td>
-                                                <td><span class="badge bg-info-subtle text-info">En Ruta</span></td>
-                                                <td class="fs-12">Hoy 16:00</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="fw-semibold">PED-2026-1459</td>
-                                                <td><div class="fw-medium">Centinela</div><div class="fs-11 text-muted">Sierra Gorda</div></td>
-                                                <td>Patricio Reyes</td>
-                                                <td><span class="badge bg-info-subtle text-info">En Ruta</span></td>
-                                                <td class="fs-12">Hoy 12:00</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="fw-semibold">PED-2026-1456</td>
-                                                <td><div class="fw-medium">CMDIC</div><div class="fs-11 text-muted">Iquique</div></td>
-                                                <td>Mario Salinas</td>
-                                                <td><span class="badge bg-success-subtle text-success">Entregada</span></td>
-                                                <td class="fs-12">Hoy 11:35</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="fw-semibold">PED-2026-1457</td>
-                                                <td><div class="fw-medium">BHP Escondida</div><div class="fs-11 text-muted">Bodega 4</div></td>
-                                                <td>Felipe Bustos</td>
-                                                <td><span class="badge bg-success-subtle text-success">Entregada</span></td>
-                                                <td class="fs-12">Ayer 16:45</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="fw-semibold">PED-2026-1463</td>
-                                                <td><div class="fw-medium">Tres Valles</div><div class="fs-11 text-muted">Salamanca</div></td>
-                                                <td>Hugo Carrasco</td>
-                                                <td><span class="badge bg-primary-subtle text-primary">Despachado</span></td>
-                                                <td class="fs-12">Hoy 15:30</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
 
-                <!-- ╔════════ FILA 5 — ALERTAS ACTIVAS ════════╗ -->
-                <div class="row">
-                    <div class="col-12">
+                <!-- ╔═ ROW 4: Tablas inferiores ═╗ -->
+                <div class="row g-3">
+                    <div class="col-xl-4">
                         <div class="card stretch stretch-full">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h5 class="card-title"><i class="feather-bell me-2"></i>Alertas Activas</h5>
-                                <span class="badge bg-danger">6 alertas</span>
+                                <h6 class="card-title mb-0 fw-bold">Mejores Clientes</h6>
+                                <a href="cotizaciones.html" class="fs-11 text-primary fw-semibold">Ver todos</a>
                             </div>
-                            <div class="card-body">
-                                <div class="valtrax-alert-grid">
-                                    <div class="valtrax-alert valtrax-alert-critical">
-                                        <div class="d-flex gap-3">
-                                            <i class="feather-alert-octagon"></i>
-                                            <div>
-                                                <div class="fw-semibold">PED-2026-1450 — Entrega comprometida HOY</div>
-                                                <div class="fs-11 text-muted">En ruta a Faena Escondida · ETA 18:00 hrs</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="valtrax-alert valtrax-alert-critical">
-                                        <div class="d-flex gap-3">
-                                            <i class="feather-alert-octagon"></i>
-                                            <div>
-                                                <div class="fw-semibold">PED-2026-1453 — Cliente urgente</div>
-                                                <div class="fs-11 text-muted">Esperando confirmación de proveedor de lubricantes</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="valtrax-alert valtrax-alert-warning">
-                                        <div class="d-flex gap-3">
-                                            <i class="feather-clock"></i>
-                                            <div>
-                                                <div class="fw-semibold">PED-2026-1454 — Sin autorización (48 hrs)</div>
-                                                <div class="fs-11 text-muted">Chuquicamata · Requiere aprobación de gerencia</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="valtrax-alert valtrax-alert-warning">
-                                        <div class="d-flex gap-3">
-                                            <i class="feather-package"></i>
-                                            <div>
-                                                <div class="fw-semibold">Stock crítico</div>
-                                                <div class="fs-11 text-muted">Filtros hidráulicos CAT 793 — bajo mínimo</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="valtrax-alert valtrax-alert-info">
-                                        <div class="d-flex gap-3">
-                                            <i class="feather-file-text"></i>
-                                            <div>
-                                                <div class="fw-semibold">4 cotizaciones pendientes de envío</div>
-                                                <div class="fs-11 text-muted">Esta semana — área comercial</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="valtrax-alert valtrax-alert-danger">
-                                        <div class="d-flex gap-3">
-                                            <i class="feather-truck"></i>
-                                            <div>
-                                                <div class="fw-semibold">PED-2026-1459 — Camión propio en ruta</div>
-                                                <div class="fs-11 text-muted">VLTX-01 · Conductor: P. Reyes</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="card-body p-0">
+                                <table class="table vxd-tbl mb-0">
+                                    <thead><tr><th>#</th><th>Cliente</th><th>Ped.</th><th>Total</th><th>Margen</th></tr></thead>
+                                    <tbody id="tbl-clientes"><tr><td colspan="5" style="text-align:center;padding:24px;color:#94a3b8;font-size:12px;">Cargando...</td></tr></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="card stretch stretch-full">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="card-title mb-0 fw-bold">Pedidos Recientes</h6>
+                                <a href="pedidos.html" class="fs-11 text-primary fw-semibold">Ver todos</a>
+                            </div>
+                            <div class="card-body p-0">
+                                <table class="table vxd-tbl mb-0">
+                                    <thead><tr><th>Folio</th><th>Cliente</th><th>Total</th><th>Estado</th><th>Factura</th></tr></thead>
+                                    <tbody id="tbl-pedidos"><tr><td colspan="5" style="text-align:center;padding:24px;color:#94a3b8;font-size:12px;">Cargando...</td></tr></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="card stretch stretch-full">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="card-title mb-0 fw-bold">Órdenes de Compra</h6>
+                                <a href="ordenes-compra.html" class="fs-11 text-primary fw-semibold">Ver todas</a>
+                            </div>
+                            <div class="card-body p-0">
+                                <table class="table vxd-tbl mb-0">
+                                    <thead><tr><th>OC</th><th>Proveedor</th><th>Costo</th><th>Estado</th></tr></thead>
+                                    <tbody id="tbl-ocs"><tr><td colspan="4" style="text-align:center;padding:24px;color:#94a3b8;font-size:12px;">Cargando...</td></tr></tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -771,9 +492,7 @@
         </div>
     </main>
 
-    <!-- Leaflet JS + inicialización del mapa VALTRAX -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
     <script>
     (function() {
       if (typeof L === 'undefined') return;
@@ -1007,7 +726,143 @@
     <!--! END: Vendors JS !-->
     <!--! BEGIN: Apps Init  !-->
     <script src="assets/js/common-init.min.js"></script>
-    <script src="assets/js/dashboard-init.min.js"></script>
+    <script>
+(async function vxDash(){
+    function fCLP(n){if(!n||n===0)return '$0';if(n>=1e6)return '
+    <!--! END: Apps Init !-->
+    <!--! BEGIN: Theme Customizer  !-->
+    <script src="assets/js/theme-customizer-init.min.js"></script>
+    <!--! END: Theme Customizer !-->
+</body>
+
+</html>+Math.round(n/1e6*10)/10+'M';if(n>=1e3)return '
+    <!--! END: Apps Init !-->
+    <!--! BEGIN: Theme Customizer  !-->
+    <script src="assets/js/theme-customizer-init.min.js"></script>
+    <!--! END: Theme Customizer !-->
+</body>
+
+</html>+Math.round(n/1e3)+'K';return '
+    <!--! END: Apps Init !-->
+    <!--! BEGIN: Theme Customizer  !-->
+    <script src="assets/js/theme-customizer-init.min.js"></script>
+    <!--! END: Theme Customizer !-->
+</body>
+
+</html>+Math.round(n).toLocaleString('es-CL');}
+    function set(id,v){const el=document.getElementById(id);if(el)el.textContent=v;}
+    function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+    const ESB={'Pendiente':'#fef9c3','En compra':'#dbeafe','Preparación':'#ede9fe','Despachado':'#ffedd5','Entregado':'#d1fae5'};
+    const ESC={'Pendiente':'#92400e','En compra':'#1d4ed8','Preparación':'#6d28d9','Despachado':'#c2410c','Entregado':'#065f46'};
+    try{
+        const [pptos,pedidos,ocs] = await Promise.all([
+            fetch('/api/presupuestos').then(r=>r.ok?r.json():[]),
+            fetch('/api/pedidos').then(r=>r.ok?r.json():[]),
+            fetch('/api/oc').then(r=>r.ok?r.json():[])
+        ]);
+        // KPI cotizaciones
+        const totalCot=pptos.length;
+        const aprobadas=pptos.filter(p=>['cotizacion','aprobada'].includes(p.estado)).length;
+        const pendientes=pptos.filter(p=>['pendiente','solicitud','presupuesto'].includes(p.estado)).length;
+        const conv=totalCot?Math.round(aprobadas/totalCot*100):0;
+        set('kpi-cot-total',totalCot||0);
+        set('kpi-cot-apr',aprobadas+' aprobadas');
+        set('kpi-cot-pen',pendientes+' pendientes');
+        set('kpi-conv',conv+'%');
+        set('kpi-conv-lbl',aprobadas+' de '+totalCot+' cotizaciones');
+        const cb=document.getElementById('kpi-conv-bar'); if(cb) cb.style.width=conv+'%';
+        // KPI pedidos
+        const totalPed=pedidos.length;
+        const pedEnt=pedidos.filter(p=>p.estado==='Entregado').length;
+        const pedPend=pedidos.filter(p=>p.estado==='Pendiente').length;
+        const pedPro=totalPed-pedEnt-pedPend;
+        const valorTotal=pedidos.reduce((s,p)=>s+(parseFloat(p.total_venta)||0),0);
+        set('kpi-ped-total',totalPed); set('kpi-ped-ent',pedEnt+' entregados'); set('kpi-ped-pro',pedPro+' en proceso');
+        set('kpi-valor',fCLP(valorTotal));
+        // KPI rentabilidad
+        const ganTotal=pedidos.reduce((s,p)=>s+(parseFloat(p.ganancia)||0),0);
+        const margen=valorTotal?Math.round(ganTotal/valorTotal*1000)/10:0;
+        set('kpi-gan',fCLP(ganTotal)); set('kpi-gan-sub','Sobre '+fCLP(valorTotal)+' vendidos');
+        set('kpi-margen',margen+'%');
+        const mb=document.getElementById('kpi-margen-bar'); if(mb) mb.style.width=Math.min(margen,100)+'%';
+        // KPI facturación
+        const facturados=pedidos.filter(p=>p.nro_factura).length;
+        const sinFact=totalPed-facturados;
+        const pctFact=totalPed?Math.round(facturados/totalPed*100):0;
+        set('kpi-fact',facturados); set('kpi-fact-sub',facturados+' de '+totalPed+' con factura'); set('kpi-sinfact',sinFact);
+        const fb=document.getElementById('kpi-fact-bar'); if(fb) fb.style.width=pctFact+'%';
+        // Gráfico línea
+        const mm={};
+        pedidos.forEach(p=>{const m=(p.fecha||p.creado_en||'').slice(0,7);if(!m||m.length<7)return;if(!mm[m]){mm[m]={v:0,c:0};}mm[m].v+=parseFloat(p.total_venta)||0;mm[m].c+=parseFloat(p.total_costo)||0;});
+        const MN=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+        const sk=Object.keys(mm).sort().slice(-12);
+        const mlb=sk.map(m=>{const[y,mo]=m.split('-');return MN[+mo]+' '+y.slice(2);});
+        const mv=sk.map(m=>Math.round(mm[m].v)); const mc=sk.map(m=>Math.round(mm[m].c));
+        if(window.ApexCharts&&document.getElementById('chartVentas')){
+            new ApexCharts(document.getElementById('chartVentas'),{
+                series:[{name:'Ventas',data:mv.length?mv:[0]},{name:'Costos',data:mc.length?mc:[0]}],
+                chart:{type:'area',height:260,toolbar:{show:false},fontFamily:'DM Sans, sans-serif'},
+                colors:['#2563eb','#f59e0b'],
+                fill:{type:'gradient',gradient:{shadeIntensity:1,opacityFrom:0.2,opacityTo:0.02,stops:[0,95,100]}},
+                stroke:{curve:'smooth',width:2.5},dataLabels:{enabled:false},
+                xaxis:{categories:mlb.length?mlb:['Sin datos'],labels:{style:{fontSize:'11px',colors:'#94a3b8'}}},
+                yaxis:{labels:{formatter:v=>'
+    <!--! END: Apps Init !-->
+    <!--! BEGIN: Theme Customizer  !-->
+    <script src="assets/js/theme-customizer-init.min.js"></script>
+    <!--! END: Theme Customizer !-->
+</body>
+
+</html>+Math.round(v/1000)+'K',style:{fontSize:'11px',colors:'#94a3b8'}}},
+                grid:{borderColor:'#f1f5f9',strokeDashArray:4},
+                tooltip:{y:{formatter:v=>'
+    <!--! END: Apps Init !-->
+    <!--! BEGIN: Theme Customizer  !-->
+    <script src="assets/js/theme-customizer-init.min.js"></script>
+    <!--! END: Theme Customizer !-->
+</body>
+
+</html>+Math.round(v).toLocaleString('es-CL')}},
+                legend:{position:'top',fontFamily:'DM Sans',fontSize:'12px'},markers:{size:3}
+            }).render();
+        }
+        // Gráfico donut
+        const estNm=['Pendiente','En compra','Preparación','Despachado','Entregado'];
+        const estCl=['#fbbf24','#60a5fa','#a78bfa','#fb923c','#34d399'];
+        const estCt=estNm.map(e=>pedidos.filter(p=>p.estado===e).length);
+        if(window.ApexCharts&&document.getElementById('chartDonut')&&totalPed>0){
+            new ApexCharts(document.getElementById('chartDonut'),{
+                series:estCt,labels:estNm,
+                chart:{type:'donut',height:200,fontFamily:'DM Sans, sans-serif'},
+                colors:estCl,
+                plotOptions:{pie:{donut:{size:'65%',labels:{show:true,total:{show:true,label:'Total',formatter:()=>totalPed,style:{fontSize:'18px',fontWeight:'700',color:'#0f172a'}}}}}},
+                dataLabels:{enabled:false},legend:{show:false},stroke:{width:0}
+            }).render();
+            const dl=document.getElementById('donutLegend');
+            if(dl) dl.innerHTML=estNm.map((e,i)=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f1f5f9;"><div style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:50%;background:'+estCl[i]+';display:inline-block;"></span><span style="font-size:12px;color:#334155;">'+e+'</span></div><span style="font-size:12px;font-weight:700;color:#0f172a;">'+estCt[i]+'</span></div>').join('');
+        } else if(document.getElementById('chartDonut')){
+            document.getElementById('chartDonut').innerHTML='<div style="text-align:center;padding:50px;color:#94a3b8;font-size:13px;">Sin pedidos aún</div>';
+        }
+        // Tabla clientes
+        const cm={};
+        pedidos.forEach(p=>{if(!p.cliente)return;if(!cm[p.cliente]){cm[p.cliente]={n:p.cliente,p:0,t:0,g:0};}cm[p.cliente].p++;cm[p.cliente].t+=parseFloat(p.total_venta)||0;cm[p.cliente].g+=parseFloat(p.ganancia)||0;});
+        const topC=Object.values(cm).sort((a,b)=>b.t-a.t).slice(0,5);
+        const tc=document.getElementById('tbl-clientes');
+        if(tc) tc.innerHTML=topC.length?topC.map((c,i)=>{const mg=c.t?Math.round(c.g/c.t*100):0;const rc=i===0?'r1':i===1?'r2':i===2?'r3':'';return '<tr><td><span class="vxd-rank '+rc+'">'+(i+1)+'</span></td><td><span class="fw-semibold" style="font-size:12px;">'+esc(c.n)+'</span></td><td style="text-align:center;">'+c.p+'</td><td class="fw-bold" style="color:#2563eb;">'+fCLP(c.t)+'</td><td><span class="vxd-pill '+(mg>=30?'vxd-grow':'vxd-warn')+'">'+mg+'%</span></td></tr>';}).join(''):'<tr><td colspan="5" style="text-align:center;padding:20px;color:#94a3b8;font-size:12px;">Sin datos</td></tr>';
+        // Tabla pedidos recientes
+        const rp=[...pedidos].sort((a,b)=>new Date(b.creado_en||b.fecha||0)-new Date(a.creado_en||a.fecha||0)).slice(0,5);
+        const tp=document.getElementById('tbl-pedidos');
+        if(tp) tp.innerHTML=rp.length?rp.map(p=>{const bg=ESB[p.estado]||'#f1f5f9',cl=ESC[p.estado]||'#64748b';const fct=p.nro_factura?'<span style="background:#d1fae5;color:#065f46;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700;">'+esc(p.nro_factura)+'</span>':'<span style="background:#fff7ed;color:#c2410c;padding:2px 7px;border-radius:5px;font-size:10px;">⚠ Sin</span>';return '<tr><td><a href="pedidos.html" style="font-weight:700;color:#2563eb;font-size:11px;text-decoration:none;">'+esc(p.folio)+'</a></td><td style="font-size:11px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(p.cliente||'—')+'</td><td class="fw-bold" style="font-size:11px;color:#2563eb;">'+fCLP(p.total_venta)+'</td><td><span style="background:'+bg+';color:'+cl+';padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700;">'+esc(p.estado)+'</span></td><td>'+fct+'</td></tr>';}).join(''):'<tr><td colspan="5" style="text-align:center;padding:20px;color:#94a3b8;font-size:12px;">Sin datos</td></tr>';
+        // Tabla OCs
+        const OB={'Borrador':'#f1f5f9','Confirmada':'#dbeafe','En Tránsito':'#fef9c3','Recibida':'#d1fae5','Cancelada':'#fee2e2'};
+        const OC={'Borrador':'#64748b','Confirmada':'#1d4ed8','En Tránsito':'#92400e','Recibida':'#065f46','Cancelada':'#b91c1c'};
+        const ro=[...ocs].sort((a,b)=>new Date(b.creado_en||b.fecha||0)-new Date(a.creado_en||a.fecha||0)).slice(0,5);
+        const to=document.getElementById('tbl-ocs');
+        if(to) to.innerHTML=ro.length?ro.map(o=>{const bg=OB[o.estado]||'#f1f5f9',cl=OC[o.estado]||'#64748b';return '<tr><td><a href="ordenes-compra.html" style="font-weight:700;color:#7c3aed;font-size:11px;text-decoration:none;">'+esc(o.folio)+'</a></td><td style="font-size:11px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(o.proveedor||'—')+'</td><td class="fw-bold" style="font-size:11px;color:#475569;">'+fCLP(o.total_costo)+'</td><td><span style="background:'+bg+';color:'+cl+';padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700;">'+esc(o.estado)+'</span></td></tr>';}).join(''):'<tr><td colspan="4" style="text-align:center;padding:20px;color:#94a3b8;font-size:12px;">Sin datos</td></tr>';
+    } catch(e){ console.error('Dashboard error:',e); }
+})();
+</script>
+<script src="assets/js/dashboard-init.min.js"></script>
     <!--! END: Apps Init !-->
     <!--! BEGIN: Theme Customizer  !-->
     <script src="assets/js/theme-customizer-init.min.js"></script>
