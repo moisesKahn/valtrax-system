@@ -17,71 +17,104 @@
     <link rel="stylesheet" type="text/css" href="assets/css/cotizacion.css" />
     <style id="valtrax-nav-pre-init">.nxl-navbar .nxl-submenu{display:none}html.valtrax-loading .nxl-navigation,html.valtrax-loading .nxl-navigation *{transition:none!important;animation:none!important}</style>
     <style>
-    /* ── Layout ── */
-    .pi-tabs { display:flex; gap:0; border-bottom:2px solid #e2e8f0; margin-bottom:24px; }
-    .pi-tab  { padding:10px 22px; font-size:13px; font-weight:600; color:#64748b; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; transition:all .2s; white-space:nowrap; }
-    .pi-tab:hover  { color:#2563eb; }
-    .pi-tab.active { color:#2563eb; border-bottom-color:#2563eb; background:none; }
-    .pi-panel { display:none; } .pi-panel.active { display:block; }
+    /* ── Tabs ── */
+    .pi-tabs{display:flex;gap:0;border-bottom:2px solid #e2e8f0;margin-bottom:0;}
+    .pi-tab{padding:12px 26px;font-size:13px;font-weight:600;color:#64748b;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;display:flex;align-items:center;gap:8px;}
+    .pi-tab:hover:not(.disabled){color:#2563eb;}
+    .pi-tab.active{color:#2563eb;border-bottom-color:#2563eb;}
+    .pi-tab.disabled{opacity:.4;cursor:not-allowed;}
+    .pi-tab .tb{font-size:10px;background:#e2e8f0;color:#64748b;border-radius:10px;padding:1px 7px;font-weight:700;}
+    .pi-tab.active .tb{background:#dbeafe;color:#2563eb;}
+    .pi-panel{display:none;}.pi-panel.active{display:block;}
 
-    /* ── Items table ── */
-    .pi-tbl { width:100%; border-collapse:collapse; }
-    .pi-tbl th { background:#f8fafc; font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; padding:10px 12px; border-bottom:2px solid #e2e8f0; }
-    .pi-tbl td { padding:8px 10px; border-bottom:1px solid #f1f5f9; vertical-align:middle; font-size:13px; }
-    .pi-tbl input, .pi-tbl select { border:1.5px solid #e2e8f0; border-radius:8px; padding:7px 10px; font-size:13px; width:100%; outline:none; transition:border .2s; font-family:'DM Sans',sans-serif; background:#fff; }
-    .pi-tbl input:focus, .pi-tbl select:focus { border-color:#2563eb; }
-    .pi-tbl tr:hover td { background:#f8fafc; }
+    /* ── Estado ── */
+    .e-badge{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+    .e-sol{background:#fef3c7;color:#b45309;}
+    .e-ppto{background:#dbeafe;color:#1d4ed8;}
+    .e-emit{background:#d1fae5;color:#065f46;}
 
-    /* ── Presupuesto cols ── */
-    .pup-precio { width:130px; }
-    .pup-url    { width:220px; }
-    .pup-margin { width:90px; }
-    .pup-venta  { width:120px; }
-    .pup-accion { width:110px; }
+    /* ── Sección/card ── */
+    .pi-sec{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px 24px;margin-bottom:18px;}
+    .pi-sec-title{font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px;}
+    .cot-field label{font-size:12px;font-weight:600;color:#64748b;margin-bottom:4px;display:block;}
+    .cot-field input,.cot-field select,.cot-field textarea{border:1.5px solid #e2e8f0;border-radius:9px;padding:8px 12px;font-size:13px;width:100%;outline:none;transition:border .2s;font-family:'DM Sans',sans-serif;background:#fff;}
+    .cot-field input:focus,.cot-field select:focus,.cot-field textarea:focus{border-color:#2563eb;}
+    .req{color:#ef4444;}
 
-    /* ── Modal opciones ── */
-    #modalOpciones { display:none; position:fixed; inset:0; z-index:12000; background:rgba(10,18,35,.72); backdrop-filter:blur(6px); align-items:center; justify-content:center; }
-    .modal-op-box { background:#fff; border-radius:18px; width:96%; max-width:820px; max-height:90vh; overflow-y:auto; box-shadow:0 30px 80px rgba(0,0,0,.3); font-family:'DM Sans',sans-serif; }
-    .modal-op-header { display:flex; justify-content:space-between; align-items:center; padding:18px 22px 14px; border-bottom:1px solid #e2e8f0; position:sticky; top:0; background:#fff; z-index:2; border-radius:18px 18px 0 0; }
-    .modal-op-header h6 { margin:0; font-size:15px; font-weight:700; color:#1e293b; }
-    .op-card { border:1.5px solid #e2e8f0; border-radius:12px; padding:14px 16px; cursor:pointer; transition:all .18s; display:flex; gap:14px; align-items:flex-start; margin-bottom:10px; }
-    .op-card:hover { border-color:#2563eb; background:#eff6ff; }
-    .op-card.selected { border-color:#059669; background:#f0fdf4; }
-    .op-rank { width:32px; height:32px; border-radius:50%; background:#2563eb; color:#fff; font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .op-rank.gold   { background:linear-gradient(135deg,#f59e0b,#fcd34d); color:#78350f; }
-    .op-rank.silver { background:linear-gradient(135deg,#94a3b8,#cbd5e1); color:#334155; }
-    .op-rank.bronze { background:linear-gradient(135deg,#d97706,#fbbf24); color:#78350f; }
-    .op-precio { font-size:19px; font-weight:800; color:#2563eb; white-space:nowrap; }
-    .op-tienda { font-size:12px; font-weight:700; color:#1e293b; }
-    .op-desc   { font-size:11px; color:#64748b; line-height:1.4; margin-top:2px; }
+    /* ── Autocomplete ── */
+    .ac-drop{position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid #2563eb;border-radius:0 0 10px 10px;z-index:2000;max-height:200px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.12);}
+    .ac-drop .ac-it{padding:9px 14px;font-size:13px;cursor:pointer;color:#1e293b;}
+    .ac-drop .ac-it:hover{background:#eff6ff;}
 
-    /* ── Status badges ── */
-    .badge-ok  { background:#d1fae5; color:#059669; border-radius:6px; padding:2px 8px; font-size:11px; font-weight:600; }
-    .badge-pen { background:#fef3c7; color:#d97706; border-radius:6px; padding:2px 8px; font-size:11px; font-weight:600; }
-    .badge-ia  { background:#ede9fe; color:#7c3aed; border-radius:6px; padding:2px 8px; font-size:11px; font-weight:600; }
+    /* ── Tabla ítems Tab1 ── */
+    .pi-tbl{width:100%;border-collapse:collapse;}
+    .pi-tbl th{background:#f8fafc;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;padding:10px 12px;border-bottom:2px solid #e2e8f0;white-space:nowrap;}
+    .pi-tbl td{padding:8px 10px;border-bottom:1px solid #f1f5f9;vertical-align:middle;font-size:13px;}
+    .pi-tbl tr:last-child td{border-bottom:none;}
+    .pi-tbl tr:hover td{background:#f8fafc;}
+    .pi-tbl input,.pi-tbl select{border:1.5px solid #e2e8f0;border-radius:8px;padding:6px 10px;font-size:13px;width:100%;outline:none;transition:border .2s;font-family:'DM Sans',sans-serif;background:#fff;}
+    .pi-tbl input:focus,.pi-tbl select:focus{border-color:#2563eb;}
+    .sub-row td{background:#fafcff;padding:4px 10px 8px 36px;border-bottom:1px dashed #e2e8f0;}
+    .sub-row:hover td{background:#f0f6ff;}
+    .btn-addsub{background:none;border:1px dashed #cbd5e1;border-radius:6px;color:#64748b;font-size:11px;padding:3px 10px;cursor:pointer;margin-top:4px;transition:all .15s;}
+    .btn-addsub:hover{border-color:#2563eb;color:#2563eb;}
 
-    /* ── Margen global bar ── */
-    .margen-global-bar { background:linear-gradient(135deg,#1e293b,#334155); border-radius:12px; padding:14px 20px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:18px; }
-    .margen-global-bar label { color:#94a3b8; font-size:12px; font-weight:600; white-space:nowrap; margin:0; }
-    .margen-global-bar input { width:80px; border:1.5px solid #475569; border-radius:8px; padding:6px 10px; font-size:14px; font-weight:700; color:#f1f5f9; background:#0f172a; text-align:center; font-family:'DM Sans',sans-serif; outline:none; }
-    .margen-global-bar input:focus { border-color:#2563eb; }
-    .btn-buscar-todo { background:linear-gradient(135deg,#7c3aed,#2563eb); color:#fff; border:none; border-radius:10px; padding:9px 18px; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; white-space:nowrap; }
-    .btn-buscar-todo:disabled { opacity:.5; cursor:not-allowed; }
+    /* ── Card ítem presupuesto ── */
+    .pcard{border:1.5px solid #e2e8f0;border-radius:14px;margin-bottom:14px;overflow:hidden;}
+    .pcard-hdr{background:#f8fafc;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer;user-select:none;}
+    .pcard-hdr:hover{background:#f1f5f9;}
+    .pcard-title{font-weight:700;font-size:13px;color:#1e293b;}
+    .pcard-meta{font-size:11px;color:#64748b;margin-top:2px;}
+    .pcard-body{padding:14px 16px;}
+    .pcard-body.col{display:none;}
 
-    /* ── Loading spinner in cell ── */
-    @keyframes spin { to{transform:rotate(360deg)} }
-    .spin-sm { width:16px; height:16px; border:2px solid #e2e8f0; border-top-color:#7c3aed; border-radius:50%; animation:spin .7s linear infinite; display:inline-block; }
+    /* ── Tabla opciones ── */
+    .opt-tbl{width:100%;border-collapse:collapse;font-size:13px;}
+    .opt-tbl th{font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;padding:7px 9px;border-bottom:1.5px solid #e2e8f0;background:#f8fafc;white-space:nowrap;}
+    .opt-tbl td{padding:8px 8px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
+    .opt-tbl tr:last-child td{border-bottom:none;}
+    .opt-tbl tr.opt-sel{background:#f0fdf4;}
+    .opt-tbl input{border:1.5px solid #e2e8f0;border-radius:7px;padding:5px 8px;font-size:12px;width:100%;outline:none;background:#fff;font-family:'DM Sans',sans-serif;}
+    .opt-tbl input:focus{border-color:#2563eb;}
+    .opt-num{width:22px;height:22px;border-radius:50%;background:#e2e8f0;color:#64748b;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;}
+    .opt-num.s{background:#059669;color:#fff;}
+    .btn-sel{background:none;border:1.5px solid #e2e8f0;border-radius:7px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;color:#64748b;white-space:nowrap;transition:all .15s;}
+    .btn-sel:hover{border-color:#2563eb;color:#2563eb;}
+    .btn-sel.on{background:#059669;border-color:#059669;color:#fff;}
+    .venta-val{font-weight:800;color:#2563eb;font-size:13px;white-space:nowrap;}
 
-    /* ── Totales presupuesto ── */
-    .pi-total-box { background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:12px; padding:16px 20px; }
-    .pi-total-row { display:flex; justify-content:space-between; font-size:13px; color:#64748b; margin-bottom:6px; }
-    .pi-total-row.final { font-size:16px; font-weight:800; color:#1e293b; border-top:2px solid #e2e8f0; padding-top:8px; margin-top:4px; }
+    /* ── Totales ── */
+    .tot-box{background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:12px;padding:16px 20px;}
+    .tot-row{display:flex;justify-content:space-between;font-size:13px;color:#64748b;margin-bottom:7px;align-items:center;}
+    .tot-row.fin{font-size:16px;font-weight:800;color:#1e293b;border-top:2px solid #e2e8f0;padding-top:9px;margin-top:4px;}
+
+    /* ── Botón IA ── */
+    .btn-ia{background:#7c3aed;color:#fff;border:none;border-radius:8px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;transition:background .15s;}
+    .btn-ia:hover{background:#6d28d9;}
+    .btn-ia:disabled{background:#c4b5fd;cursor:not-allowed;}
+
+    /* ── Spinner ── */
+    .spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;}
+    @keyframes sp{to{transform:rotate(360deg);}}
+
+    /* ── Modal IA ── */
+    #modalIA{display:none;position:fixed;inset:0;z-index:12000;background:rgba(10,18,35,.72);backdrop-filter:blur(5px);align-items:center;justify-content:center;}
+    .mia-box{background:#fff;border-radius:18px;width:96%;max-width:780px;max-height:88vh;overflow-y:auto;box-shadow:0 28px 72px rgba(0,0,0,.28);font-family:'DM Sans',sans-serif;}
+    .mia-hdr{display:flex;justify-content:space-between;align-items:flex-start;padding:18px 22px 14px;border-bottom:1px solid #e2e8f0;position:sticky;top:0;background:#fff;z-index:2;border-radius:18px 18px 0 0;}
+    .ia-card{border:1.5px solid #e2e8f0;border-radius:11px;padding:12px 14px;cursor:pointer;transition:all .16s;display:flex;gap:12px;align-items:flex-start;margin-bottom:8px;}
+    .ia-card:hover{border-color:#2563eb;background:#eff6ff;}
+    .ia-card.sel{border-color:#059669;background:#f0fdf4;}
+    .ia-rk{width:28px;height:28px;border-radius:50%;background:#2563eb;color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .ia-rk.g{background:linear-gradient(135deg,#f59e0b,#fcd34d);color:#78350f;}
+    .ia-rk.s{background:linear-gradient(135deg,#94a3b8,#cbd5e1);color:#334155;}
+    .ia-rk.b{background:linear-gradient(135deg,#d97706,#fbbf24);color:#78350f;}
+
+    /* ── Toast ── */
+    #vx-toast{position:fixed;bottom:28px;right:28px;z-index:99999;background:#1e293b;color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;}
     </style>
 </head>
 <body>
-    <!--! ================================================================ !-->
-    <!--! [Inicio] Menu de Navegacion VALTRAX v5 !-->
-    <!--! ================================================================ !-->
+    <!-- ── NAV ── -->
     <nav class="nxl-navigation">
         <div class="navbar-wrapper">
             <div class="m-header">
@@ -92,12 +125,7 @@
             </div>
             <div class="navbar-content">
                 <ul class="nxl-navbar">
-                    <li class="nxl-item">
-                        <a class="nxl-link" href="index.html">
-                            <span class="nxl-micon"><i class="feather-grid"></i></span>
-                            <span class="nxl-mtext">Dashboard</span>
-                        </a>
-                    </li>
+                    <li class="nxl-item"><a class="nxl-link" href="index.html"><span class="nxl-micon"><i class="feather-grid"></i></span><span class="nxl-mtext">Dashboard</span></a></li>
                     <li class="nxl-item nxl-caption"><label>Área Comercial</label></li>
                     <li class="nxl-item nxl-hasmenu">
                         <a href="javascript:void(0);" class="nxl-link">
@@ -107,7 +135,7 @@
                         <ul class="nxl-submenu">
                             <li class="nxl-item"><a class="nxl-link" href="cotizaciones.html">Listado</a></li>
                             <li class="nxl-item"><a class="nxl-link" href="cotizaciones-crear.html">Nueva Cotización</a></li>
-                            <li class="nxl-item"><a class="nxl-link active" href="presupuesto-interno.html">Presupuesto Interno</a></li>
+                            <li class="nxl-item"><a class="nxl-link" href="presupuesto-interno.html">Presupuesto Interno</a></li>
                         </ul>
                     </li>
                     <li class="nxl-item nxl-hasmenu">
@@ -123,6 +151,9 @@
                     <li class="nxl-item nxl-caption"><label>Área Operacional</label></li>
                     <li class="nxl-item"><a class="nxl-link" href="pedidos.html"><span class="nxl-micon"><i class="feather-package"></i></span><span class="nxl-mtext">Pedidos</span></a></li>
                     <li class="nxl-item"><a class="nxl-link" href="ordenes-compra.html"><span class="nxl-micon"><i class="feather-shopping-bag"></i></span><span class="nxl-mtext">Órdenes de Compra</span></a></li>
+                    <li class="nxl-item"><a class="nxl-link" href="entregas.html"><span class="nxl-micon"><i class="feather-check-square"></i></span><span class="nxl-mtext">Entregas</span></a></li>
+                    <li class="nxl-item nxl-caption"><label>Herramientas</label></li>
+                    <li class="nxl-item"><a class="nxl-link" href="buscador-precios.html"><span class="nxl-micon"><i class="feather-tag"></i></span><span class="nxl-mtext">Buscador de Precios</span></a></li>
                 </ul>
             </div>
         </div>
@@ -130,22 +161,23 @@
     <script>
     (function(){
         document.documentElement.classList.add('valtrax-loading');
-        var s=document.querySelectorAll('.nxl-navbar .nxl-submenu'); for(var j=0;j<s.length;j++) s[j].style.display='none';
+        var s=document.querySelectorAll('.nxl-navbar .nxl-submenu');
+        for(var j=0;j<s.length;j++) s[j].style.display='none';
         var page=location.pathname.split('/').pop()||'index.html';
         var links=document.querySelectorAll('.nxl-navbar a.nxl-link');
         for(var i=0;i<links.length;i++){
             var h=links[i].getAttribute('href');
             if(h&&h.split('/').pop()===page){
-                var it=links[i].closest('.nxl-item'); if(it) it.classList.add('active');
-                var hm=links[i].closest('.nxl-hasmenu'); if(hm){hm.classList.add('nxl-trigger');var sub=hm.querySelector(':scope>.nxl-submenu');if(sub)sub.style.display='block';}
+                var it=links[i].closest('.nxl-item');if(it)it.classList.add('active');
+                var hm=links[i].closest('.nxl-hasmenu');
+                if(hm){hm.classList.add('nxl-trigger');var sub=hm.querySelector(':scope>.nxl-submenu');if(sub)sub.style.display='block';}
                 break;
             }
         }
     })();
     </script>
-    <!--! ================================================================ !-->
-    <!--! [Start] Header !-->
-    <!--! ================================================================ !-->
+
+    <!-- ── HEADER ── -->
     <header class="nxl-header">
         <div class="header-wrapper">
             <div class="header-left d-flex align-items-center gap-4">
@@ -153,9 +185,6 @@
                     <a href="javascript:void(0);" id="menu-mini-button"><i class="feather-align-left"></i></a>
                     <a href="javascript:void(0);" id="menu-expend-button" style="display:none"><i class="feather-arrow-right"></i></a>
                 </div>
-                <a href="javascript:void(0);" class="nxl-head-mobile-toggler" id="mobile-collapse">
-                    <div class="hamburger hamburger--arrowturn"><div class="hamburger-box"><div class="hamburger-inner"></div></div></div>
-                </a>
             </div>
             <div class="header-right ms-auto">
                 <div class="d-flex align-items-center">
@@ -163,7 +192,7 @@
                         <a href="javascript:void(0);" class="nxl-head-link me-0 p-1" data-bs-toggle="dropdown" data-bs-auto-close="outside">
                             <div id="vx-avatar" style="width:36px;height:36px;border-radius:50%;background:#2563eb;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;">VX</div>
                         </a>
-                        <div class="dropdown-menu dropdown-menu-end" style="min-width:200px;border-radius:12px;padding:8px 0;box-shadow:0 8px 28px rgba(0,0,0,0.13);">
+                        <div class="dropdown-menu dropdown-menu-end" style="min-width:200px;border-radius:12px;padding:8px 0;">
                             <div class="px-3 py-2 mb-1 border-bottom">
                                 <p class="mb-0 fw-semibold fs-13" id="vx-nombre-header">VALTRAX</p>
                                 <p class="mb-0 text-muted fs-11">Administrador</p>
@@ -175,887 +204,936 @@
             </div>
         </div>
     </header>
-    <script>
-    (function(){
-        var nombre=localStorage.getItem('vx_usuario')||'Valtrax User';
-        var partes=nombre.trim().split(/\s+/);
-        var iniciales=partes.length>=2?(partes[0][0]+partes[partes.length-1][0]).toUpperCase():nombre.slice(0,2).toUpperCase();
-        var av=document.getElementById('vx-avatar'); var nh=document.getElementById('vx-nombre-header');
-        if(av)av.textContent=iniciales; if(nh)nh.textContent=nombre;
-    })();
-    </script>
+    <script>(function(){var n=localStorage.getItem('vx_usuario')||'Valtrax User';var p=n.trim().split(/\s+/);var ini=p.length>=2?(p[0][0]+p[p.length-1][0]).toUpperCase():n.slice(0,2).toUpperCase();var av=document.getElementById('vx-avatar');var nh=document.getElementById('vx-nombre-header');if(av)av.textContent=ini;if(nh)nh.textContent=n;})();</script>
 
-    <!--! ================================================================ !-->
-    <!--! [Inicio] Contenido Principal — Presupuesto Interno VALTRAX !-->
-    <!--! ================================================================ !-->
+    <!-- ══════════════════════════════════════════════════════════════════
+         MAIN
+    ══════════════════════════════════════════════════════════════════ -->
     <main class="nxl-container">
-        <div class="nxl-content">
+      <div class="nxl-content">
 
-            <!-- PAGE HEADER -->
-            <div class="page-header">
-                <div class="page-header-left d-flex align-items-center">
-                    <div class="page-header-title"><h5 class="m-b-10">Presupuesto Interno</h5></div>
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Inicio</a></li>
-                        <li class="breadcrumb-item">Área Comercial</li>
-                        <li class="breadcrumb-item">Presupuesto Interno</li>
-                    </ul>
-                </div>
-                <div class="page-header-right ms-auto d-flex gap-2 align-items-center">
-                    <button class="btn btn-sm btn-outline-secondary" onclick="limpiarTodo()"><i class="feather-trash-2 me-1"></i>Limpiar</button>
-                    <button class="btn btn-sm btn-primary" id="btnEmitirCot" onclick="emitirCotizacion()" disabled>
-                        <i class="feather-send me-1"></i>Emitir Cotización
-                    </button>
+        <!-- Page header -->
+        <div class="page-header">
+            <div class="page-header-left d-flex align-items-center">
+                <div class="page-header-title"><h5 class="m-b-10">Presupuesto Interno</h5></div>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Inicio</a></li>
+                    <li class="breadcrumb-item">Área Comercial</li>
+                    <li class="breadcrumb-item">Presupuesto Interno</li>
+                </ul>
+            </div>
+            <div class="page-header-right ms-auto d-flex align-items-center gap-2">
+                <span id="estadoBadge" class="e-badge e-sol">● Solicitud</span>
+                <a href="cotizaciones.html" class="btn btn-sm btn-outline-secondary"><i class="feather-arrow-left me-1"></i>Volver</a>
+            </div>
+        </div>
+
+        <div class="main-content">
+          <div class="card stretch stretch-full">
+
+            <!-- TABS -->
+            <div class="card-header p-0" style="border-bottom:none;">
+                <div class="pi-tabs px-4 pt-3">
+                    <div class="pi-tab active" id="tabBtn1" onclick="irTab(1)">
+                        <i class="feather-clipboard" style="font-size:14px;"></i>
+                        Solicitud de Cotización
+                        <span class="tb" id="badgeItems">0</span>
+                    </div>
+                    <div class="pi-tab disabled" id="tabBtn2" onclick="irTab(2)">
+                        <i class="feather-dollar-sign" style="font-size:14px;"></i>
+                        Presupuesto Interno
+                        <span class="tb" id="badgePpto">–</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="main-content">
+            <!-- ══════════════════════════════════════════════
+                 TAB 1 — SOLICITUD DE COTIZACIÓN
+            ══════════════════════════════════════════════ -->
+            <div class="pi-panel active" id="panel1">
+              <div class="card-body">
 
-                <!-- CABECERA PRESUPUESTO -->
-                <div class="card mb-3">
-                    <div class="card-body py-3">
-                        <div class="row g-3 align-items-end">
-                            <div class="col-md-5">
-                                <label class="fs-11 fw-semibold text-muted text-uppercase mb-1">Cliente / Empresa <span style="color:#dc2626">*</span></label>
-                                <input type="text" id="piCliente" class="form-control form-control-sm" placeholder="Nombre del cliente o empresa..." oninput="verificarListoEmitir()">
+                <!-- Cabecera -->
+                <div class="pi-sec">
+                    <div class="pi-sec-title">Cabecera de Cotización</div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="cot-field" style="position:relative;">
+                                <label>Cliente <span class="req">*</span></label>
+                                <input type="text" id="solCliente" placeholder="Nombre del cliente..."
+                                    autocomplete="off"
+                                    oninput="acFiltrar(this.value)"
+                                    onfocus="acFiltrar(this.value)"
+                                    onblur="setTimeout(acOcultar,200)">
+                                <input type="hidden" id="solClienteId">
+                                <div id="solDrop" class="ac-drop" style="display:none;"></div>
                             </div>
-                            <div class="col-md-3">
-                                <label class="fs-11 fw-semibold text-muted text-uppercase mb-1">Faena / Proyecto</label>
-                                <input type="text" id="piFaena" class="form-control form-control-sm" placeholder="Ej: Faena Escondida">
+                        </div>
+                        <div class="col-md-3">
+                            <div class="cot-field">
+                                <label>Fecha</label>
+                                <input type="date" id="solFecha">
                             </div>
-                            <div class="col-md-2">
-                                <label class="fs-11 fw-semibold text-muted text-uppercase mb-1">Fecha Solicitud</label>
-                                <input type="date" id="piFecha" class="form-control form-control-sm">
+                        </div>
+                        <div class="col-md-3">
+                            <div class="cot-field">
+                                <label>Vigencia</label>
+                                <select id="solVigencia">
+                                    <option>15 días</option>
+                                    <option selected>30 días</option>
+                                    <option>45 días</option>
+                                    <option>60 días</option>
+                                </select>
                             </div>
-                            <div class="col-md-2 d-flex align-items-end">
-                                <div class="d-flex gap-2 align-items-center w-100">
-                                    <div>
-                                        <label class="fs-11 fw-semibold text-muted text-uppercase mb-1">API Key Claude</label>
-                                        <div class="d-flex gap-1">
-                                            <input type="password" id="piApiKey" class="form-control form-control-sm" placeholder="sk-ant-..." style="font-family:monospace;font-size:11px;" oninput="guardarApiKeyPI()">
-                                        </div>
-                                    </div>
-                                </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="cot-field">
+                                <label>Faena / Lugar de entrega</label>
+                                <input type="text" id="solFaena" placeholder="Nombre de la faena o lugar de entrega...">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="cot-field">
+                                <label>OC Cliente</label>
+                                <input type="text" id="solOC" placeholder="Nº orden de compra (opcional)">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="cot-field">
+                                <label>Referencia interna</label>
+                                <input type="text" id="solRef" placeholder="Referencia opcional...">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="cot-field">
+                                <label>Observaciones</label>
+                                <textarea id="solObs" rows="2" placeholder="Condiciones especiales, notas generales..."></textarea>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- TABS -->
-                <div class="pi-tabs">
-                    <div class="pi-tab active" onclick="switchTab('tab-items',this)">
-                        <i class="feather-list" style="margin-right:6px;"></i>1 · Items Solicitados
-                        <span id="badgeItems" class="badge bg-primary ms-2" style="font-size:10px;display:none;">0</span>
+                <!-- Ítems -->
+                <div class="pi-sec">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="pi-sec-title mb-0">Ítems Solicitados</div>
+                        <button class="btn btn-sm btn-outline-primary" onclick="agregarItem()">
+                            <i class="feather-plus me-1"></i>Agregar Ítem
+                        </button>
                     </div>
-                    <div class="pi-tab" onclick="switchTab('tab-presupuesto',this)">
-                        <i class="feather-dollar-sign" style="margin-right:6px;"></i>2 · Presupuesto Interno
-                        <span id="badgePpto" class="badge bg-success ms-2" style="font-size:10px;display:none;">0</span>
+                    <div class="table-responsive">
+                        <table class="pi-tbl">
+                            <thead>
+                                <tr>
+                                    <th style="width:36px;text-align:center;">#</th>
+                                    <th>Descripción del ítem</th>
+                                    <th style="width:90px;">Cantidad</th>
+                                    <th style="width:110px;">Unidad</th>
+                                    <th style="width:40px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyItems"></tbody>
+                        </table>
+                    </div>
+                    <div id="emptyItems" class="text-center py-4 text-muted fs-13">
+                        <i class="feather-inbox" style="font-size:28px;display:block;margin-bottom:8px;opacity:.35;"></i>
+                        Sin ítems. Haz clic en "Agregar Ítem".
                     </div>
                 </div>
 
-                <!-- ══ TAB 1: ITEMS SOLICITADOS ══════════════════════════════════════ -->
-                <div id="tab-items" class="pi-panel active">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center py-2">
-                            <h6 class="mb-0 fs-13"><i class="feather-list me-1 text-primary"></i>Items que el cliente solicita cotizar</h6>
-                            <button class="btn btn-sm btn-primary" onclick="agregarItemPI()"><i class="feather-plus me-1"></i>Agregar Ítem</button>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="pi-tbl">
-                                    <thead>
-                                        <tr>
-                                            <th style="width:36px;">#</th>
-                                            <th>Descripción del ítem / producto</th>
-                                            <th style="width:90px;">Cantidad</th>
-                                            <th style="width:110px;">Unidad</th>
-                                            <th style="width:40px;"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tbodyItems"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="card-footer d-flex justify-content-between align-items-center py-2">
-                            <button class="btn btn-sm btn-outline-primary" onclick="agregarItemPI()"><i class="feather-plus me-1"></i>Agregar otro</button>
-                            <button class="btn btn-sm btn-primary" onclick="irAPresupuesto()" id="btnIrPpto" disabled>
-                                Ir a Presupuesto Interno <i class="feather-arrow-right ms-1"></i>
+                <!-- Acciones Tab1 -->
+                <div class="d-flex justify-content-between align-items-center">
+                    <span id="solSavedMsg" class="text-success fs-12" style="display:none;">
+                        <i class="feather-check-circle me-1"></i>Solicitud guardada correctamente
+                    </span>
+                    <div class="ms-auto d-flex gap-2">
+                        <button class="btn btn-outline-secondary btn-sm" onclick="nuevaSolicitud()">
+                            <i class="feather-refresh-cw me-1"></i>Nueva
+                        </button>
+                        <button class="btn btn-primary" onclick="guardarSolicitud()">
+                            <i class="feather-save me-1"></i>Guardar Solicitud
+                        </button>
+                    </div>
+                </div>
+
+              </div>
+            </div><!-- /panel1 -->
+
+            <!-- ══════════════════════════════════════════════
+                 TAB 2 — PRESUPUESTO INTERNO
+            ══════════════════════════════════════════════ -->
+            <div class="pi-panel" id="panel2">
+              <div class="card-body">
+
+                <!-- Resumen cabecera (readonly) -->
+                <div class="pi-sec" style="padding:12px 20px;">
+                    <div class="d-flex flex-wrap gap-3 align-items-center">
+                        <div><span class="text-muted fs-11 fw-600 text-uppercase">Cliente:</span>&nbsp;<span id="pptoCliente" class="fw-semibold fs-13">—</span></div>
+                        <span class="text-muted">·</span>
+                        <div><span class="text-muted fs-11 fw-600 text-uppercase">Faena:</span>&nbsp;<span id="pptoFaena" class="fw-semibold fs-13">—</span></div>
+                        <span class="text-muted">·</span>
+                        <div><span class="text-muted fs-11 fw-600 text-uppercase">Fecha:</span>&nbsp;<span id="pptoFecha" class="fw-semibold fs-13">—</span></div>
+                        <div class="ms-auto">
+                            <button class="btn btn-xs btn-outline-secondary fs-12" onclick="irTab(1)">
+                                <i class="feather-edit-2 me-1"></i>Editar cabecera
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- ══ TAB 2: PRESUPUESTO INTERNO ════════════════════════════════════ -->
-                <div id="tab-presupuesto" class="pi-panel">
+                <!-- Configuración global -->
+                <div class="pi-sec" style="padding:14px 20px;">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label class="fs-12 fw-600 text-muted d-block mb-1">% Ganancia global</label>
+                            <div class="d-flex align-items-center gap-2">
+                                <input type="number" id="margenGlobal" value="30" min="0" max="500"
+                                    style="border:1.5px solid #e2e8f0;border-radius:8px;padding:7px 10px;font-size:13px;width:80px;font-family:'DM Sans',sans-serif;">
+                                <span class="text-muted fs-12">%</span>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="aplicarMargenGlobal()">Aplicar a todos</button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="fs-12 fw-600 text-muted d-block mb-1">API Key Claude (búsqueda IA)</label>
+                            <input type="password" id="claudeKey" placeholder="sk-ant-..."
+                                style="border:1.5px solid #e2e8f0;border-radius:8px;padding:7px 10px;font-size:13px;width:100%;font-family:'DM Sans',sans-serif;"
+                                oninput="localStorage.setItem('vx_claude_key',this.value)">
+                        </div>
+                        <div class="col-md-5 d-flex align-items-end justify-content-end">
+                            <button id="btnBuscarTodos" class="btn-ia" onclick="buscarTodosIA()">
+                                🤖 Buscar todos con IA
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-                    <!-- Margen global + buscar todo -->
-                    <div class="margen-global-bar">
-                        <i class="feather-percent" style="color:#94a3b8;font-size:18px;"></i>
-                        <label>Margen de ganancia global:</label>
-                        <input type="number" id="margenGlobal" value="30" min="0" max="999" step="1" oninput="aplicarMargenGlobal()">
-                        <span style="color:#94a3b8;font-size:13px;">%</span>
-                        <div style="flex:1;"></div>
-                        <div style="color:#64748b;font-size:11px;margin-right:8px;">Margen individual por fila anula el global</div>
-                        <button class="btn-buscar-todo" id="btnBuscarTodo" onclick="buscarTodosItems()">
-                            <span>🤖</span> Buscar todos con IA
+                <!-- Cards por ítem -->
+                <div id="containerPpto"></div>
+
+                <!-- Totales + comisión -->
+                <div class="pi-sec mt-1">
+                    <div class="row justify-content-end">
+                        <div class="col-md-5 col-lg-4">
+                            <div class="tot-box">
+                                <div class="tot-row"><span>Costo total proveedores:</span><span id="totCosto" class="fw-600">$ 0</span></div>
+                                <div class="tot-row"><span>Precio venta s/comisión:</span><span id="totVentaSin" class="fw-600">$ 0</span></div>
+                                <div class="tot-row" style="align-items:center;">
+                                    <span>Comisión:</span>
+                                    <select id="selComision" onchange="recalcTotales()"
+                                        style="border:1.5px solid #cbd5e1;border-radius:6px;padding:3px 10px;font-size:13px;font-weight:600;color:#1e293b;background:#fff;width:auto;">
+                                        <option value="3">3 %</option>
+                                        <option value="4" selected>4 %</option>
+                                        <option value="5">5 %</option>
+                                    </select>
+                                </div>
+                                <div class="tot-row fin"><span>PRECIO VENTA NETO:</span><span id="totVentaFinal" style="color:#2563eb;">$ 0</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acciones Tab2 -->
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <span id="pptoSavedMsg" class="text-success fs-12" style="display:none;">
+                        <i class="feather-check-circle me-1"></i>Presupuesto guardado
+                    </span>
+                    <div class="ms-auto d-flex gap-2">
+                        <button class="btn btn-outline-secondary" onclick="guardarPresupuesto()">
+                            <i class="feather-save me-1"></i>Guardar Presupuesto
+                        </button>
+                        <button id="btnEmitir" class="btn btn-success" onclick="abrirModalEmitir()" disabled>
+                            <i class="feather-send me-1"></i>Emitir Cotización
                         </button>
                     </div>
+                </div>
 
-                    <div class="card">
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="pi-tbl">
-                                    <thead>
-                                        <tr>
-                                            <th style="width:36px;">#</th>
-                                            <th>Ítem / Descripción solicitada</th>
-                                            <th style="width:80px;">Cant.</th>
-                                            <th style="width:80px;">Unid.</th>
-                                            <th class="pup-precio">Precio Costo</th>
-                                            <th class="pup-url">Producto / URL encontrado</th>
-                                            <th class="pup-margin">Margen %</th>
-                                            <th class="pup-venta" style="text-align:right;">Precio Venta</th>
-                                            <th class="pup-accion" style="text-align:center;">IA</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tbodyPpto"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <!-- Totales -->
-                        <div class="card-footer">
-                            <div class="row justify-content-end">
-                                <div class="col-md-4">
-                                    <div class="pi-total-box">
-                                        <div class="pi-total-row"><span>Costo total:</span><span id="piTotCosto">$ 0</span></div>
-                                        <div class="pi-total-row"><span>Margen promedio:</span><span id="piTotMargen">0 %</span></div>
-                                        <div class="pi-total-row" style="align-items:center;">
-                                            <span>Comisión:</span>
-                                            <select id="piComision" onchange="recalcTotales()" style="border:1.5px solid #cbd5e1;border-radius:6px;padding:2px 8px;font-size:13px;font-weight:600;color:#1e293b;background:#fff;cursor:pointer;">
-                                                <option value="3">3 %</option>
-                                                <option value="4" selected>4 %</option>
-                                                <option value="5">5 %</option>
-                                            </select>
-                                        </div>
-                                        <div class="pi-total-row final"><span>PRECIO VENTA NETO:</span><span id="piTotVenta" style="color:#2563eb;">$ 0</span></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- /tab-presupuesto -->
+              </div>
+            </div><!-- /panel2 -->
 
-            </div><!-- /main-content -->
+          </div><!-- /card -->
+        </div><!-- /main-content -->
 
-            <footer class="footer">
-                <p class="fs-11 text-muted fw-medium text-uppercase mb-0 copyright"><span>© Copyright </span><a href="javascript:void(0);" class="ms-1"><span class="fw-bold">VALTRAX</span></a></p>
-                <p class="fs-11 text-muted fw-medium text-uppercase mb-0">Presupuesto Interno · Cotización para Cliente</p>
-            </footer>
-        </div>
+        <footer class="footer">
+            <p class="fs-11 text-muted fw-medium text-uppercase mb-0 copyright"><span>© Copyright </span><a href="javascript:void(0);" class="ms-1"><span class="fw-bold">VALTRAX</span></a></p>
+            <p class="fs-11 text-muted fw-medium text-uppercase mb-0">Presupuesto Interno · Sistema de Cotización VALTRAX</p>
+        </footer>
+      </div>
     </main>
 
-    <!-- ══ MODAL OPCIONES IA ══════════════════════════════════════════════ -->
-    <div id="modalOpciones">
-        <div class="modal-op-box">
-            <div class="modal-op-header">
+    <!-- ══════════════════════════════════════════════
+         MODAL IA
+    ══════════════════════════════════════════════ -->
+    <div id="modalIA">
+        <div class="mia-box">
+            <div class="mia-hdr">
                 <div>
-                    <h6 id="modalOpTitulo">Opciones encontradas</h6>
-                    <p class="fs-11 text-muted mb-0" id="modalOpSub">Selecciona la mejor opción para este ítem</p>
+                    <h6 id="miaTitle" style="margin:0;font-size:15px;font-weight:700;color:#1e293b;">Opciones IA</h6>
+                    <p id="miaMeta" style="margin:0;font-size:11px;color:#64748b;"></p>
                 </div>
-                <button onclick="cerrarModalOp()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#94a3b8;">×</button>
+                <button onclick="cerrarModalIA()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#94a3b8;line-height:1;">×</button>
             </div>
-            <div style="padding:18px 20px;">
-                <!-- Status / loading -->
-                <div id="modalOpLoading" class="text-center py-5" style="display:none;">
-                    <div class="spinner-border text-primary mb-3" role="status"></div>
-                    <p class="text-muted fs-13">Buscando mejores opciones con IA...</p>
-                    <p class="fs-11 text-muted" id="modalOpLoadingMsg"></p>
+            <div style="padding:16px 20px;">
+                <div id="miaLoading" style="display:none;text-align:center;padding:28px 0;">
+                    <div class="spin" style="width:30px;height:30px;border-width:3px;margin:0 auto 12px;border-color:rgba(99,102,241,.25);border-top-color:#6366f1;"></div>
+                    <p id="miaLoadMsg" style="font-size:13px;color:#64748b;margin:0;">Buscando...</p>
                 </div>
-                <div id="modalOpError" class="alert alert-danger" style="display:none;"></div>
-                <!-- Lista opciones -->
-                <div id="modalOpLista"></div>
-                <!-- Acciones -->
-                <div id="modalOpAcciones" style="display:none;" class="mt-3 pt-3 border-top d-flex justify-content-between align-items-center">
-                    <button onclick="rebuscar()" class="btn btn-sm btn-outline-secondary"><i class="feather-refresh-cw me-1"></i>Nueva búsqueda</button>
-                    <button onclick="cerrarModalOp()" class="btn btn-sm btn-outline-secondary">Cerrar sin seleccionar</button>
-                </div>
+                <div id="miaError" style="display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:12px 16px;color:#dc2626;font-size:13px;margin-bottom:12px;"></div>
+                <div id="miaLista"></div>
+            </div>
+            <div style="padding:12px 20px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;">
+                <button onclick="rebuscarIA()" style="background:none;border:1.5px solid #e2e8f0;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:600;color:#64748b;cursor:pointer;display:flex;align-items:center;gap:6px;">
+                    <i class="feather-refresh-cw" style="font-size:12px;"></i>Nueva búsqueda
+                </button>
+                <button onclick="cerrarModalIA()" style="background:#f1f5f9;border:none;border-radius:8px;padding:7px 20px;font-size:13px;font-weight:600;cursor:pointer;color:#475569;">Cerrar sin seleccionar</button>
             </div>
         </div>
     </div>
 
-    <!-- ══ MODAL CONFIRMAR EMISIÓN ════════════════════════════════════════ -->
-    <div id="modalEmitir" style="display:none;position:fixed;inset:0;z-index:13000;background:rgba(10,18,35,.72);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
-        <div style="background:#fff;border-radius:18px;padding:32px 28px;width:90%;max-width:460px;box-shadow:0 30px 80px rgba(0,0,0,.3);font-family:'DM Sans',sans-serif;">
-            <h6 style="font-weight:700;color:#1e293b;margin-bottom:6px;font-size:16px;"><i class="feather-send" style="color:#2563eb;margin-right:8px;"></i>Emitir Cotización al Cliente</h6>
-            <p class="text-muted fs-13 mb-3">El presupuesto interno se convertirá en cotización oficial con precios de venta (con margen aplicado).</p>
-            <div class="mb-3">
-                <label class="fs-11 fw-semibold text-muted text-uppercase mb-1">Folio cotización</label>
-                <input type="text" id="emFolio" class="form-control form-control-sm" readonly style="background:#f8fafc;font-weight:700;font-size:15px;">
+    <!-- ══════════════════════════════════════════════
+         MODAL EMITIR
+    ══════════════════════════════════════════════ -->
+    <div id="modalEmitir" style="display:none;position:fixed;inset:0;z-index:12000;background:rgba(10,18,35,.72);backdrop-filter:blur(5px);align-items:center;justify-content:center;">
+        <div style="background:#fff;border-radius:18px;width:96%;max-width:480px;padding:28px;font-family:'DM Sans',sans-serif;">
+            <h5 style="font-weight:800;color:#1e293b;margin-bottom:6px;">Emitir Cotización</h5>
+            <p style="font-size:13px;color:#64748b;margin-bottom:22px;">Confirma los datos finales antes de emitir.</p>
+            <div class="row g-3">
+                <div class="col-6">
+                    <label style="font-size:12px;font-weight:600;color:#64748b;display:block;margin-bottom:4px;">Folio</label>
+                    <input id="emFolio" type="text" readonly style="border:1.5px solid #e2e8f0;border-radius:9px;padding:8px 12px;font-size:14px;font-weight:700;width:100%;background:#f8fafc;font-family:'DM Sans',sans-serif;">
+                </div>
+                <div class="col-6">
+                    <label style="font-size:12px;font-weight:600;color:#64748b;display:block;margin-bottom:4px;">IVA</label>
+                    <select id="emIva" style="border:1.5px solid #e2e8f0;border-radius:9px;padding:8px 12px;font-size:13px;width:100%;font-family:'DM Sans',sans-serif;">
+                        <option value="0">Sin IVA (Neto)</option>
+                        <option value="19" selected>19% IVA</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label style="font-size:12px;font-weight:600;color:#64748b;display:block;margin-bottom:4px;">Nota para el cliente</label>
+                    <textarea id="emNota" rows="2" style="border:1.5px solid #e2e8f0;border-radius:9px;padding:8px 12px;font-size:13px;width:100%;font-family:'DM Sans',sans-serif;resize:none;" placeholder="Condiciones de entrega, observaciones..."></textarea>
+                </div>
             </div>
-            <div class="mb-3">
-                <label class="fs-11 fw-semibold text-muted text-uppercase mb-1">IVA</label>
-                <select id="emIva" class="form-select form-select-sm">
-                    <option value="19">Con IVA (19%)</option>
-                    <option value="0">Sin IVA (Exento)</option>
-                </select>
-            </div>
-            <div class="mb-4">
-                <label class="fs-11 fw-semibold text-muted text-uppercase mb-1">Observación</label>
-                <textarea id="emObs" class="form-control form-control-sm" rows="2" placeholder="Condiciones, plazos, etc."></textarea>
-            </div>
-            <div class="d-flex gap-2 justify-content-end">
-                <button onclick="cerrarEmitir()" class="btn btn-sm btn-outline-secondary">Cancelar</button>
-                <button onclick="confirmarEmision()" class="btn btn-sm btn-primary"><i class="feather-send me-1"></i>Generar Cotización</button>
+            <div class="d-flex gap-2 justify-content-end mt-3">
+                <button onclick="document.getElementById('modalEmitir').style.display='none'" style="background:#f1f5f9;border:none;border-radius:9px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;color:#475569;">Cancelar</button>
+                <button onclick="confirmarEmision()" style="background:#2563eb;color:#fff;border:none;border-radius:9px;padding:9px 22px;font-size:13px;font-weight:700;cursor:pointer;"><i class="feather-send me-1"></i>Confirmar y Emitir</button>
             </div>
         </div>
     </div>
 
-    <!--! ================================================================ !-->
-    <!--! [Fin] Contenido Principal — Presupuesto Interno VALTRAX !-->
-    <!--! ================================================================ !-->
+    <!-- TOAST -->
+    <div id="vx-toast"></div>
 
-    <!--! BEGIN: Vendors JS !-->
+    <!-- Scripts -->
     <script src="assets/vendors/js/vendors.min.js"></script>
-    <!--! END: Vendors JS !-->
-    <script src="assets/js/common-init.min.js"></script>
+    <script src="assets/js/theme.js"></script>
     <script src="assets/js/valtrax-db.js"></script>
-
     <script>
-    /* ═══════════════════════════════════════════════════════════════════
-       PRESUPUESTO INTERNO — VALTRAX
-    ═══════════════════════════════════════════════════════════════════ */
+    // ═══════════════════════════════════════════════════════════
+    //  VALTRAX · Presupuesto Interno
+    //  Flujo: solicitud → presupuesto → emitido
+    // ═══════════════════════════════════════════════════════════
 
-    // ── Estado ──────────────────────────────────────────────────────────
-    var _items    = [];  // [{id, desc, cant, unidad}]
-    var _ppto     = {};  // {id: {precio, url, margen, opciones_cache, seleccionado}}
-    var _itemActual = null;  // id del ítem cuya modal está abierta
+    var _pID    = null;           // ID del registro activo
+    var _estado = 'solicitud';
+    var _items  = [];             // [{id,desc,subItems:[{id,texto}],cant,unidad}]
+    var _ppto   = {};             // {itemId:{opciones:[{lugar,url,precio,margen,ventaUnit,seleccionada}],iaCache:[]}}
+    var _iaItemActual = null;
 
-    // ── Init ─────────────────────────────────────────────────────────────
-    document.addEventListener('DOMContentLoaded', function(){
-        var hoy = new Date().toISOString().slice(0,10);
-        document.getElementById('piFecha').value = hoy;
+    // ── Utilidades ─────────────────────────────────────────────
+    function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+    function fmtCLP(v){ return '$ '+(Math.round(v)||0).toLocaleString('es-CL'); }
+    function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function toast(msg,c){ var t=document.getElementById('vx-toast'); t.textContent=msg; t.style.background=c||'#1e293b'; t.style.opacity=1; setTimeout(()=>t.style.opacity=0,2800); }
 
-        var key = localStorage.getItem('vx_claude_key') || '';
-        document.getElementById('piApiKey').value = key;
+    // ── Tabs ────────────────────────────────────────────────────
+    function irTab(n){
+        if(n===2&&!_items.length){ toast('Guarda la solicitud con al menos un ítem primero','#dc2626'); return; }
+        ['1','2'].forEach(i=>{
+            document.getElementById('panel'+i).classList.toggle('active',i==n);
+            document.getElementById('tabBtn'+i).classList.toggle('active',i==n);
+        });
+        if(n===2){ sincPpto(); renderPpto(); syncResumen(); }
+    }
 
-        cargarDesdeStorage();
+    // ── Estado ─────────────────────────────────────────────────
+    function setEstado(e){
+        _estado=e;
+        var b=document.getElementById('estadoBadge');
+        var map={solicitud:['e-sol','● Solicitud'],presupuesto:['e-ppto','● Presupuesto'],emitido:['e-emit','✔ Emitido']};
+        var d=map[e]||map.solicitud;
+        b.className='e-badge '+d[0]; b.textContent=d[1];
+        document.getElementById('tabBtn2').classList.toggle('disabled',!_items.length);
+    }
+
+    // ── Autocomplete cliente ────────────────────────────────────
+    function acFiltrar(q){
+        var drop=document.getElementById('solDrop');
+        var cl=(typeof ValtraxDB!=='undefined')?ValtraxDB.getClientes():[];
+        var f=cl.filter(c=>(c.nombre||'').toLowerCase().includes((q||'').toLowerCase())).slice(0,8);
+        if(!f.length){drop.style.display='none';return;}
+        drop.innerHTML=f.map(c=>`<div class="ac-it" onmousedown="acSel('${esc(c.nombre)}','${c.id||''}')"> ${esc(c.nombre)}</div>`).join('');
+        drop.style.display='block';
+    }
+    function acOcultar(){ document.getElementById('solDrop').style.display='none'; }
+    function acSel(n,id){ document.getElementById('solCliente').value=n; document.getElementById('solClienteId').value=id; acOcultar(); }
+
+    // ── Ítems Tab 1 ─────────────────────────────────────────────
+    function agregarItem(){
+        var it={id:uid(),desc:'',subItems:[],cant:1,unidad:'unid'};
+        _items.push(it);
         renderItems();
-        renderPpto();
-    });
-
-    function guardarApiKeyPI(){
-        var k = document.getElementById('piApiKey').value.trim();
-        if(k) localStorage.setItem('vx_claude_key', k);
+        setTimeout(()=>{ var inp=document.getElementById('desc_'+it.id); if(inp)inp.focus(); },50);
     }
 
-    function limpiarTodo(){
-        if(!confirm('¿Seguro que deseas limpiar todo el presupuesto?')) return;
-        _items=[]; _ppto={}; _itemActual=null;
-        renderItems(); renderPpto();
-        localStorage.removeItem('vx_pi_items'); localStorage.removeItem('vx_pi_ppto');
-    }
-
-    function cargarDesdeStorage(){
-        try {
-            var it = localStorage.getItem('vx_pi_items'); if(it) _items = JSON.parse(it);
-            var pp = localStorage.getItem('vx_pi_ppto'); if(pp) _ppto  = JSON.parse(pp);
-        } catch(e){}
-    }
-    function guardarEnStorage(){
-        localStorage.setItem('vx_pi_items', JSON.stringify(_items));
-        localStorage.setItem('vx_pi_ppto',  JSON.stringify(_ppto));
-    }
-
-    // ── Tabs ──────────────────────────────────────────────────────────────
-    function switchTab(id, el){
-        document.querySelectorAll('.pi-panel').forEach(p=>p.classList.remove('active'));
-        document.querySelectorAll('.pi-tab').forEach(t=>t.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        el.classList.add('active');
-    }
-    function irAPresupuesto(){
-        sincronizarPpto();
-        switchTab('tab-presupuesto', document.querySelectorAll('.pi-tab')[1]);
-        renderPpto();
-    }
-
-    // ── ITEMS TAB ──────────────────────────────────────────────────────────
-    var _idCnt = 0;
-    function agregarItemPI(desc, cant, unidad){
-        _idCnt++;
-        _items.push({ id:'pi'+_idCnt, desc:desc||'', cant:cant||1, unidad:unidad||'unidad' });
+    function eliminarItem(id){
+        if(!confirm('¿Eliminar este ítem?')) return;
+        _items=_items.filter(i=>i.id!==id); delete _ppto[id];
         renderItems();
-        guardarEnStorage();
-        // focus en el último input
-        setTimeout(()=>{
-            var rows = document.querySelectorAll('#tbodyItems tr');
-            if(rows.length){ var inp=rows[rows.length-1].querySelector('.pi-desc'); if(inp) inp.focus(); }
-        },60);
     }
 
-    function eliminarItemPI(id){
-        _items = _items.filter(i=>i.id!==id);
-        delete _ppto[id];
-        renderItems(); renderPpto();
-        guardarEnStorage();
+    function agregarSubItem(id){
+        var it=_items.find(i=>i.id===id); if(!it) return;
+        it.subItems.push({id:uid(),texto:''});
+        renderItems();
+    }
+
+    function eliminarSubItem(iid,sid){
+        var it=_items.find(i=>i.id===iid); if(!it) return;
+        it.subItems=it.subItems.filter(s=>s.id!==sid);
+        renderItems();
     }
 
     function renderItems(){
-        var tbody = document.getElementById('tbodyItems');
-        if(!_items.length){
-            tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4 fs-13">
-                <i class="feather-list" style="font-size:24px;opacity:.3;display:block;margin-bottom:8px;"></i>
-                Agrega los ítems que el cliente solicita cotizar
-            </td></tr>`;
-            document.getElementById('btnIrPpto').disabled = true;
-            document.getElementById('badgeItems').style.display = 'none';
-            return;
-        }
-        tbody.innerHTML = _items.map((it,idx)=>`
-            <tr data-id="${it.id}">
-                <td class="text-muted fs-12 fw-semibold">${idx+1}</td>
-                <td><input class="pi-desc" type="text" value="${escHtml(it.desc)}" placeholder="Descripción del producto o servicio..."
-                    oninput="actualizarItem('${it.id}','desc',this.value)"></td>
-                <td><input type="number" value="${it.cant}" min="1" step="0.01" style="text-align:center;"
-                    oninput="actualizarItem('${it.id}','cant',this.value)"></td>
-                <td><select oninput="actualizarItem('${it.id}','unidad',this.value)">
-                    ${['unidad','par','set','metro','kg','lt','m²','m³','caja','rollo','tubo'].map(u=>`<option${it.unidad===u?' selected':''}>${u}</option>`).join('')}
-                </select></td>
-                <td><button class="btn btn-sm btn-outline-danger" style="padding:3px 8px;" onclick="eliminarItemPI('${it.id}')"><i class="feather-trash-2"></i></button></td>
-            </tr>`).join('');
-
-        document.getElementById('btnIrPpto').disabled = !_items.some(i=>i.desc.trim());
-        var b = document.getElementById('badgeItems');
-        b.textContent = _items.length; b.style.display = '';
-        verificarListoEmitir();
+        var tbody=document.getElementById('tbodyItems');
+        var empty=document.getElementById('emptyItems');
+        if(!_items.length){ tbody.innerHTML=''; empty.style.display='block'; updBadges(); return; }
+        empty.style.display='none';
+        tbody.innerHTML=_items.map((it,idx)=>{
+            var subs=(it.subItems||[]).map(s=>`
+                <tr class="sub-row">
+                    <td colspan="2">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="feather-corner-down-right text-muted" style="font-size:11px;flex-shrink:0;"></i>
+                            <input type="text" value="${esc(s.texto)}" placeholder="Detalle / especificación del sub-ítem..."
+                                oninput="updSub('${it.id}','${s.id}',this.value)">
+                        </div>
+                    </td>
+                    <td colspan="3" style="text-align:right;">
+                        <button onclick="eliminarSubItem('${it.id}','${s.id}')"
+                            style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:15px;padding:0 6px;">×</button>
+                    </td>
+                </tr>`).join('');
+            return `<tr>
+                <td style="color:#94a3b8;font-size:12px;font-weight:700;text-align:center;">${idx+1}</td>
+                <td>
+                    <input type="text" id="desc_${it.id}" value="${esc(it.desc)}"
+                        placeholder="Descripción del ítem requerido..."
+                        oninput="updItem('${it.id}','desc',this.value)">
+                    <button class="btn-addsub" onclick="agregarSubItem('${it.id}')">
+                        <i class="feather-plus" style="font-size:10px;"></i> sub-ítem
+                    </button>
+                </td>
+                <td><input type="number" value="${it.cant}" min="0.001" step="any" style="text-align:center;"
+                    oninput="updItem('${it.id}','cant',this.value)"></td>
+                <td>
+                    <select onchange="updItem('${it.id}','unidad',this.value)">
+                        ${['unid','kg','ton','m','m²','m³','lt','gl','set','hr','día','mes','caja','par'].map(u=>
+                            `<option${it.unidad===u?' selected':''}>${u}</option>`).join('')}
+                    </select>
+                </td>
+                <td style="text-align:center;">
+                    <button onclick="eliminarItem('${it.id}')" title="Eliminar ítem"
+                        style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:16px;padding:2px 6px;">
+                        <i class="feather-trash-2"></i>
+                    </button>
+                </td>
+            </tr>${subs}`;
+        }).join('');
+        updBadges();
     }
 
-    function actualizarItem(id, campo, valor){
-        var it = _items.find(i=>i.id===id);
-        if(!it) return;
-        it[campo] = campo==='cant' ? parseFloat(valor)||1 : valor;
-        document.getElementById('btnIrPpto').disabled = !_items.some(i=>i.desc.trim());
-        guardarEnStorage();
-        verificarListoEmitir();
+    function updItem(id,campo,val){ var it=_items.find(i=>i.id===id); if(it) it[campo]=val; }
+    function updSub(iid,sid,val){ var it=_items.find(i=>i.id===iid); if(!it)return; var s=it.subItems.find(x=>x.id===sid); if(s) s.texto=val; }
+
+    function updBadges(){
+        document.getElementById('badgeItems').textContent=_items.length;
+        var conSel=_items.filter(i=>(_ppto[i.id]||{opciones:[]}).opciones.some(o=>o.seleccionada)).length;
+        document.getElementById('badgePpto').textContent=_items.length?(conSel+'/'+_items.length):'–';
+        document.getElementById('tabBtn2').classList.toggle('disabled',!_items.length);
     }
 
-    // ── PRESUPUESTO TAB ──────────────────────────────────────────────────
-    function sincronizarPpto(){
-        _items.forEach(it=>{
-            if(!_ppto[it.id]) _ppto[it.id] = { precio:0, url:'', margen: parseInt(document.getElementById('margenGlobal').value)||30, opciones:null };
-        });
-        // limpiar ids que ya no existen
-        Object.keys(_ppto).forEach(k=>{ if(!_items.find(i=>i.id===k)) delete _ppto[k]; });
+    // ── Guardar Solicitud ───────────────────────────────────────
+    function guardarSolicitud(){
+        var cliente=document.getElementById('solCliente').value.trim();
+        if(!cliente){ toast('Ingresa el nombre del cliente','#dc2626'); return; }
+        if(!_items.length){ toast('Agrega al menos un ítem','#dc2626'); return; }
+        // Capturar descripciones actuales de los inputs
+        _items.forEach(it=>{ var inp=document.getElementById('desc_'+it.id); if(inp) it.desc=inp.value.trim(); });
+        if(!_pID) _pID=uid();
+        var prev=getPresupuestos().find(x=>x.id===_pID);
+        var obj={
+            id:_pID,
+            estado:'solicitud',
+            cabecera:{
+                cliente,
+                clienteId:document.getElementById('solClienteId').value||'',
+                fecha:document.getElementById('solFecha').value,
+                vigencia:document.getElementById('solVigencia').value,
+                faena:document.getElementById('solFaena').value.trim(),
+                oc:document.getElementById('solOC').value.trim(),
+                ref:document.getElementById('solRef').value.trim(),
+                obs:document.getElementById('solObs').value.trim()
+            },
+            items:_items,
+            ppto:_ppto,
+            creadoEn:prev?prev.creadoEn:new Date().toISOString().slice(0,10),
+            actualizadoEn:new Date().toISOString().slice(0,10)
+        };
+        savePresupuesto(obj);
+        setEstado('solicitud');
+        var m=document.getElementById('solSavedMsg'); m.style.display='inline-flex'; setTimeout(()=>m.style.display='none',3000);
+        toast('✓ Solicitud guardada','#059669');
+        updBadges();
+    }
+
+    // ── Guardar Presupuesto ─────────────────────────────────────
+    function guardarPresupuesto(){
+        if(!_pID){ toast('Guarda primero la solicitud','#dc2626'); return; }
+        var obj=cargarPresupuesto(); if(!obj) return;
+        obj.ppto=_ppto;
+        obj.estado='presupuesto';
+        obj.actualizadoEn=new Date().toISOString().slice(0,10);
+        savePresupuesto(obj);
+        setEstado('presupuesto');
+        var m=document.getElementById('pptoSavedMsg'); m.style.display='inline-flex'; setTimeout(()=>m.style.display='none',3000);
+        toast('✓ Presupuesto guardado','#059669');
+    }
+
+    // ── Storage ─────────────────────────────────────────────────
+    function getPresupuestos(){ return JSON.parse(localStorage.getItem('vx_presupuestos')||'[]'); }
+    function savePresupuesto(obj){
+        var list=getPresupuestos();
+        var idx=list.findIndex(x=>x.id===obj.id);
+        if(idx>-1) list[idx]=obj; else list.push(obj);
+        localStorage.setItem('vx_presupuestos',JSON.stringify(list));
+    }
+    function cargarPresupuesto(){ return getPresupuestos().find(x=>x.id===_pID)||null; }
+
+    // ── Presupuesto render ──────────────────────────────────────
+    function sincPpto(){ _items.forEach(it=>{ if(!_ppto[it.id]) _ppto[it.id]={opciones:[]}; }); }
+
+    function syncResumen(){
+        document.getElementById('pptoCliente').textContent=document.getElementById('solCliente').value||'—';
+        document.getElementById('pptoFaena').textContent=document.getElementById('solFaena').value||'—';
+        document.getElementById('pptoFecha').textContent=document.getElementById('solFecha').value||'—';
     }
 
     function renderPpto(){
-        sincronizarPpto();
-        var tbody = document.getElementById('tbodyPpto');
+        var mg=parseInt(document.getElementById('margenGlobal').value)||30;
         if(!_items.length){
-            tbody.innerHTML = `<tr><td colspan="9" class="text-center text-muted py-4 fs-13">Primero agrega ítems en la pestaña anterior</td></tr>`;
-            recalcTotales(); return;
-        }
-        tbody.innerHTML = _items.map((it,idx)=>{
-            var p = _ppto[it.id] || {};
-            var margen = p.margen !== undefined ? p.margen : (parseInt(document.getElementById('margenGlobal').value)||30);
-            var precio = parseFloat(p.precio)||0;
-            var venta  = precio > 0 ? Math.round(precio * (1 + margen/100)) : 0;
-            var hasCached = p.opciones && p.opciones.length;
-            var estado = precio>0 ? '<span class="badge-ok">✓ Con precio</span>' : (hasCached ? '<span class="badge-pen">Sin seleccionar</span>' : '<span class="badge-pen">Sin precio</span>');
-            return `<tr data-id="${it.id}">
-                <td class="text-muted fs-12 fw-semibold">${idx+1}</td>
-                <td>
-                    <div class="fw-semibold fs-13">${escHtml(it.desc)||'<em class="text-muted">Sin descripción</em>'}</div>
-                    <div class="fs-11 text-muted">${it.cant} ${it.unidad} &nbsp;${estado}</div>
-                </td>
-                <td class="text-center fs-12">${it.cant}</td>
-                <td class="text-center fs-12">${it.unidad}</td>
-                <td class="pup-precio">
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-text" style="font-size:11px;">$</span>
-                        <input type="number" class="form-control form-control-sm ppto-precio" value="${precio||''}"
-                            min="0" step="1" placeholder="0"
-                            oninput="actualizarPpto('${it.id}','precio',this.value);recalcFila('${it.id}')">
-                    </div>
-                </td>
-                <td class="pup-url">
-                    <input type="text" class="form-control form-control-sm ppto-url" value="${escHtml(p.url||'')}"
-                        placeholder="URL o descripción del producto"
-                        oninput="actualizarPpto('${it.id}','url',this.value)">
-                </td>
-                <td class="pup-margin">
-                    <div class="input-group input-group-sm">
-                        <input type="number" class="form-control form-control-sm ppto-margen" value="${margen}"
-                            min="0" max="999" step="1" style="text-align:center;"
-                            oninput="actualizarPpto('${it.id}','margen',this.value);recalcFila('${it.id}')">
-                        <span class="input-group-text" style="font-size:11px;">%</span>
-                    </div>
-                </td>
-                <td class="pup-venta" style="text-align:right;">
-                    <span class="fw-bold fs-14 text-primary ppto-venta" id="venta_${it.id}">${venta>0?fmtCLP(venta):'—'}</span>
-                </td>
-                <td class="pup-accion" style="text-align:center;">
-                    <div class="d-flex gap-1 justify-content-center">
-                        ${hasCached
-                            ? `<button class="btn btn-xs btn-outline-success" style="font-size:11px;padding:3px 7px;" onclick="abrirModalOp('${it.id}',false)" title="Ver opciones guardadas"><i class="feather-list"></i></button>`
-                            : ''}
-                        <button class="btn btn-xs" id="btnIA_${it.id}" style="background:linear-gradient(135deg,#7c3aed,#2563eb);color:white;border:none;border-radius:6px;padding:3px 8px;font-size:11px;" onclick="abrirModalOp('${it.id}',true)" title="Buscar con IA">
-                            🤖
-                        </button>
-                    </div>
-                </td>
-            </tr>`;
-        }).join('');
-        recalcTotales();
-        var b = document.getElementById('badgePpto');
-        var conPrecio = Object.values(_ppto).filter(p=>parseFloat(p.precio)>0).length;
-        b.textContent = conPrecio+'/'+_items.length; b.style.display='';
-    }
-
-    function actualizarPpto(id, campo, valor){
-        if(!_ppto[id]) _ppto[id]={precio:0,url:'',margen:30,opciones:null};
-        _ppto[id][campo] = campo==='margen'||campo==='precio' ? parseFloat(valor)||0 : valor;
-        guardarEnStorage();
-        recalcTotales();
-        verificarListoEmitir();
-    }
-
-    function recalcFila(id){
-        var p = _ppto[id]; if(!p) return;
-        var precio = parseFloat(p.precio)||0;
-        var margen = parseFloat(p.margen)||0;
-        var venta  = precio>0 ? Math.round(precio*(1+margen/100)) : 0;
-        var el = document.getElementById('venta_'+id);
-        if(el) el.textContent = venta>0 ? fmtCLP(venta) : '—';
-        recalcTotales();
-        verificarListoEmitir();
-    }
-
-    function recalcTotales(){
-        var costo=0, ventaTot=0, margenes=[], cnt=0;
-        _items.forEach(it=>{
-            var p=_ppto[it.id]; if(!p) return;
-            var precio=parseFloat(p.precio)||0; var margen=parseFloat(p.margen)||0;
-            var cant=parseFloat(it.cant)||1;
-            costo   += precio * cant;
-            ventaTot+= Math.round(precio*(1+margen/100)) * cant;
-            if(precio>0){ margenes.push(margen); cnt++; }
-        });
-        var comPct = parseFloat((document.getElementById('piComision')||{}).value||4);
-        var ventaConCom = Math.round(ventaTot * (1 + comPct/100));
-        var promMargen = cnt>0 ? (margenes.reduce((a,b)=>a+b,0)/cnt).toFixed(1) : 0;
-        document.getElementById('piTotCosto').textContent  = fmtCLP(costo);
-        document.getElementById('piTotVenta').textContent  = fmtCLP(ventaConCom);
-        document.getElementById('piTotMargen').textContent = promMargen+' %';
-        // Guardar venta con comisión para usar en emisión
-        window._ventaFinalConCom = ventaConCom;
-        window._comisionPct = comPct;
-    }
-
-    function aplicarMargenGlobal(){
-        var mg = parseInt(document.getElementById('margenGlobal').value)||0;
-        // Aplicar a filas que NO tienen margen individual editado manualmente
-        document.querySelectorAll('.ppto-margen').forEach(inp=>{
-            var row=inp.closest('tr'); if(!row) return;
-            var id=row.dataset.id; if(!id) return;
-            // Solo si el usuario no lo cambió explícitamente (no lo detectamos, pero aplicamos el global)
-            inp.value = mg;
-            actualizarPpto(id,'margen',mg);
-            recalcFila(id);
-        });
-    }
-
-    // ── MODAL OPCIONES IA ───────────────────────────────────────────────────
-    function abrirModalOp(id, buscarNuevo){
-        _itemActual = id;
-        var it = _items.find(i=>i.id===id); if(!it) return;
-        document.getElementById('modalOpTitulo').textContent = 'Opciones para: '+it.desc;
-        document.getElementById('modalOpSub').textContent = it.cant+' '+it.unidad;
-        document.getElementById('modalOpLoading').style.display = 'none';
-        document.getElementById('modalOpError').style.display   = 'none';
-        document.getElementById('modalOpAcciones').style.display= 'none';
-        document.getElementById('modalOpLista').innerHTML = '';
-        document.getElementById('modalOpciones').style.display  = 'flex';
-
-        var p = _ppto[id];
-        if(!buscarNuevo && p && p.opciones && p.opciones.length){
-            renderOpciones(p.opciones, id);
-        } else {
-            ejecutarBusquedaIA(id, it);
-        }
-    }
-
-    function cerrarModalOp(){
-        document.getElementById('modalOpciones').style.display='none';
-        _itemActual=null;
-    }
-
-    function rebuscar(){
-        if(!_itemActual) return;
-        var it=_items.find(i=>i.id===_itemActual); if(!it) return;
-        document.getElementById('modalOpLista').innerHTML='';
-        document.getElementById('modalOpAcciones').style.display='none';
-        ejecutarBusquedaIA(_itemActual, it);
-    }
-
-    async function ejecutarBusquedaIA(id, it){
-        var key = localStorage.getItem('vx_claude_key');
-        if(!key){
-            document.getElementById('modalOpError').textContent='Configura tu API Key de Claude en el campo superior de esta página.';
-            document.getElementById('modalOpError').style.display='';
+            document.getElementById('containerPpto').innerHTML='<p class="text-muted fs-13 py-3 text-center">Sin ítems. Ve a la pestaña Solicitud y agrega ítems primero.</p>';
             return;
         }
-        document.getElementById('modalOpLoading').style.display='';
-        document.getElementById('modalOpLoadingMsg').textContent='Buscando "'+it.desc+'" en tiendas chilenas...';
+        document.getElementById('containerPpto').innerHTML=_items.map((it,idx)=>{
+            var p=_ppto[it.id]||{opciones:[]};
+            var opts=p.opciones||[];
+            var selIdx=opts.findIndex(o=>o.seleccionada);
+            var subTxt=(it.subItems||[]).filter(s=>s.texto).map(s=>`<span class="me-2 fs-11 text-muted">↳ ${esc(s.texto)}</span>`).join('');
 
-        var btn = document.getElementById('btnIA_'+id);
-        if(btn){ btn.disabled=true; btn.innerHTML='<span class="spin-sm"></span>'; }
+            var optRows=opts.map((op,oi)=>{
+                var venta=op.precio>0?Math.round(op.precio*(1+(parseFloat(op.margen)!==undefined?parseFloat(op.margen):mg)/100)):0;
+                return `<tr class="${op.seleccionada?'opt-sel':''}">
+                    <td style="width:24px;text-align:center;"><span class="opt-num${op.seleccionada?' s':''}">${oi+1}</span></td>
+                    <td style="min-width:140px;"><input type="text" value="${esc(op.lugar)}" placeholder="Tienda / proveedor / lugar físico..."
+                        oninput="updOpt('${it.id}',${oi},'lugar',this.value)"></td>
+                    <td style="min-width:160px;"><input type="text" value="${esc(op.url)}" placeholder="URL del producto (opcional)..."
+                        oninput="updOpt('${it.id}',${oi},'url',this.value)"></td>
+                    <td style="width:130px;"><input type="number" value="${op.precio||''}" min="0" step="1" placeholder="0"
+                        style="text-align:right;" oninput="updOpt('${it.id}',${oi},'precio',+this.value);rfila('${it.id}',${oi})"></td>
+                    <td style="width:80px;"><input type="number" value="${op.margen!==undefined?op.margen:mg}" min="0" max="999" step="1"
+                        style="text-align:center;" placeholder="${mg}"
+                        oninput="updOpt('${it.id}',${oi},'margen',+this.value);rfila('${it.id}',${oi})"></td>
+                    <td style="width:120px;text-align:right;"><span id="vv_${it.id}_${oi}" class="venta-val">${venta>0?fmtCLP(venta):'—'}</span></td>
+                    <td style="width:120px;text-align:center;">
+                        <button class="btn-sel ${op.seleccionada?'on':''}" onclick="selOpt('${it.id}',${oi})">
+                            ${op.seleccionada?'✔ Seleccionada':'Seleccionar'}
+                        </button>
+                    </td>
+                    <td style="width:30px;text-align:center;">
+                        <button onclick="delOpt('${it.id}',${oi})"
+                            style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:15px;padding:0 4px;">×</button>
+                    </td>
+                </tr>`;
+            }).join('');
 
-        var fecha = new Date().toLocaleDateString('es-CL');
-        var prompt = `Busca en tiendas chilenas el precio de: "${it.desc}" (${it.cant} ${it.unidad}). Fecha: ${fecha}.
-
-Responde ÚNICAMENTE con este JSON sin texto antes ni después:
-{"opciones":[{"tienda":"Falabella","producto":"nombre producto","precio":14990,"url":"https://www.falabella.com/...","condicion":"nuevo"}]}
-
-REGLAS ESTRICTAS:
-- "precio" = número entero CLP sin puntos ni símbolos (ej: 14990).
-- "url" = URL de la tienda que empiece con https:// (puede ser búsqueda o producto específico).
-- Incluye al menos 3 opciones de distintas tiendas chilenas (Falabella, Sodimac, Ripley, Paris, Easy, MercadoLibre Chile, etc.).
-- Ordena de menor a mayor precio.
-- NO agregues texto fuera del JSON.`;
-
-        try {
-            var res = await fetch('https://api.anthropic.com/v1/messages', {
-                method:'POST',
-                headers:{
-                    'Content-Type':'application/json',
-                    'x-api-key': key,
-                    'anthropic-version':'2023-06-01',
-                    'anthropic-dangerous-direct-browser-access':'true'
-                },
-                body: JSON.stringify({
-                    model:'claude-haiku-4-5',
-                    max_tokens:900,
-                    system: 'Eres un asistente que responde ÚNICAMENTE con JSON válido, sin texto adicional, sin explicaciones, sin markdown. Solo el objeto JSON puro.',
-                    tools:[{type:'web_search_20250305',name:'web_search',max_uses:3}],
-                    messages:[{role:'user',content:prompt}]
-                })
-            });
-            if(!res.ok){ var e=await res.json().catch(()=>({})); throw new Error(e.error?.message||'HTTP '+res.status); }
-            var data = await res.json();
-            // Concatenar todos los bloques de texto (puede haber varios después de tool_result)
-            var allText = (data.content||[])
-                .filter(b=>b.type==='text')
-                .map(b=>b.text)
-                .join('')
-                .trim();
-            if(!allText) throw new Error('Sin respuesta de texto del modelo');
-            // Extraer JSON: primero bloque ```json```, luego primer { ... }
-            var jsonStr = allText;
-            var m = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/); if(m) jsonStr=m[1].trim();
-            var obj = jsonStr.match(/\{[\s\S]*\}/); 
-            if(!obj) throw new Error('La IA no devolvió JSON. Respuesta: '+allText.slice(0,120));
-            jsonStr = obj[0];
-            var parsed = JSON.parse(jsonStr);
-            var opciones = (parsed.opciones||[]).map(o=>({
-                tienda:   o.tienda   || 'Tienda',
-                producto: o.producto || o.nombre || o.descripcion || it.desc,
-                precio:   parseFloat(String(o.precio).replace(/[^0-9.]/g,'')) || 0,
-                url:      o.url ? (o.url.startsWith('http') ? o.url
-                              : 'https://'+o.url.replace(/^\/+/,'')) : '',
-                condicion: o.condicion || 'nuevo'
-            }))
-            .filter(o => o.precio > 0)
-            .map(o => ({
-                ...o,
-                url: o.url || `https://www.google.com/search?q=${encodeURIComponent(o.tienda+' '+o.producto+' Chile')}`
-            }))
-            .sort((a,b)=>a.precio-b.precio)
-            .slice(0,10);
-            if(!opciones.length) throw new Error('La IA no encontró precios para este producto. Intenta reformular el nombre.');
-
-            // Guardar en caché
-            if(!_ppto[id]) _ppto[id]={precio:0,url:'',margen:30,opciones:null};
-            _ppto[id].opciones = opciones;
-            guardarEnStorage();
-
-            document.getElementById('modalOpLoading').style.display='none';
-            renderOpciones(opciones, id);
-        } catch(err){
-            document.getElementById('modalOpLoading').style.display='none';
-            document.getElementById('modalOpError').textContent='Error: '+err.message;
-            document.getElementById('modalOpError').style.display='';
-        }
-        if(btn){ btn.disabled=false; btn.innerHTML='🤖'; }
-        renderPpto();
-    }
-
-    function renderOpciones(opciones, id){
-        var selActual = (_ppto[id]||{}).url || '';
-        var ranks = ['gold','silver','bronze'];
-        document.getElementById('modalOpLista').innerHTML = opciones.map((op,i)=>{
-            var rankClass = ranks[i]||'';
-            var isSelected = selActual && selActual===op.url;
-            return `<div class="op-card${isSelected?' selected':''}" onclick="seleccionarOpcion('${id}',${i})" data-idx="${i}">
-                <div class="op-rank ${rankClass}">${i+1}</div>
-                <div style="flex:1;">
-                    <div class="d-flex justify-content-between align-items-start gap-2">
-                        <div>
-                            <div class="op-tienda">${escHtml(op.tienda)}</div>
-                            <div class="op-desc">${escHtml(op.producto)}</div>
-                        </div>
-                        <div class="op-precio">${fmtCLP(op.precio)}</div>
+            var selLabel=selIdx>=0?`<span style="font-size:11px;font-weight:700;color:#059669;">✔ ${fmtCLP(Math.round(opts[selIdx].precio*(1+(parseFloat(opts[selIdx].margen)||mg)/100)))}</span>`
+                                  :`<span style="font-size:11px;font-weight:600;color:#f59e0b;">Sin precio seleccionado</span>`;
+            return `<div class="pcard">
+                <div class="pcard-hdr" onclick="toggleCard('pb_${it.id}','ch_${it.id}')">
+                    <div style="flex:1;min-width:0;">
+                        <div class="pcard-title">${idx+1}. ${esc(it.desc)||'<em class="fw-normal text-muted">Sin descripción</em>'}</div>
+                        <div class="pcard-meta">${it.cant} ${it.unidad}${subTxt?' &nbsp;·&nbsp; '+subTxt:''}</div>
                     </div>
-                    <div class="d-flex gap-2 align-items-center mt-2">
-                        <span class="badge ${op.condicion==='nuevo'?'bg-success-subtle text-success':'bg-secondary-subtle text-secondary'}" style="font-size:10px;">${op.condicion||'nuevo'}</span>
-                        <a href="${op.url}" target="_blank" rel="noopener" class="btn btn-xs btn-outline-primary" style="font-size:10px;padding:2px 7px;" onclick="event.stopPropagation()">
-                            <i class="feather-external-link me-1"></i>Ver producto
-                        </a>
-                        ${isSelected ? '<span class="badge-ok" style="font-size:10px;">✓ Seleccionado</span>' : ''}
+                    <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                        ${selLabel}
+                        <button class="btn-ia" id="btnIA_${it.id}" onclick="event.stopPropagation();abrirModalIA('${it.id}')">🤖 IA</button>
+                        <i class="feather-chevron-down text-muted" id="ch_${it.id}" style="font-size:14px;transition:transform .2s;"></i>
                     </div>
+                </div>
+                <div class="pcard-body" id="pb_${it.id}">
+                    <div class="table-responsive mb-2">
+                        <table class="opt-tbl">
+                            <thead><tr>
+                                <th style="width:24px;">#</th>
+                                <th>Lugar / Proveedor</th>
+                                <th>URL del Producto</th>
+                                <th style="text-align:right;">Precio Costo ($)</th>
+                                <th style="text-align:center;">% Ganancia</th>
+                                <th style="text-align:right;">Precio Venta</th>
+                                <th style="text-align:center;">Opción</th>
+                                <th></th>
+                            </tr></thead>
+                            <tbody>${optRows||'<tr><td colspan="8" class="text-center text-muted fs-12 py-3">Sin opciones. Agrega manualmente o usa IA.</td></tr>'}</tbody>
+                        </table>
+                    </div>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="addOpt('${it.id}')">
+                        <i class="feather-plus me-1"></i>Agregar opción manual
+                    </button>
                 </div>
             </div>`;
         }).join('');
-        document.getElementById('modalOpAcciones').style.display='flex';
+        recalcTotales();
+        updBadges();
+        verificarEmitir();
     }
 
-    function seleccionarOpcion(id, idx){
-        var p = _ppto[id]; if(!p||!p.opciones) return;
-        var op = p.opciones[idx];
-        p.precio = op.precio;
-        p.url    = op.url;
-        // margen ya está en p.margen
-        guardarEnStorage();
+    function toggleCard(bodyId, chId){
+        var b=document.getElementById(bodyId); if(!b) return;
+        b.classList.toggle('col');
+        var ch=document.getElementById(chId); if(ch) ch.style.transform=b.classList.contains('col')?'rotate(-90deg)':'';
+    }
 
-        // Actualizar visual en modal
-        document.querySelectorAll('#modalOpLista .op-card').forEach((c,i)=>{
-            c.classList.toggle('selected', i===idx);
-        });
-
-        // Actualizar fila en tabla
+    // ── Opciones ────────────────────────────────────────────────
+    function addOpt(id){
+        if(!_ppto[id]) _ppto[id]={opciones:[]};
+        var mg=parseInt(document.getElementById('margenGlobal').value)||30;
+        _ppto[id].opciones.push({lugar:'',url:'',precio:0,margen:mg,ventaUnit:0,seleccionada:false});
         renderPpto();
-        mostrarToast('✓ Opción seleccionada: '+fmtCLP(op.precio)+' — '+op.tienda, '#059669');
-        setTimeout(cerrarModalOp, 800);
+        var pb=document.getElementById('pb_'+id); if(pb) pb.classList.remove('col');
     }
 
-    // ── BUSCAR TODOS ─────────────────────────────────────────────────────────
-    var _buscarTodoQueue = [];
-    var _buscarTodoIdx   = 0;
-
-    async function buscarTodosItems(){
-        var key = localStorage.getItem('vx_claude_key');
-        if(!key){ mostrarToast('⚠️ Configura tu API Key de Claude primero', '#f59e0b'); return; }
-        var pendientes = _items.filter(it=>it.desc.trim() && (!_ppto[it.id]||!_ppto[it.id].opciones));
-        if(!pendientes.length){
-            mostrarToast('✓ Todos los ítems ya tienen opciones guardadas', '#059669');
-            return;
-        }
-        var btn = document.getElementById('btnBuscarTodo');
-        btn.disabled=true; btn.innerHTML='<span class="spin-sm"></span> Buscando '+pendientes.length+' ítems...';
-
-        for(var i=0; i<pendientes.length; i++){
-            var it=pendientes[i];
-            btn.innerHTML='<span class="spin-sm"></span> Ítem '+(i+1)+'/'+pendientes.length+': '+it.desc.slice(0,25)+'...';
-            await ejecutarBusquedaIASilenciosa(it.id, it);
-            renderPpto();
-        }
-        btn.disabled=false; btn.innerHTML='<span>🤖</span> Buscar todos con IA';
-        mostrarToast('✓ Búsqueda completada para '+pendientes.length+' ítems', '#059669');
+    function delOpt(id,i){
+        if(!_ppto[id]) return;
+        _ppto[id].opciones.splice(i,1);
+        renderPpto();
     }
 
-    async function ejecutarBusquedaIASilenciosa(id, it){
-        var key=localStorage.getItem('vx_claude_key'); if(!key) return;
-        var fecha=new Date().toLocaleDateString('es-CL');
-        var prompt=`Busca en tiendas chilenas el precio más barato de: "${it.desc}" (${it.cant} ${it.unidad}). Fecha: ${fecha}.
-Encuentra las 10 opciones MÁS BARATAS. URL debe ser del producto específico (no búsqueda ni categoría).
-Responde SOLO JSON:
-{"opciones":[{"tienda":"","producto":"","precio":0,"url":"https://...","condicion":"nuevo"}]}
-Precio entero CLP. Ordena menor a mayor.`;
-        try {
-            var res=await fetch('https://api.anthropic.com/v1/messages',{
-                method:'POST',
-                headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-                body:JSON.stringify({model:'claude-haiku-4-5',max_tokens:900,system:'Responde ÚNICAMENTE con JSON válido, sin texto adicional, sin markdown, sin explicaciones.',tools:[{type:'web_search_20250305',name:'web_search',max_uses:3}],messages:[{role:'user',content:prompt}]})
+    function updOpt(id,i,campo,val){
+        var op=(_ppto[id]||{opciones:[]}).opciones[i]; if(!op) return;
+        op[campo]=val;
+    }
+
+    function rfila(id,i){
+        var op=(_ppto[id]||{opciones:[]}).opciones[i]; if(!op) return;
+        var mg=parseInt(document.getElementById('margenGlobal').value)||30;
+        var v=op.precio>0?Math.round(op.precio*(1+(parseFloat(op.margen)!==undefined?parseFloat(op.margen):mg)/100)):0;
+        op.ventaUnit=v;
+        var el=document.getElementById('vv_'+id+'_'+i); if(el) el.textContent=v>0?fmtCLP(v):'—';
+        recalcTotales();
+    }
+
+    function selOpt(id,i){
+        var p=_ppto[id]; if(!p) return;
+        p.opciones.forEach((o,j)=>o.seleccionada=(j===i));
+        renderPpto();
+        toast('✔ Opción seleccionada','#059669');
+    }
+
+    function aplicarMargenGlobal(){
+        var mg=parseInt(document.getElementById('margenGlobal').value)||0;
+        _items.forEach(it=>{
+            (_ppto[it.id]||{opciones:[]}).opciones.forEach(op=>{
+                op.margen=mg;
+                if(op.precio>0) op.ventaUnit=Math.round(op.precio*(1+mg/100));
             });
-            if(!res.ok) return;
-            var data=await res.json();
-            var allText=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();
-            if(!allText) return;
-            var js=allText; var m=js.match(/```(?:json)?\s*([\s\S]*?)```/); if(m) js=m[1].trim();
-            var obj=js.match(/\{[\s\S]*\}/); if(!obj) return; js=obj[0];
-            var parsed=JSON.parse(js);
-            var opciones=(parsed.opciones||[]).map(o=>({
-                tienda: o.tienda||'Tienda', producto: o.producto||o.nombre||it.desc,
-                precio: parseFloat(String(o.precio).replace(/[^0-9.]/g,''))||0,
-                url: o.url?(o.url.startsWith('http')?o.url:'https://'+o.url.replace(/^\/+/,'')):'' ,
-                condicion: o.condicion||'nuevo'
-            })).filter(o=>o.precio>0)
-            .map(o=>({...o, url: o.url||`https://www.google.com/search?q=${encodeURIComponent(o.tienda+' '+o.producto+' Chile')}`}))
-            .sort((a,b)=>a.precio-b.precio).slice(0,10);
-            if(!opciones.length) return;
-            if(!_ppto[id]) _ppto[id]={precio:0,url:'',margen:parseInt(document.getElementById('margenGlobal').value)||30,opciones:null};
-            _ppto[id].opciones=opciones;
-            guardarEnStorage();
-        } catch(e){}
+        });
+        renderPpto();
+        toast('Margen '+mg+'% aplicado a todos los ítems','#2563eb');
     }
 
-    // ── EMITIR COTIZACIÓN ────────────────────────────────────────────────────
-    function verificarListoEmitir(){
-        var cliente=document.getElementById('piCliente').value.trim();
-        var conPrecio=Object.values(_ppto).some(p=>parseFloat(p.precio)>0);
-        document.getElementById('btnEmitirCot').disabled=!(cliente&&conPrecio);
+    // ── Totales ─────────────────────────────────────────────────
+    function recalcTotales(){
+        var mg=parseInt(document.getElementById('margenGlobal').value)||30;
+        var costo=0, ventaSin=0;
+        _items.forEach(it=>{
+            var p=_ppto[it.id]; if(!p) return;
+            var sel=p.opciones.find(o=>o.seleccionada); if(!sel) return;
+            var cant=parseFloat(it.cant)||1;
+            var precio=parseFloat(sel.precio)||0;
+            var margen=parseFloat(sel.margen)!==undefined?parseFloat(sel.margen):mg;
+            var venta=precio>0?Math.round(precio*(1+margen/100)):0;
+            costo+=precio*cant; ventaSin+=venta*cant;
+        });
+        var com=parseFloat(document.getElementById('selComision').value)||4;
+        var ventaFinal=Math.round(ventaSin*(1+com/100));
+        document.getElementById('totCosto').textContent=fmtCLP(costo);
+        document.getElementById('totVentaSin').textContent=fmtCLP(ventaSin);
+        document.getElementById('totVentaFinal').textContent=fmtCLP(ventaFinal);
+        window._ventaFinal=ventaFinal; window._comPct=com;
     }
 
-    function nextFolioCot(){
-        // Sincronizado con valtrax-db.js: folio = list.length + 100
-        var list=JSON.parse(localStorage.getItem('vx_cotizaciones')||'[]');
-        var n=list.length+100;
-        return 'COT'+String(n).padStart(5,'0');
+    function verificarEmitir(){
+        var ok=_items.some(it=>(_ppto[it.id]||{opciones:[]}).opciones.some(o=>o.seleccionada));
+        document.getElementById('btnEmitir').disabled=!ok;
     }
 
-    function emitirCotizacion(){
-        var folio=nextFolioCot();
-        document.getElementById('emFolio').value=folio;
+    // ── Emitir ──────────────────────────────────────────────────
+    function nextFolio(){ var l=JSON.parse(localStorage.getItem('vx_cotizaciones')||'[]'); return 'COT'+String(l.length+100).padStart(5,'0'); }
+
+    function abrirModalEmitir(){
+        document.getElementById('emFolio').value=nextFolio();
         document.getElementById('modalEmitir').style.display='flex';
     }
-    function cerrarEmitir(){ document.getElementById('modalEmitir').style.display='none'; }
 
     function confirmarEmision(){
-        var folio   = document.getElementById('emFolio').value;
-        var iva     = parseInt(document.getElementById('emIva').value)||0;
-        var obs     = document.getElementById('emObs').value.trim();
-        var cliente = document.getElementById('piCliente').value.trim();
-        var faena   = document.getElementById('piFaena').value.trim();
-        var fecha   = document.getElementById('piFecha').value;
+        var folio=document.getElementById('emFolio').value;
+        var iva=parseInt(document.getElementById('emIva').value)||0;
+        var nota=document.getElementById('emNota').value.trim();
+        var cliente=document.getElementById('solCliente').value.trim();
+        var faena=document.getElementById('solFaena').value.trim();
+        var fecha=document.getElementById('solFecha').value;
+        var mg=parseInt(document.getElementById('margenGlobal').value)||30;
+        var com=window._comPct||4;
 
-        var items = _items.map(it=>{
-            var p=_ppto[it.id]||{};
-            var precio=parseFloat(p.precio)||0;
-            var margen=parseFloat(p.margen)||(parseInt(document.getElementById('margenGlobal').value)||30);
-            var comPct=window._comisionPct||4;
-            // Precio venta unitario ya incluye margen + comisión (no se muestra por separado)
-            var ventaSinCom=precio>0?Math.round(precio*(1+margen/100)):0;
-            var venta=ventaSinCom>0?Math.round(ventaSinCom*(1+comPct/100)):0;
-            return {desc:it.desc, cant:it.cant, unidad:it.unidad, costoUnit:precio, margen, ventaUnit:venta, url:p.url||''};
-        }).filter(i=>i.ventaUnit>0);
+        var items=_items.map(it=>{
+            var p=_ppto[it.id]; if(!p) return null;
+            var sel=p.opciones.find(o=>o.seleccionada); if(!sel||!sel.precio) return null;
+            var margen=parseFloat(sel.margen)!==undefined?parseFloat(sel.margen):mg;
+            var ventaSin=Math.round(sel.precio*(1+margen/100));
+            var venta=Math.round(ventaSin*(1+com/100));
+            var subs=(it.subItems||[]).filter(s=>s.texto).map(s=>s.texto).join(' | ');
+            return {desc:it.desc+(subs?' — '+subs:''), cant:parseFloat(it.cant)||1, unidad:it.unidad,
+                    costoUnit:sel.precio, margen, ventaUnit:venta, url:sel.url||''};
+        }).filter(Boolean);
 
+        if(!items.length){ toast('Selecciona al menos una opción por ítem','#dc2626'); return; }
         var subtotal=items.reduce((s,i)=>s+i.ventaUnit*i.cant,0);
         var ivaAmt=Math.round(subtotal*iva/100);
         var total=subtotal+ivaAmt;
 
-        // Guardar en ValtraxDB
-        var cot={
-            folio, cliente, faena, fecha, obs, iva,
-            estado:'Pendiente', total, items: items.map(i=>({...i, precio:i.ventaUnit})),
-            presupuesto: _ppto
-        };
-        if(typeof ValtraxDB!=='undefined') ValtraxDB.guardarCotizacion(cot);
+        var cot={folio,cliente,faena,fecha,obs:nota,iva,items,total,estado:'Pendiente'};
+        var saved=ValtraxDB.saveCotizacion(cot);
 
-        cerrarEmitir();
-        abrirPDFVisor(cot);
+        if(_pID){
+            var obj=cargarPresupuesto();
+            if(obj){ obj.estado='emitido'; obj.folioEmitido=folio; savePresupuesto(obj); }
+        }
+        setEstado('emitido');
+        document.getElementById('modalEmitir').style.display='none';
+        toast('✔ Cotización '+folio+' emitida','#059669');
+        setTimeout(()=>{
+            if(confirm('Cotización '+folio+' emitida correctamente.\n\n¿Abrir visor de PDF?')){
+                sessionStorage.setItem('vx_cot_pdf',JSON.stringify(saved));
+                window.open('cotizaciones-crear.html?folio='+folio,'_blank');
+            }
+        },400);
     }
 
-    // ── PDF VISOR ──────────────────────────────────────────────────────────
-    function abrirPDFVisor(cot){
-        var iva=cot.iva||0;
-        var subtotal=cot.items.reduce((s,i)=>s+(i.precio||i.ventaUnit)*i.cant,0);
-        var ivaAmt=Math.round(subtotal*iva/100);
-        var total=subtotal+ivaAmt;
-        var nombreArchivo=(cot.folio+'-'+cot.cliente).replace(/[^a-zA-Z0-9\-\_]/g,'_');
+    // ── Modal IA ────────────────────────────────────────────────
+    function abrirModalIA(itemId){
+        _iaItemActual=itemId;
+        var it=_items.find(i=>i.id===itemId); if(!it) return;
+        document.getElementById('miaTitle').textContent='Opciones IA para: '+it.desc;
+        document.getElementById('miaMeta').textContent=it.cant+' '+it.unidad;
+        document.getElementById('miaError').style.display='none';
+        document.getElementById('miaLista').innerHTML='';
+        document.getElementById('miaLoading').style.display='none';
+        document.getElementById('modalIA').style.display='flex';
+        var cache=(_ppto[itemId]||{}).iaCache;
+        if(cache) renderMiaOpts(cache,itemId);
+        else ejecutarIA(itemId,it,false);
+    }
+    function cerrarModalIA(){ document.getElementById('modalIA').style.display='none'; }
+    function rebuscarIA(){ if(_iaItemActual){ var it=_items.find(i=>i.id===_iaItemActual); if(it) ejecutarIA(_iaItemActual,it,true); } }
 
-        var html=`<!DOCTYPE html><html><head><meta charset="utf-8">
-        <title>${cot.folio} · ${cot.cliente}</title>
-        <style>
-        *{box-sizing:border-box;margin:0;padding:0;}
-        body{font-family:'Segoe UI',Arial,sans-serif;color:#1e293b;font-size:13px;padding:32px;}
-        .hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:18px;border-bottom:3px solid #2563eb;}
-        .logo{font-size:26px;font-weight:900;color:#2563eb;letter-spacing:-1px;}
-        .logo span{color:#1e293b;}
-        .folio{text-align:right;}
-        .folio h2{font-size:22px;font-weight:800;color:#1e293b;}
-        .folio .badge{background:#2563eb;color:#fff;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;}
-        .meta{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
-        .meta-box{background:#f8fafc;border-radius:10px;padding:14px 16px;}
-        .meta-box label{font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;display:block;margin-bottom:4px;}
-        .meta-box p{font-size:14px;font-weight:600;color:#1e293b;margin:0;}
-        table{width:100%;border-collapse:collapse;margin-bottom:20px;}
-        thead th{background:#1e293b;color:#fff;padding:10px 12px;font-size:11px;font-weight:700;text-transform:uppercase;}
-        tbody tr:nth-child(even){background:#f8fafc;}
-        tbody td{padding:10px 12px;border-bottom:1px solid #e2e8f0;font-size:13px;}
-        .tot{display:flex;justify-content:flex-end;margin-bottom:24px;}
-        .tot-box{min-width:280px;}
-        .tot-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid #f1f5f9;}
-        .tot-final{display:flex;justify-content:space-between;padding:10px 0 0;font-size:17px;font-weight:800;color:#2563eb;border-top:2px solid #2563eb;margin-top:4px;}
-        .obs{background:#fefce8;border-left:4px solid #f59e0b;padding:12px 16px;border-radius:0 8px 8px 0;font-size:12px;color:#78350f;margin-bottom:20px;}
-        .footer{text-align:center;font-size:11px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:16px;}
-        @media print{body{padding:18px;} .no-print{display:none;}}
-        </style></head><body>
-        <div class="hdr">
-            <div><div class="logo">VAL<span>TRAX</span></div><div style="font-size:11px;color:#64748b;margin-top:4px;">Sistema de Abastecimiento Urgente · Industria Minera</div></div>
-            <div class="folio"><div class="badge">COTIZACIÓN</div><h2 style="margin:6px 0 4px;">${cot.folio}</h2><div style="font-size:12px;color:#64748b;">${cot.fecha||new Date().toLocaleDateString('es-CL')}</div></div>
-        </div>
-        <div class="meta">
-            <div class="meta-box"><label>Cliente</label><p>${escHtml(cot.cliente)}</p></div>
-            <div class="meta-box"><label>Faena / Proyecto</label><p>${escHtml(cot.faena||'—')}</p></div>
-        </div>
-        <table>
-            <thead><tr><th>#</th><th>Descripción</th><th>Cant.</th><th>Unidad</th><th style="text-align:right;">P.Unit.</th><th style="text-align:right;">Total</th></tr></thead>
-            <tbody>
-            ${cot.items.map((it,i)=>`<tr>
-                <td>${i+1}</td>
-                <td>${escHtml(it.desc)}</td>
-                <td style="text-align:center;">${it.cant}</td>
-                <td style="text-align:center;">${it.unidad||'unidad'}</td>
-                <td style="text-align:right;font-weight:600;">${fmtCLP(it.precio||it.ventaUnit)}</td>
-                <td style="text-align:right;font-weight:700;">${fmtCLP((it.precio||it.ventaUnit)*it.cant)}</td>
-            </tr>`).join('')}
-            </tbody>
-        </table>
-        <div class="tot"><div class="tot-box">
-            <div class="tot-row"><span>Subtotal neto:</span><span>${fmtCLP(subtotal)}</span></div>
-            ${iva>0?`<div class="tot-row"><span>IVA (${iva}%):</span><span>${fmtCLP(ivaAmt)}</span></div>`:''}
-            <div class="tot-final"><span>TOTAL:</span><span>${fmtCLP(total)}</span></div>
-        </div></div>
-        ${cot.obs?`<div class="obs"><strong>Observaciones:</strong> ${escHtml(cot.obs)}</div>`:''}
-        <div class="footer">VALTRAX — Cotización ${cot.folio} — Documento generado el ${new Date().toLocaleDateString('es-CL')}</div>
-        <script>window.onload=function(){document.title="${nombreArchivo}";}<\/script>
-        </body></html>`;
+    async function ejecutarIA(itemId,it,forzar){
+        var key=localStorage.getItem('vx_claude_key');
+        if(!key){ showMiaErr('Ingresa tu API Key de Claude en la sección de configuración.'); return; }
+        var cache=(_ppto[itemId]||{}).iaCache;
+        if(cache&&!forzar){ renderMiaOpts(cache,itemId); return; }
 
-        var win = window.open('','_blank');
-        win.document.write(html);
-        win.document.close();
-        setTimeout(()=>win.print(), 800);
+        document.getElementById('miaLoading').style.display='block';
+        document.getElementById('miaLoadMsg').textContent='Buscando "'+it.desc+'" en tiendas chilenas...';
+        document.getElementById('miaLista').innerHTML='';
+        document.getElementById('miaError').style.display='none';
+        var btn=document.getElementById('btnIA_'+itemId);
+        if(btn){btn.disabled=true;btn.innerHTML='<span class="spin"></span>';}
 
-        mostrarToast('✓ Cotización '+cot.folio+' generada — '+cot.cliente, '#059669');
+        var prompt=`Busca en tiendas chilenas el precio de: "${it.desc}" (${it.cant} ${it.unidad}). Fecha: ${new Date().toLocaleDateString('es-CL')}.
+
+Responde ÚNICAMENTE con JSON, sin texto antes ni después:
+{"opciones":[{"tienda":"Falabella","producto":"nombre exacto","precio":14990,"url":"https://www.falabella.com/...","condicion":"nuevo"}]}
+
+REGLAS: precio=entero CLP sin puntos, url empieza con https://, mínimo 3 opciones de distintas tiendas chilenas, ordenado de menor a mayor precio.`;
+
+        try {
+            var res=await fetch('https://api.anthropic.com/v1/messages',{
+                method:'POST',
+                headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+                body:JSON.stringify({model:'claude-haiku-4-5',max_tokens:900,
+                    system:'Responde ÚNICAMENTE con JSON válido, sin texto adicional, sin markdown.',
+                    tools:[{type:'web_search_20250305',name:'web_search',max_uses:3}],
+                    messages:[{role:'user',content:prompt}]})
+            });
+            if(!res.ok){var e=await res.json().catch(()=>({}));throw new Error(e.error?.message||'HTTP '+res.status);}
+            var data=await res.json();
+            var allText=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();
+            if(!allText) throw new Error('Sin respuesta de texto');
+            var js=allText;
+            var m=js.match(/```(?:json)?\s*([\s\S]*?)```/);if(m)js=m[1].trim();
+            var obj=js.match(/\{[\s\S]*\}/);if(!obj) throw new Error('La IA no devolvió JSON. Respuesta: '+allText.slice(0,100));
+            js=obj[0];
+            var parsed=JSON.parse(js);
+            var opts=(parsed.opciones||[]).map(o=>({
+                tienda:o.tienda||'Tienda',producto:o.producto||it.desc,
+                precio:parseFloat(String(o.precio).replace(/[^0-9.]/g,''))||0,
+                url:o.url?(o.url.startsWith('http')?o.url:'https://'+o.url):'',
+                condicion:o.condicion||'nuevo'
+            })).filter(o=>o.precio>0)
+            .map(o=>({...o,url:o.url||`https://www.google.com/search?q=${encodeURIComponent(o.tienda+' '+o.producto+' Chile')}`}))
+            .sort((a,b)=>a.precio-b.precio).slice(0,10);
+            if(!opts.length) throw new Error('La IA no encontró precios. Intenta reformular el nombre del ítem.');
+            if(!_ppto[itemId]) _ppto[itemId]={opciones:[]};
+            _ppto[itemId].iaCache=opts;
+            document.getElementById('miaLoading').style.display='none';
+            renderMiaOpts(opts,itemId);
+        } catch(err){
+            document.getElementById('miaLoading').style.display='none';
+            showMiaErr('Error: '+err.message);
+        }
+        if(btn){btn.disabled=false;btn.innerHTML='🤖 IA';}
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
-    function fmtCLP(n){ return '$ '+Math.round(n||0).toLocaleString('es-CL'); }
-    function escHtml(str){ var d=document.createElement('div'); d.textContent=str||''; return d.innerHTML; }
-    function mostrarToast(msg,color){
-        var t=document.createElement('div');
-        t.style.cssText=`position:fixed;bottom:28px;right:28px;background:${color};color:white;padding:12px 20px;border-radius:10px;z-index:99999;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.2);`;
-        t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),3200);
+    function showMiaErr(msg){ var el=document.getElementById('miaError');el.textContent=msg;el.style.display='block'; }
+
+    function renderMiaOpts(opts,itemId){
+        var mg=parseInt(document.getElementById('margenGlobal').value)||30;
+        var rk=['g','s','b'];
+        document.getElementById('miaLista').innerHTML=opts.map((op,i)=>{
+            var venta=Math.round(op.precio*(1+mg/100));
+            return `<div class="ia-card" onclick="selOptIA('${itemId}',${i})">
+                <div class="ia-rk ${rk[i]||''}">${i+1}</div>
+                <div style="flex:1;">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+                        <div>
+                            <div style="font-size:12px;font-weight:700;color:#1e293b;">${esc(op.tienda)}</div>
+                            <div style="font-size:11px;color:#64748b;margin-top:2px;">${esc(op.producto)}</div>
+                            ${op.url?`<a href="${esc(op.url)}" target="_blank" style="font-size:10px;color:#2563eb;" onclick="event.stopPropagation()">Ver producto ↗</a>`:''}
+                        </div>
+                        <div style="text-align:right;flex-shrink:0;">
+                            <div style="font-size:17px;font-weight:800;color:#2563eb;">${fmtCLP(op.precio)}</div>
+                            <div style="font-size:10px;color:#94a3b8;">precio costo</div>
+                            <div style="font-size:12px;font-weight:700;color:#059669;">${fmtCLP(venta)}</div>
+                            <div style="font-size:10px;color:#94a3b8;">con +${mg}% ganancia</div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
     }
 
-    // Init: agregar primer item vacío si no hay ninguno
-    document.addEventListener('DOMContentLoaded', function(){
-        if(_items.length===0) agregarItemPI();
+    function selOptIA(itemId,idx){
+        var cache=(_ppto[itemId]||{}).iaCache;if(!cache||!cache[idx])return;
+        var op=cache[idx];
+        var mg=parseInt(document.getElementById('margenGlobal').value)||30;
+        if(!_ppto[itemId]) _ppto[itemId]={opciones:[]};
+        // Deseleccionar previas y agregar nueva
+        _ppto[itemId].opciones.forEach(o=>o.seleccionada=false);
+        _ppto[itemId].opciones.push({lugar:op.tienda,url:op.url||'',precio:op.precio,margen:mg,ventaUnit:Math.round(op.precio*(1+mg/100)),seleccionada:true});
+        cerrarModalIA();
+        renderPpto();
+        toast('✔ Opción IA agregada y seleccionada','#059669');
+    }
+
+    // ── Buscar todos IA ─────────────────────────────────────────
+    async function buscarTodosIA(){
+        var btn=document.getElementById('btnBuscarTodos');
+        var key=localStorage.getItem('vx_claude_key');
+        if(!key){toast('Ingresa tu API Key de Claude','#dc2626');return;}
+        var pend=_items.filter(it=>!(_ppto[it.id]||{}).iaCache);
+        if(!pend.length){toast('Todos los ítems ya tienen caché IA','#2563eb');return;}
+        btn.disabled=true;
+        for(var i=0;i<pend.length;i++){
+            btn.innerHTML=`<span class="spin"></span> Ítem ${i+1}/${pend.length}`;
+            await ejecutarIASil(pend[i]);
+            renderPpto();
+        }
+        btn.disabled=false;btn.innerHTML='🤖 Buscar todos con IA';
+        toast('✓ Búsqueda IA completada para '+pend.length+' ítems','#059669');
+    }
+
+    async function ejecutarIASil(it){
+        var key=localStorage.getItem('vx_claude_key');if(!key)return;
+        var prompt=`Busca precio en tiendas chilenas de: "${it.desc}" (${it.cant} ${it.unidad}).
+JSON ÚNICO: {"opciones":[{"tienda":"","producto":"","precio":0,"url":"https://...","condicion":"nuevo"}]}
+precio=entero CLP, mínimo 3 opciones, orden menor a mayor.`;
+        try {
+            var res=await fetch('https://api.anthropic.com/v1/messages',{
+                method:'POST',
+                headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+                body:JSON.stringify({model:'claude-haiku-4-5',max_tokens:900,system:'Solo JSON válido.',tools:[{type:'web_search_20250305',name:'web_search',max_uses:3}],messages:[{role:'user',content:prompt}]})
+            });
+            if(!res.ok)return;
+            var data=await res.json();
+            var allText=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();
+            var js=allText;var m=js.match(/```(?:json)?\s*([\s\S]*?)```/);if(m)js=m[1].trim();
+            var obj=js.match(/\{[\s\S]*\}/);if(!obj)return;js=obj[0];
+            var parsed=JSON.parse(js);
+            var opts=(parsed.opciones||[]).map(o=>({tienda:o.tienda||'Tienda',producto:o.producto||it.desc,
+                precio:parseFloat(String(o.precio).replace(/[^0-9.]/g,''))||0,
+                url:o.url?(o.url.startsWith('http')?o.url:'https://'+o.url):'',condicion:o.condicion||'nuevo'
+            })).filter(o=>o.precio>0).sort((a,b)=>a.precio-b.precio).slice(0,10);
+            if(!opts.length)return;
+            if(!_ppto[it.id])_ppto[it.id]={opciones:[]};
+            _ppto[it.id].iaCache=opts;
+        }catch(e){}
+    }
+
+    // ── Nueva solicitud ─────────────────────────────────────────
+    function nuevaSolicitud(){
+        if(_items.length&&!confirm('¿Crear nueva solicitud?\nSe perderán los cambios no guardados.'))return;
+        _pID=null;_estado='solicitud';_items=[];_ppto={};
+        ['solCliente','solClienteId','solFaena','solOC','solRef','solObs'].forEach(id=>document.getElementById(id).value='');
+        document.getElementById('solFecha').value=new Date().toISOString().slice(0,10);
+        document.getElementById('solVigencia').value='30 días';
+        renderItems();setEstado('solicitud');irTab(1);
+    }
+
+    // ── Init ────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded',function(){
+        document.getElementById('solFecha').value=new Date().toISOString().slice(0,10);
+        var k=localStorage.getItem('vx_claude_key');if(k)document.getElementById('claudeKey').value=k;
+        // Cargar registro si viene de listado
+        var pid=sessionStorage.getItem('vx_ppto_id');
+        if(pid){ sessionStorage.removeItem('vx_ppto_id'); var obj=getPresupuestos().find(x=>x.id===pid); if(obj) loadForm(obj); else renderItems(); }
+        else renderItems();
+        setEstado(_estado);
     });
-    </script>
 
-    <!--! BEGIN: Theme Customizer !-->
-    <div class="theme-customizer">
-        <div class="customizer-handle">
-            <a href="javascript:void(0);" class="cutomizer-open-trigger bg-primary"><i class="feather-settings"></i></a>
-        </div>
-        <div class="customizer-sidebar-wrapper">
-            <div class="customizer-sidebar-header px-4 ht-80 border-bottom d-flex align-items-center justify-content-between">
-                <h5 class="mb-0">Theme Settings</h5>
-                <a href="javascript:void(0);" class="cutomizer-close-trigger d-flex"><i class="feather-x"></i></a>
-            </div>
-        </div>
-    </div>
-    <!--! END: Theme Customizer !-->
+    function loadForm(obj){
+        _pID=obj.id;_estado=obj.estado||'solicitud';_items=obj.items||[];_ppto=obj.ppto||{};
+        var c=obj.cabecera||{};
+        document.getElementById('solCliente').value=c.cliente||'';
+        document.getElementById('solClienteId').value=c.clienteId||'';
+        document.getElementById('solFaena').value=c.faena||'';
+        document.getElementById('solFecha').value=c.fecha||new Date().toISOString().slice(0,10);
+        document.getElementById('solVigencia').value=c.vigencia||'30 días';
+        document.getElementById('solOC').value=c.oc||'';
+        document.getElementById('solRef').value=c.ref||'';
+        document.getElementById('solObs').value=c.obs||'';
+        renderItems();setEstado(_estado);
+    }
+    </script>
+    <script src="assets/js/common-init.min.js"></script>
 </body>
 </html>
