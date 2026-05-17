@@ -134,8 +134,7 @@
                         </a>
                         <ul class="nxl-submenu">
                             <li class="nxl-item"><a class="nxl-link" href="cotizaciones.html">Listado</a></li>
-                            <li class="nxl-item"><a class="nxl-link" href="cotizaciones-crear.html">Nueva Cotización</a></li>
-                            <li class="nxl-item"><a class="nxl-link" href="presupuesto-interno.html">Presupuesto Interno</a></li>
+                            <li class="nxl-item"><a class="nxl-link" href="presupuesto-interno.html">Nueva Cotización</a></li>
                         </ul>
                     </li>
                     <li class="nxl-item nxl-hasmenu">
@@ -243,6 +242,11 @@
                         <i class="feather-dollar-sign" style="font-size:14px;"></i>
                         Presupuesto Interno
                         <span class="tb" id="badgePpto">–</span>
+                    </div>
+                    <div class="pi-tab disabled" id="tabBtn3" onclick="irTab(3)">
+                        <i class="feather-send" style="font-size:14px;"></i>
+                        Cotización
+                        <span class="tb" id="badgeCot">–</span>
                     </div>
                 </div>
             </div>
@@ -441,7 +445,7 @@
                         <button class="btn btn-outline-secondary" onclick="guardarPresupuesto()">
                             <i class="feather-save me-1"></i>Guardar Presupuesto
                         </button>
-                        <button id="btnEmitir" class="btn btn-success" onclick="abrirModalEmitir()" disabled>
+                        <button id="btnEmitir" class="btn btn-success" onclick="irTab(3)" disabled>
                             <i class="feather-send me-1"></i>Emitir Cotización
                         </button>
                     </div>
@@ -449,6 +453,120 @@
 
               </div>
             </div><!-- /panel2 -->
+
+            <!-- ══════════════════════════════════════════════
+                 TAB 3 — COTIZACIÓN (EMISIÓN)
+            ══════════════════════════════════════════════ -->
+            <div class="pi-panel" id="panel3">
+              <div class="card-body">
+
+                <!-- Resumen para emisión -->
+                <div class="pi-sec" style="padding:12px 20px;">
+                    <div class="d-flex flex-wrap gap-3 align-items-center">
+                        <div><span class="text-muted fs-11 fw-600 text-uppercase">Cliente:</span>&nbsp;<span id="cotCliente" class="fw-semibold fs-13">—</span></div>
+                        <span class="text-muted">·</span>
+                        <div><span class="text-muted fs-11 fw-600 text-uppercase">Faena:</span>&nbsp;<span id="cotFaena" class="fw-semibold fs-13">—</span></div>
+                        <span class="text-muted">·</span>
+                        <div><span class="text-muted fs-11 fw-600 text-uppercase">Fecha:</span>&nbsp;<span id="cotFecha" class="fw-semibold fs-13">—</span></div>
+                        <div class="ms-auto">
+                            <button class="btn btn-xs btn-outline-secondary fs-12" onclick="irTab(2)">
+                                <i class="feather-arrow-left me-1"></i>Volver al presupuesto
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulario emisión -->
+                <div class="pi-sec">
+                    <div class="pi-sec-title">Datos de la Cotización</div>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="cot-field">
+                                <label>Folio</label>
+                                <input type="text" id="cotFolio" readonly style="background:#f8fafc;font-weight:700;font-size:14px;">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="cot-field">
+                                <label>IVA</label>
+                                <select id="cotIva">
+                                    <option value="0">Sin IVA (Neto)</option>
+                                    <option value="19" selected>19% IVA</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="cot-field">
+                                <label>Vigencia</label>
+                                <input type="text" id="cotVigencia" readonly style="background:#f8fafc;">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="cot-field">
+                                <label>OC Cliente</label>
+                                <input type="text" id="cotOC" readonly style="background:#f8fafc;">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="cot-field">
+                                <label>Nota para el cliente</label>
+                                <textarea id="cotNota" rows="2" placeholder="Condiciones de entrega, plazos, observaciones especiales..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla resumen ítems a cotizar -->
+                <div class="pi-sec">
+                    <div class="pi-sec-title">Ítems Cotizados</div>
+                    <div class="table-responsive">
+                        <table class="pi-tbl" id="tblCotItems">
+                            <thead>
+                                <tr>
+                                    <th style="width:36px;text-align:center;">#</th>
+                                    <th>Descripción</th>
+                                    <th style="width:80px;text-align:center;">Cant.</th>
+                                    <th style="width:80px;text-align:center;">Unidad</th>
+                                    <th style="width:130px;text-align:right;">Precio Unit.</th>
+                                    <th style="width:130px;text-align:right;">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyCot"></tbody>
+                        </table>
+                    </div>
+                    <div id="emptyCot" class="text-center py-3 text-muted fs-13" style="display:none;">
+                        <i class="feather-alert-circle me-1"></i>No hay ítems con precio seleccionado. Vuelve al Presupuesto Interno.
+                    </div>
+                </div>
+
+                <!-- Totales cotización -->
+                <div class="row justify-content-end">
+                    <div class="col-md-5 col-lg-4">
+                        <div class="tot-box">
+                            <div class="tot-row"><span>Subtotal neto:</span><span id="cotSubtotal" class="fw-600">$ 0</span></div>
+                            <div class="tot-row" id="cotIvaRow"><span>IVA (19%):</span><span id="cotIvaAmt" class="fw-600">$ 0</span></div>
+                            <div class="tot-row fin"><span>TOTAL:</span><span id="cotTotal" style="color:#2563eb;">$ 0</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acciones Tab3 -->
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <span id="cotSavedMsg" class="text-success fs-12" style="display:none;">
+                        <i class="feather-check-circle me-1"></i>Cotización emitida correctamente
+                    </span>
+                    <div class="ms-auto d-flex gap-2">
+                        <button class="btn btn-outline-secondary" onclick="irTab(2)">
+                            <i class="feather-arrow-left me-1"></i>Volver
+                        </button>
+                        <button class="btn btn-success" onclick="confirmarEmision()">
+                            <i class="feather-send me-1"></i>Confirmar y Emitir
+                        </button>
+                    </div>
+                </div>
+
+              </div>
+            </div><!-- /panel3 -->
 
           </div><!-- /card -->
         </div><!-- /main-content -->
@@ -548,11 +666,16 @@
     // ── Tabs ────────────────────────────────────────────────────
     function irTab(n){
         if(n===2&&!_items.length){ toast('Guarda la solicitud con al menos un ítem primero','#dc2626'); return; }
-        ['1','2'].forEach(i=>{
+        if(n===3){
+            var ok=_items.some(it=>(_ppto[it.id]||{opciones:[]}).opciones.some(o=>o.seleccionada));
+            if(!ok){ toast('Selecciona al menos una opción de precio en el Presupuesto Interno','#dc2626'); return; }
+        }
+        ['1','2','3'].forEach(i=>{
             document.getElementById('panel'+i).classList.toggle('active',i==n);
             document.getElementById('tabBtn'+i).classList.toggle('active',i==n);
         });
         if(n===2){ sincPpto(); renderPpto(); syncResumen(); }
+        if(n===3){ sincCot(); }
     }
 
     // ── Estado ─────────────────────────────────────────────────
@@ -562,7 +685,9 @@
         var map={solicitud:['e-sol','● Solicitud'],presupuesto:['e-ppto','● Presupuesto'],emitido:['e-emit','✔ Emitido']};
         var d=map[e]||map.solicitud;
         b.className='e-badge '+d[0]; b.textContent=d[1];
-        document.getElementById('tabBtn2').classList.toggle('disabled',!_items.length);
+        var noItems=!_items.length;
+        document.getElementById('tabBtn2').classList.toggle('disabled',noItems);
+        document.getElementById('tabBtn3').classList.toggle('disabled',noItems);
     }
 
     // ── Autocomplete cliente ────────────────────────────────────
@@ -885,6 +1010,57 @@
     function verificarEmitir(){
         var ok=_items.some(it=>(_ppto[it.id]||{opciones:[]}).opciones.some(o=>o.seleccionada));
         document.getElementById('btnEmitir').disabled=!ok;
+        document.getElementById('tabBtn3').classList.toggle('disabled',!ok);
+    }
+
+    // ── Sincronizar Tab 3 ────────────────────────────────────────
+    function sincCot(){
+        var mg=parseInt(document.getElementById('margenGlobal').value)||30;
+        var com=parseFloat(document.getElementById('selComision').value)||4;
+        // Cabecera
+        document.getElementById('cotCliente').textContent=document.getElementById('solCliente').value||'—';
+        document.getElementById('cotFaena').textContent=document.getElementById('solFaena').value||'—';
+        document.getElementById('cotFecha').textContent=document.getElementById('solFecha').value||'—';
+        document.getElementById('cotVigencia').value=document.getElementById('solVigencia').value||'';
+        document.getElementById('cotOC').value=document.getElementById('solOC').value||'';
+        document.getElementById('cotFolio').value=nextFolio();
+        // Tabla ítems
+        var tbody=document.getElementById('tbodyCot');
+        var empty=document.getElementById('emptyCot');
+        var rows=[];
+        var subtotal=0;
+        _items.forEach(function(it,idx){
+            var p=_ppto[it.id]; if(!p)return;
+            var sel=p.opciones.find(function(o){return o.seleccionada;}); if(!sel||!sel.precio)return;
+            var margen=parseFloat(sel.margen)!==undefined?parseFloat(sel.margen):mg;
+            var ventaSin=Math.round(sel.precio*(1+margen/100));
+            var venta=Math.round(ventaSin*(1+com/100));
+            var cant=parseFloat(it.cant)||1;
+            var total=venta*cant;
+            subtotal+=total;
+            var subs=(it.subItems||[]).filter(function(s){return s.texto;}).map(function(s){return s.texto;}).join(' · ');
+            rows.push('<tr>'+
+                '<td style="text-align:center;color:#94a3b8;font-weight:700;">'+(idx+1)+'</td>'+
+                '<td>'+esc(it.desc)+(subs?'<br><span style="font-size:11px;color:#64748b;">'+esc(subs)+'</span>':'')+'</td>'+
+                '<td style="text-align:center;">'+cant+'</td>'+
+                '<td style="text-align:center;">'+esc(it.unidad)+'</td>'+
+                '<td style="text-align:right;font-weight:600;">'+fmtCLP(venta)+'</td>'+
+                '<td style="text-align:right;font-weight:700;">'+fmtCLP(total)+'</td>'+
+            '</tr>');
+        });
+        if(!rows.length){ tbody.innerHTML=''; empty.style.display='block'; }
+        else{ tbody.innerHTML=rows.join(''); empty.style.display='none'; }
+        // Totales
+        var ivaVal=parseInt(document.getElementById('cotIva').value)||0;
+        var ivaAmt=Math.round(subtotal*ivaVal/100);
+        var total=subtotal+ivaAmt;
+        document.getElementById('cotSubtotal').textContent=fmtCLP(subtotal);
+        document.getElementById('cotIvaAmt').textContent=fmtCLP(ivaAmt);
+        document.getElementById('cotTotal').textContent=fmtCLP(total);
+        document.getElementById('cotIvaRow').style.display=ivaVal>0?'flex':'none';
+        document.getElementById('badgeCot').textContent=rows.length+' ítem'+(rows.length!==1?'s':'');
+        // Recalc al cambiar IVA
+        document.getElementById('cotIva').onchange=sincCot;
     }
 
     // ── Emitir ──────────────────────────────────────────────────
@@ -896,9 +1072,9 @@
     }
 
     function confirmarEmision(){
-        var folio=document.getElementById('emFolio').value;
-        var iva=parseInt(document.getElementById('emIva').value)||0;
-        var nota=document.getElementById('emNota').value.trim();
+        var folio=document.getElementById('cotFolio').value;
+        var iva=parseInt(document.getElementById('cotIva').value)||0;
+        var nota=document.getElementById('cotNota').value.trim();
         var cliente=document.getElementById('solCliente').value.trim();
         var faena=document.getElementById('solFaena').value.trim();
         var fecha=document.getElementById('solFecha').value;
@@ -929,7 +1105,7 @@
             if(obj){ obj.estado='emitido'; obj.folioEmitido=folio; savePresupuesto(obj); }
         }
         setEstado('emitido');
-        document.getElementById('modalEmitir').style.display='none';
+        var ms=document.getElementById('cotSavedMsg'); if(ms) ms.style.display='inline-flex';
         toast('✔ Cotización '+folio+' emitida','#059669');
         setTimeout(()=>{
             if(confirm('Cotización '+folio+' emitida correctamente.\n\n¿Abrir visor de PDF?')){
