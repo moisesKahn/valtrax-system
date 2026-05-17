@@ -184,6 +184,14 @@ router.delete('/pedidos/:folio', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+router.patch('/pedidos/:folio/factura', async (req, res) => {
+    try {
+        const val = req.body.nro_factura || null;
+        await pool.query('UPDATE pedidos SET nro_factura=? WHERE folio=?', [val, req.params.folio]);
+        res.json({ ok: true, nro_factura: val });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 /* ════════════════════════════════════════════════════════════
    ÓRDENES DE COMPRA
    ════════════════════════════════════════════════════════════ */

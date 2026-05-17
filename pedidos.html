@@ -55,6 +55,13 @@
     .detail-label{font-size:10px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;}
     .detail-val{font-size:13px;color:#1e293b;}
     .empty-state{text-align:center;padding:60px 20px;color:#94a3b8;}
+    .fct-badge-ok{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:700;background:#d1fae5;color:#065f46;cursor:pointer;white-space:nowrap;border:none;}
+    .fct-badge-ok:hover{background:#a7f3d0;}
+    .fct-warn-btn{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;background:#fff7ed;color:#c2410c;border:1.5px dashed #fed7aa;cursor:pointer;white-space:nowrap;}
+    .fct-warn-btn:hover{background:#ffedd5;}
+    .fct-input{height:26px;border:1.5px solid #2563eb;border-radius:6px;padding:0 7px;font-size:11px;font-family:'DM Sans',sans-serif;outline:none;width:96px;}
+    .fct-save{height:26px;width:26px;border-radius:6px;background:#16a34a;color:#fff;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;}
+    .fct-cancel{height:26px;width:26px;border-radius:6px;background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;}
     </style>
 </head>
 <body>
@@ -235,6 +242,7 @@
                                 <th style="padding:7px 12px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;">Fecha</th>
                                 <th style="padding:7px 12px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;">Total venta</th>
                                 <th style="padding:7px 12px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;">OC asociada</th>
+                                <th style="padding:7px 12px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;">Facturación</th>
                                 <th style="padding:7px 12px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;">Estado</th>
                                 <th style="padding:7px 16px 7px 12px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;text-align:right;">Acciones</th>
                             </tr>
@@ -323,6 +331,10 @@ function renderTabla(){
         const cotLink=p.cot_folio?`<a href="#" onclick="abrirCot('${esc(p.cot_folio)}');return false;" style="font-size:12px;color:#2563eb;font-weight:600;text-decoration:none;">${esc(p.cot_folio)}</a>`:'<span style="color:#cbd5e1;">—</span>';
         const ocF=p.oc_folio||_ocMap[p.folio]||null;
         const ocLink=ocF?`<a href="ordenes-compra.html?oc=${esc(ocF)}" style="font-size:12px;color:#7c3aed;font-weight:600;text-decoration:none;">${esc(ocF)}</a>`:'<span style="color:#cbd5e1;">—</span>';
+        const ff=esc(p.folio);
+        const factCell=p.nro_factura
+            ?`<div id="fct-${ff}" style="display:flex;align-items:center;gap:4px;"><button class="fct-badge-ok" onclick="toggleFact('${ff}')">✔ ${esc(p.nro_factura)}</button></div><div id="fct-inp-${ff}" style="display:none;align-items:center;gap:4px;"><input id="fct-v-${ff}" type="text" value="${esc(p.nro_factura)}" placeholder="Nº factura" class="fct-input" onkeydown="if(event.key==='Enter')guardarFactura('${ff}')"><button class="fct-save" onclick="guardarFactura('${ff}')"><i class='feather-check' style='font-size:10px;'></i></button><button class="fct-cancel" onclick="toggleFact('${ff}')"><i class='feather-x' style='font-size:10px;'></i></button></div>`
+            :`<div id="fct-${ff}" style="display:flex;align-items:center;gap:4px;"><button class="fct-warn-btn" onclick="toggleFact('${ff}')"><i class='feather-alert-circle' style='font-size:10px;'></i> Sin factura</button></div><div id="fct-inp-${ff}" style="display:none;align-items:center;gap:4px;"><input id="fct-v-${ff}" type="text" value="" placeholder="Nº factura" class="fct-input" onkeydown="if(event.key==='Enter')guardarFactura('${ff}')"><button class="fct-save" onclick="guardarFactura('${ff}')"><i class='feather-check' style='font-size:10px;'></i></button><button class="fct-cancel" onclick="toggleFact('${ff}')"><i class='feather-x' style='font-size:10px;'></i></button></div>`;
         return `<tr style="border-bottom:1px solid rgba(148,163,184,0.1);">
             <td style="padding:10px 12px;"><a href="#" style="font-weight:700;color:#2563eb;text-decoration:none;font-size:12px;" onclick="verDet('${esc(p.folio)}');return false;">${esc(p.folio)}</a></td>
             <td style="padding:10px 12px;">${cotLink}</td>
@@ -331,6 +343,7 @@ function renderTabla(){
             <td style="padding:10px 12px;font-size:12px;">${fmtF(p.fecha)}</td>
             <td style="padding:10px 12px;font-weight:700;">${fmtCLP(p.total_venta)}</td>
             <td style="padding:10px 12px;">${ocLink}</td>
+            <td style="padding:8px 12px;">${factCell}</td>
             <td style="padding:10px 12px;"><span class="badge-est ${e.css}">${e.lbl}</span></td>
             <td style="padding:10px 16px 10px 12px;text-align:right;"><div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">${buildBtns(p)}</div></td>
         </tr>`;
@@ -345,6 +358,34 @@ function buildBtns(p){
     if(p.estado==='Preparación')  b+=`<button class="btn-act btn-orange" onclick="cambiar('${f}','Despachado')"><i class="feather-truck" style="font-size:11px;"></i> Despachar</button>`;
     if(p.estado==='Despachado')   b+=`<button class="btn-act btn-green"  onclick="cambiar('${f}','Entregado')"><i class="feather-check-circle" style="font-size:11px;"></i> Entregado</button>`;
     return b;
+}
+
+function toggleFact(folio){
+    const bd=document.getElementById('fct-'+folio);
+    const inp=document.getElementById('fct-inp-'+folio);
+    if(!bd||!inp)return;
+    const showing=inp.style.display==='flex';
+    bd.style.display=showing?'flex':'none';
+    inp.style.display=showing?'none':'flex';
+    if(!showing){const v=document.getElementById('fct-v-'+folio);if(v)v.focus();}
+}
+
+async function guardarFactura(folio){
+    const v=document.getElementById('fct-v-'+folio);
+    if(!v)return;
+    const val=v.value.trim();
+    const p=_datos.find(x=>x.folio===folio);
+    if(!p)return;
+    try{
+        const r=await fetch('/api/pedidos/'+encodeURIComponent(folio)+'/factura',{
+            method:'PATCH',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({nro_factura:val})
+        });
+        if(!r.ok){const e=await r.json();throw new Error(e.error||'Error');}
+        p.nro_factura=val;
+        renderTabla();
+        toast(val?'Factura N°\u00a0'+val+' guardada':'Factura eliminada','#10b981');
+    }catch(e){toast('Error: '+e.message,'#ef4444');}
 }
 
 async function cambiar(folio, nuevoEstado){

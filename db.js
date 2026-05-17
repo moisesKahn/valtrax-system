@@ -123,6 +123,7 @@ async function initDB() {
             // pedidos: columnas faltantes
             `ALTER TABLE pedidos ADD COLUMN ppto_id       VARCHAR(40)`,
             `ALTER TABLE pedidos ADD COLUMN cliente_id    VARCHAR(40)`,
+            `ALTER TABLE pedidos ADD COLUMN nro_factura   VARCHAR(60)`,
             `ALTER TABLE pedidos ADD COLUMN total_venta   DECIMAL(15,2) DEFAULT 0`,
             `ALTER TABLE pedidos ADD COLUMN total_costo   DECIMAL(15,2) DEFAULT 0`,
             `ALTER TABLE pedidos ADD COLUMN total_margen  DECIMAL(5,2)  DEFAULT 0`,
