@@ -2286,14 +2286,26 @@
                 var sub   = pu * cant;
                 var lugar = opSel ? (opSel.lugar||'') : '';
                 rows.push({ idx: idx+1, pos: (idx+1)*10, desc: it.desc||'', cant: cant, ue: it.unidad||'un', pu: pu, sub: sub, lugar: lugar });
+                // Sub-ítems
+                (it.subItems||[]).forEach(function(s) {
+                    if (s.texto && s.texto.trim()) {
+                        rows.push({ isSub: true, desc: s.texto });
+                    }
+                });
             });
 
             // Calcular páginas reales
             var ySim = yTbl;
             var pgCount = 1;
             rows.forEach(function(r) {
-                var lines = doc.splitTextToSize(r.desc, C.desc.w - 2).length;
-                var rh = Math.max(ROW_H, lines * 3.5 + 4);
+                var rh;
+                if (r.isSub) {
+                    var lines = doc.splitTextToSize('\u21b3  ' + r.desc, C.desc.w + 10).length;
+                    rh = Math.max(5.5, lines * 3.5 + 3);
+                } else {
+                    var lines = doc.splitTextToSize(r.desc, C.desc.w - 2).length;
+                    rh = Math.max(ROW_H, lines * 3.5 + 4);
+                }
                 if (ySim + rh > ROW_MIN) { pgCount++; ySim = 44; }
                 ySim += rh;
             });
@@ -2308,6 +2320,34 @@
 
             var rowIdx = 0;
             rows.forEach(function(r) {
+                // Sub-ítem: fila compacta solo con texto indentado
+                if (r.isSub) {
+                    var subLines = doc.splitTextToSize('↳  ' + r.desc, C.desc.w + 10);
+                    var rh = Math.max(5.5, subLines.length * 3.5 + 3);
+                    if (yTbl + rh > ROW_MIN) {
+                        doc.addPage();
+                        var pg = doc.internal.getCurrentPageInfo().pageNumber;
+                        dibujarMembrete(pg, pgCount);
+                        yTbl = 44;
+                        yTbl = dibujarHeaderTabla(yTbl);
+                        rowIdx = 0;
+                    }
+                    // Fondo igual a la fila padre (rowIdx no cambia para sub)
+                    if (rowIdx % 2 === 1) {
+                        doc.setFillColor(...LGRAY);
+                        doc.rect(ML, yTbl, TW, rh, 'F');
+                    }
+                    doc.setDrawColor(...BORDER);
+                    doc.setLineWidth(0.1);
+                    doc.line(ML, yTbl + rh, ML + TW, yTbl + rh);
+                    doc.setFont('helvetica','normal');
+                    doc.setFontSize(7);
+                    doc.setTextColor(...GRAY);
+                    doc.text(subLines, C.desc.x + 5, yTbl + 3.8);
+                    yTbl += rh;
+                    return;
+                }
+
                 var descLines = doc.splitTextToSize(r.desc, C.desc.w - 2);
                 var rh = Math.max(ROW_H, descLines.length * 3.5 + 4);
 
