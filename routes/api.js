@@ -331,13 +331,24 @@ router.get('/presupuestos/:id', async (req, res) => {
 router.post('/presupuestos', async (req, res) => {
     try {
         const d = req.body;
-        // Si el frontend no manda folio válido (COT-XXXXX), generar uno correlativo
-        let folio = d.folio;
-        if (!folio || !/^COT-\d{5}$/.test(folio)) {
+        // Verificar si el registro ya existe para no cambiar su folio
+        const [existing] = await pool.query('SELECT folio FROM presupuestos WHERE id=?', [d.id]);
+        let folio;
+        if (existing.length && /^COT-\d{5}$/.test(existing[0].folio)) {
+            // Registro existente con folio válido → conservar
+            folio = existing[0].folio;
+        } else if (existing.length && !/^COT-\d{5}$/.test(existing[0].folio)) {
+            // Registro existente con folio inválido → corregir
+            folio = await nextFolio('presupuestos', 'COT');
+        } else if (d.folio && /^COT-\d{5}$/.test(d.folio)) {
+            // Nuevo registro con folio válido del frontend
+            folio = d.folio;
+        } else {
+            // Nuevo registro sin folio válido → generar correlativo
             folio = await nextFolio('presupuestos', 'COT');
         }
         await pool.query(
-            'INSERT INTO presupuestos (id,folio,estado,cliente,cliente_id,cabecera,items,ppto) VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE estado=VALUES(estado),cliente=VALUES(cliente),cliente_id=VALUES(cliente_id),cabecera=VALUES(cabecera),items=VALUES(items),ppto=VALUES(ppto)',
+            'INSERT INTO presupuestos (id,folio,estado,cliente,cliente_id,cabecera,items,ppto) VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE folio=VALUES(folio),estado=VALUES(estado),cliente=VALUES(cliente),cliente_id=VALUES(cliente_id),cabecera=VALUES(cabecera),items=VALUES(items),ppto=VALUES(ppto)',
             [d.id, folio, d.estado||'solicitud', d.cabecera?.cliente||'', d.cabecera?.clienteId||'', JSON.stringify(d.cabecera||{}), JSON.stringify(d.items||[]), JSON.stringify(d.ppto||{})]
         );
         const [rows] = await pool.query('SELECT * FROM presupuestos WHERE id=?', [d.id]);
