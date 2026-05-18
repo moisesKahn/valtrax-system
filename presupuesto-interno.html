@@ -1054,6 +1054,17 @@
             var todos = ValtraxDB.getEntidades();
             window._clienteObj = todos.find(function(c){ return String(c.id)===String(id); }) || null;
         }
+        // Si no está en localStorage (viene de API), buscar por nombre en /api/clientes
+        if(!window._clienteObj){
+            fetch('/api/clientes').then(function(r){return r.ok?r.json():[];}).then(function(lista){
+                var found = lista.find(function(c){return (c.nombre||'').toLowerCase()===n.toLowerCase();});
+                if(found) window._clienteObj = {
+                    rut: found.rut||'', giro: found.giro||'', tel: found.telefono||'',
+                    correo: found.email||'', ciudad: found.direccion||'',
+                    contacto: found.contacto||''
+                };
+            }).catch(function(){});
+        }
         solAcOcultar();
     }
     function solAcNuevo(nombre){
@@ -1157,6 +1168,16 @@
         var cliente=document.getElementById('solCliente').value.trim();
         if(!cliente){ toast('Ingresa el nombre del cliente','#dc2626'); return; }
         var clienteId=document.getElementById('solClienteId').value.trim();
+        // Intentar resolver objeto cliente si no está aún en memoria
+        if(!window._clienteObj && cliente){
+            fetch('/api/clientes').then(function(r){return r.ok?r.json():[];}).then(function(lista){
+                var found=lista.find(function(c){return (c.nombre||'').toLowerCase()===cliente.toLowerCase();});
+                if(found) window._clienteObj={
+                    rut:found.rut||'',giro:found.giro||'',tel:found.telefono||'',
+                    correo:found.email||'',ciudad:found.direccion||'',contacto:found.contacto||''
+                };
+            }).catch(function(){});
+        }
         if(!clienteId){
             var inp=document.getElementById('solCliente');
             inp.style.borderColor='#ef4444';
@@ -1849,6 +1870,17 @@
         document.getElementById('solCliente').value=c.cliente||'';
         document.getElementById('solClienteId').value=c.clienteId||'';
         if(c.cliente){ var ic=document.getElementById('solCliente'); ic.style.borderColor='#22c55e'; ic.style.background='rgba(34,197,94,0.06)'; }
+        // Resolver datos del cliente para el PDF
+        window._clienteObj = null;
+        if(c.cliente){
+            fetch('/api/clientes').then(function(r){return r.ok?r.json():[];}).then(function(lista){
+                var found=lista.find(function(x){return (x.nombre||'').toLowerCase()===(c.cliente||'').toLowerCase();});
+                if(found) window._clienteObj={
+                    rut:found.rut||'',giro:found.giro||'',tel:found.telefono||'',
+                    correo:found.email||'',ciudad:found.direccion||'',contacto:found.contacto||''
+                };
+            }).catch(function(){});
+        }
         document.getElementById('solFecha').value=c.fecha||new Date().toISOString().slice(0,10);
         document.getElementById('solFechaSol').value=c.fechaSol||'';
         document.getElementById('solVigencia').value=c.vigencia||'30';
@@ -2218,16 +2250,17 @@
             // ════════════════════════════════════════════════════════
             //  CONSTRUCCIÓN DEL DOCUMENTO
             // ════════════════════════════════════════════════════════
-            // Primera pasada: calcular cuántas páginas (aprox) para la cabecera
-            var pages = 1;
-            dibujarMembrete(1, 1); // temporal
-
+            // Primera pasada: solo SIMULAR posiciones para contar páginas (sin dibujar)
             var y = 37;
-            y = dibujarEncabezado(y) + 4;
-            y = dibujarDatosBloques(y);
+            // Simular encabezado: ocupa ~18mm (14 + 4)
+            y = y + 14 + 4;
+            // Simular bloque datos: contar líneas cliente
+            var cObjSim = window._clienteObj || {};
+            var lineasSim = 2 + (cObjSim.rut?1:0)+(cObjSim.giro?1:0)+(cObjSim.tel?1:0)+(cObjSim.correo?1:0)+(cObjSim.ciudad?1:0)+1;
+            y = y + (4 * Math.max(6, lineasSim + 2)) + 6 + 5 + 4.5 + 8 + 6 + 1;
 
             // Header tabla
-            var yTbl = dibujarHeaderTabla(y);
+            var yTbl = y + 8;
             var ROW_H = 7.5;
             var ROW_MIN = PH - 45; // límite antes de saltar página
 
@@ -2254,7 +2287,7 @@
                 ySim += rh;
             });
 
-            // Segunda pasada — dibujar real
+            // Única pasada real — dibujar todo de una vez
             doc.setPage(1);
             dibujarMembrete(1, pgCount);
             y = 37;
