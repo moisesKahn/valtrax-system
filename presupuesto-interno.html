@@ -2290,7 +2290,7 @@
                 var cant  = parseFloat(it.cant)||1;
                 var sub   = pu * cant;
                 var lugar = opSel ? (opSel.lugar||'') : '';
-                rows.push({ idx: idx+1, pos: (idx+1)*10, desc: it.desc||'', cant: cant, ue: it.unidad||'un', pu: pu, sub: sub, lugar: lugar });
+                rows.push({ idx: idx+1, pos: idx+1, desc: it.desc||'', cant: cant, ue: it.unidad||'un', pu: pu, sub: sub, lugar: lugar });
                 // Sub-ítems
                 (it.subItems||[]).forEach(function(s) {
                     if (s.texto && s.texto.trim()) {
@@ -2337,11 +2337,6 @@
                         yTbl = dibujarHeaderTabla(yTbl);
                         rowIdx = 0;
                     }
-                    // Fondo igual a la fila padre (rowIdx no cambia para sub)
-                    if (rowIdx % 2 === 1) {
-                        doc.setFillColor(...LGRAY);
-                        doc.rect(ML, yTbl, TW, rh, 'F');
-                    }
                     doc.setDrawColor(...BORDER);
                     doc.setLineWidth(0.1);
                     doc.line(ML, yTbl + rh, ML + TW, yTbl + rh);
@@ -2366,11 +2361,6 @@
                     rowIdx = 0;
                 }
 
-                // Fondo fila alterna
-                if (rowIdx % 2 === 1) {
-                    doc.setFillColor(...LGRAY);
-                    doc.rect(ML, yTbl, TW, rh, 'F');
-                }
                 // Borde inferior fila
                 doc.setDrawColor(...BORDER);
                 doc.setLineWidth(0.2);
