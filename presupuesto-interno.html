@@ -2434,7 +2434,7 @@
 
             // ── Bloque totales + condiciones ───────────────────────
             var neto = 0;
-            rows.forEach(function(r){ neto += r.sub; });
+            rows.forEach(function(r){ if (!r.isSub) neto += (r.sub || 0); });
             var ivaAmt = useIva ? Math.round(neto * 0.19) : 0;
             var total  = neto + ivaAmt;
 
