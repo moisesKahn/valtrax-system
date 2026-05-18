@@ -2089,14 +2089,13 @@
                 doc.setTextColor(...NAVY);
                 doc.text('COTIZACIÓN', ML, y + 7);
 
-                // Bloque info derecha
+                // Bloque info derecha — solo folio y fecha
                 doc.setFont('helvetica','normal');
                 doc.setFontSize(7.5);
                 doc.setTextColor(...GRAY);
                 var xi = MR_x, yi = y + 1;
                 var lineH = 4.2;
 
-                // N° Cotización
                 doc.text('N° Cotización:', xi - 52, yi + lineH);
                 doc.setFont('helvetica','bold');
                 doc.setTextColor(...DARK);
@@ -2109,22 +2108,7 @@
                 doc.setTextColor(...DARK);
                 doc.text(fecha, xi, yi + lineH*2, {align:'right'});
 
-                doc.setFont('helvetica','normal');
-                doc.setTextColor(...GRAY);
-                doc.text('Vigencia:', xi - 52, yi + lineH*3);
-                doc.setFont('helvetica','bold');
-                doc.setTextColor(...DARK);
-                doc.text(vigencia, xi, yi + lineH*3, {align:'right'});
-
-                doc.setFont('helvetica','normal');
-                doc.setTextColor(...GRAY);
-                doc.text('Forma de pago:', xi - 52, yi + lineH*4);
-                doc.setFont('helvetica','bold');
-                doc.setTextColor(...DARK);
-                var pagoLines = doc.splitTextToSize(formaPago, 60);
-                doc.text(pagoLines[0], xi, yi + lineH*4, {align:'right'});
-
-                return y + 18;
+                return y + 14;
             }
 
             // ════════════════════════════════════════════════════════
@@ -2141,7 +2125,7 @@
                 doc.line(ML, y, MR_x, y);
                 y += 5;
 
-                // Columna Izquierda — Emisor
+                // ── Columna Izquierda — Emisor ──
                 doc.setFont('helvetica','bold');
                 doc.setFontSize(7.5);
                 doc.setTextColor(...NAVY);
@@ -2162,7 +2146,7 @@
                 doc.setTextColor(...DARK);
                 doc.text('Ejecutivo: ' + vendedor, ML, y + lineH*5);
 
-                // Columna Derecha — Cliente
+                // ── Columna Derecha — Solo datos del Cliente ──
                 doc.setFont('helvetica','bold');
                 doc.setFontSize(7.5);
                 doc.setTextColor(...NAVY);
@@ -2179,28 +2163,65 @@
                 doc.setTextColor(...GRAY);
                 var cObj = window._clienteObj || {};
                 var yC = y + lineH*2;
-                if (cObj.rut)    { doc.text('RUT: '       + cObj.rut,    xR, yC); yC += lineH; }
-                if (cObj.giro)   { doc.text('Giro: '      + cObj.giro,   xR, yC); yC += lineH; }
-                if (cObj.tel)    { doc.text('Teléfono: '  + cObj.tel,    xR, yC); yC += lineH; }
-                if (cObj.correo) { doc.text('Email: '     + cObj.correo, xR, yC); yC += lineH; }
-                if (cObj.ciudad) { doc.text('Ciudad: '    + cObj.ciudad, xR, yC); yC += lineH; }
-                if (faena && faena !== '—' && faena !== '') {
-                    doc.text('Faena / Proyecto: ' + faena, xR, yC); yC += lineH;
-                }
-                // Forma de pago destacada
-                doc.setFont('helvetica','bold');
-                doc.setTextColor(...DARK);
-                doc.text('Pago: ' + formaPago, xR, yC); yC += lineH;
+                if (cObj.rut)     { doc.text('RUT: '      + cObj.rut,     xR, yC); yC += lineH; }
+                if (cObj.giro)    { doc.text('Giro: '     + cObj.giro,    xR, yC); yC += lineH; }
+                if (cObj.contacto){ doc.text('Contacto: ' + cObj.contacto,xR, yC); yC += lineH; }
+                if (cObj.tel)     { doc.text('Teléfono: ' + cObj.tel,     xR, yC); yC += lineH; }
+                if (cObj.correo)  { doc.text('Email: '    + cObj.correo,  xR, yC); yC += lineH; }
+                if (cObj.ciudad)  { doc.text('Ciudad: '   + cObj.ciudad,  xR, yC); yC += lineH; }
 
-                // Ajustar avance vertical según líneas usadas
-                var lineasCliente = 2 + (cObj.rut?1:0)+(cObj.giro?1:0)+(cObj.tel?1:0)+(cObj.correo?1:0)+(cObj.ciudad?1:0)+((faena&&faena!=='—'&&faena!=='')?1:0)+1;
-                y += lineH * Math.max(6, lineasCliente) + 6;
+                // Calcular avance vertical (máximo de ambas columnas)
+                var lineasCliente = 2 + (cObj.rut?1:0)+(cObj.giro?1:0)+(cObj.contacto?1:0)+(cObj.tel?1:0)+(cObj.correo?1:0)+(cObj.ciudad?1:0);
+                y += lineH * Math.max(6, lineasCliente) + 4;
 
-                // Línea separadora inferior
+                // Línea separadora
                 doc.setDrawColor(...BORDER);
                 doc.setLineWidth(0.25);
                 doc.line(ML, y, MR_x, y);
-                y += 6;
+                y += 5;
+
+                // ── BLOQUE CONDICIONES COMERCIALES (fila de cajas) ──
+                doc.setFont('helvetica','bold');
+                doc.setFontSize(7.5);
+                doc.setTextColor(...NAVY);
+                doc.text('Condiciones Comerciales', ML, y);
+                y += lineH + 1;
+
+                // 4 cajas en fila: Vigencia | Forma de Pago | Lugar de Entrega | Tiempo de Entrega
+                var lugarEntrega = (document.getElementById('solFaena') ? document.getElementById('solFaena').value : '') || (faena || 'A definir');
+                var tiempoEntrega = (document.getElementById('solTiempo') ? document.getElementById('solTiempo').value : '') || 'Según stock';
+                var garantiaVal  = (document.getElementById('solGarantia') ? document.getElementById('solGarantia').value : '') || 'No incluye';
+
+                var condItems = [
+                    { lbl: 'Vigencia',         val: vigencia },
+                    { lbl: 'Forma de Pago',    val: formaPago },
+                    { lbl: 'Lugar de Entrega', val: lugarEntrega },
+                    { lbl: 'Tiempo / Garantía', val: tiempoEntrega + (garantiaVal && garantiaVal!=='No incluye' ? ' · ' + garantiaVal : '') }
+                ];
+
+                var boxW = TW / 4 - 2;
+                var boxH = 14;
+                condItems.forEach(function(ci, i) {
+                    var bx = ML + i * (boxW + 2.5);
+                    // Fondo caja
+                    doc.setFillColor(245, 247, 250);
+                    doc.roundedRect(bx, y, boxW, boxH, 1.5, 1.5, 'F');
+                    doc.setDrawColor(...BORDER);
+                    doc.setLineWidth(0.2);
+                    doc.roundedRect(bx, y, boxW, boxH, 1.5, 1.5, 'S');
+                    // Label
+                    doc.setFont('helvetica','bold');
+                    doc.setFontSize(6);
+                    doc.setTextColor(...NAVY);
+                    doc.text(ci.lbl.toUpperCase(), bx + 2.5, y + 4.5);
+                    // Valor
+                    doc.setFont('helvetica','normal');
+                    doc.setFontSize(6.8);
+                    doc.setTextColor(...DARK);
+                    var vLines = doc.splitTextToSize(ci.val, boxW - 4);
+                    doc.text(vLines.slice(0,2), bx + 2.5, y + 8.5);
+                });
+                y += boxH + 6;
 
                 // Saludo
                 doc.setFont('helvetica','bold');
