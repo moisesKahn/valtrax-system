@@ -381,11 +381,9 @@
                             <div class="cot-field">
                                 <label>Forma de Pago</label>
                                 <select id="solPago">
+                                    <option>Al contado</option>
+                                    <option>Crédito a 30 días</option>
                                     <option>50% Inicio - 50% Contra entrega</option>
-                                    <option>100% Anticipo</option>
-                                    <option>30 días factura</option>
-                                    <option>60 días factura</option>
-                                    <option>Crédito 30/60/90 días</option>
                                 </select>
                             </div>
                         </div>
@@ -406,7 +404,9 @@
                                 <label>Lugar de Entrega</label>
                                 <input type="text" id="solFaena" list="solListaFaenas" placeholder="Para retiro en bodega" autocomplete="off">
                                 <datalist id="solListaFaenas">
-                                    <option value="Para retiro en bodega VALTRAX Antofagasta">
+                                    <option value="Bodega VALTRAX Antofagasta">
+                                    <option value="Bodega VALTRAX Calama">
+                                    <option value="Bodega cliente">
                                     <option value="Faena Escondida — Acceso principal">
                                     <option value="Chuquicamata — Portería Norte">
                                     <option value="Collahuasi — Bodega central">
@@ -419,20 +419,24 @@
                         <div class="col-md-6">
                             <div class="cot-field">
                                 <label>Tiempo de Entrega</label>
-                                <select id="solTiempo">
-                                    <option>Inmediato (stock disponible)</option>
-                                    <option selected>15 días hábiles</option>
-                                    <option>30 días hábiles</option>
-                                    <option>45 días hábiles</option>
-                                    <option>A coordinar con cliente</option>
-                                </select>
+                                <input type="text" id="solTiempo" list="solListaTiempo" placeholder="Ej: 15 días hábiles" autocomplete="off">
+                                <datalist id="solListaTiempo">
+                                    <option value="Inmediato (stock disponible)">
+                                    <option value="15 días hábiles">
+                                    <option value="30 días hábiles">
+                                    <option value="45 días hábiles">
+                                    <option value="60 días hábiles">
+                                    <option value="A coordinar con cliente">
+                                </datalist>
                             </div>
                         </div>
                         <!-- Fila 4 -->
                         <div class="col-12">
                             <div class="cot-field">
                                 <label>Observación General</label>
-                                <textarea id="solObs" rows="2" placeholder="Observaciones generales, condiciones especiales..."></textarea>
+                                <textarea id="solObs" rows="3" placeholder="Observaciones generales, condiciones especiales...">1. Validez de la oferta: Precios y condiciones validos hasta la fecha indicada. Pasado este plazo, Valtrax no se hace responsable por cambios.
+2. Stock sujeto a disponibilidad: Productos sujetos a disponibilidad de inventario al momento de confirmar el pedido.
+3. Retiro de mercancia: El cliente debe retirar la mercancia en el plazo acordado. De lo contrario, Valtrax no se hace responsable por el producto.</textarea>
                             </div>
                         </div>
                     </div>
@@ -1834,7 +1838,8 @@
     function nuevaSolicitud(){
         if(_items.length&&!confirm('¿Crear nueva solicitud?\nSe perderán los cambios no guardados.'))return;
         _pID=null;_folio=null;_estado='solicitud';_items=[itemVacio(),itemVacio(),itemVacio(),itemVacio()];_ppto={};
-        ['solCliente','solClienteId','solFaena','solObs','solFechaSol'].forEach(id=>document.getElementById(id).value='');
+        ['solCliente','solClienteId','solFaena','solFechaSol'].forEach(id=>document.getElementById(id).value='');
+        document.getElementById('solObs').value = '1. Validez de la oferta: Precios y condiciones validos hasta la fecha indicada. Pasado este plazo, Valtrax no se hace responsable por cambios.\n2. Stock sujeto a disponibilidad: Productos sujetos a disponibilidad de inventario al momento de confirmar el pedido.\n3. Retiro de mercancia: El cliente debe retirar la mercancia en el plazo acordado. De lo contrario, Valtrax no se hace responsable por el producto.';
         var inpCl=document.getElementById('solCliente');
         inpCl.style.borderColor=''; inpCl.style.background=''; inpCl.title='';
         document.getElementById('solFecha').value=new Date().toISOString().slice(0,10);
@@ -1985,7 +1990,7 @@
         var cliente  = document.getElementById('cotCliente').textContent  || '—';
         var faena    = document.getElementById('cotFaena').textContent    || '';
         var fecha    = document.getElementById('cotFecha').textContent    || new Date().toLocaleDateString('es-CL');
-        var nota     = (document.getElementById('cotNota').value || '').trim();
+        var nota     = (document.getElementById('solObs').value || document.getElementById('cotNota').value || '').trim();
         var vigDias  = parseInt(document.getElementById('solVigencia').value) || parseInt(document.getElementById('cotVigencia').value) || 30;
         var formaPago = (document.getElementById('solPago') ? document.getElementById('solPago').value : '') || '50% Inicio - 50% Contra entrega';
         // Calcular fecha de vencimiento
@@ -2322,7 +2327,7 @@
             rows.forEach(function(r) {
                 // Sub-ítem: fila compacta solo con texto indentado
                 if (r.isSub) {
-                    var subLines = doc.splitTextToSize('↳  ' + r.desc, C.desc.w + 10);
+                    var subLines = doc.splitTextToSize('   > ' + r.desc, C.desc.w + 10);
                     var rh = Math.max(5.5, subLines.length * 3.5 + 3);
                     if (yTbl + rh > ROW_MIN) {
                         doc.addPage();
@@ -2433,18 +2438,21 @@
             var ivaAmt = useIva ? Math.round(neto * 0.19) : 0;
             var total  = neto + ivaAmt;
 
-            // Condiciones — izquierda
+            // Observaciones izquierda (predeterminadas + nota)
             var totW = 80, totX = MR_x - totW;
-            doc.setFont('helvetica','normal');
-            doc.setFontSize(7.5);
-            doc.setTextColor(...GRAY);
-            doc.text('Plazo de entrega:', ML, y + 3);
-            doc.setFont('helvetica','normal');
-            doc.text('Según stock disponible (indicado por posición si aplica)', ML + 30, y + 3);
+            var obsTexto = nota || [
+                '1. Validez de la oferta: Precios y condiciones validos hasta la fecha indicada. Pasado este plazo, Valtrax no se hace responsable por cambios.',
+                '2. Stock sujeto a disponibilidad: Productos sujetos a disponibilidad de inventario al momento de confirmar el pedido.',
+                '3. Retiro de mercancia: El cliente debe retirar la mercancia en el plazo acordado. De lo contrario, Valtrax no se hace responsable por el producto.'
+            ].join('\n');
+            var obsLines = doc.splitTextToSize(obsTexto, totX - ML - 4);
             doc.setFont('helvetica','bold');
-            doc.text('Condición de pago:', ML, y + 7.5);
+            doc.setFontSize(7);
+            doc.setTextColor(...NAVY);
+            doc.text('Observaciones Generales:', ML, y + 3);
             doc.setFont('helvetica','normal');
-            doc.text('Pagadero inmediatamente sin deducción', ML + 30, y + 7.5);
+            doc.setTextColor(...GRAY);
+            doc.text(obsLines, ML, y + 7);
 
             // Totales — derecha
             var totRows = [];
@@ -2485,22 +2493,8 @@
 
             y = tyStart + totRows.length * 6 + 8;
 
-            // ── Observaciones ──────────────────────────────────────
-            if (nota) {
-                doc.setDrawColor(...BORDER);
-                doc.setLineWidth(0.25);
-                doc.line(ML, y, MR_x, y);
-                y += 5;
-                doc.setFont('helvetica','bold');
-                doc.setFontSize(8);
-                doc.setTextColor(...NAVY);
-                doc.text('Observaciones:', ML, y);
-                y += 4.5;
-                doc.setFont('helvetica','normal');
-                doc.setFontSize(7.5);
-                doc.setTextColor(...GRAY);
-                doc.text(doc.splitTextToSize(nota, TW), ML, y);
-            }
+            // ── Observaciones (ya dibujadas arriba junto a totales) ──
+            // (bloque eliminado para evitar duplicado)
 
             // ── Guardar y mostrar ──────────────────────────────────
             _pdfDoc  = doc;
