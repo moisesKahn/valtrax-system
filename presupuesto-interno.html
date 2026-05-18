@@ -2193,35 +2193,25 @@
                 var garantiaVal  = (document.getElementById('solGarantia') ? document.getElementById('solGarantia').value : '') || 'No incluye';
 
                 var condItems = [
-                    { lbl: 'Vigencia',         val: vigencia },
-                    { lbl: 'Forma de Pago',    val: formaPago },
-                    { lbl: 'Lugar de Entrega', val: lugarEntrega },
-                    { lbl: 'Tiempo / Garantía', val: tiempoEntrega + (garantiaVal && garantiaVal!=='No incluye' ? ' · ' + garantiaVal : '') }
+                    { lbl: 'Vigencia:',          val: vigencia },
+                    { lbl: 'Forma de Pago:',     val: formaPago },
+                    { lbl: 'Lugar de Entrega:',  val: lugarEntrega },
+                    { lbl: 'Tiempo de Entrega:', val: tiempoEntrega },
+                    { lbl: 'Garantía:',          val: garantiaVal }
                 ];
 
-                var boxW = TW / 4 - 2;
-                var boxH = 14;
-                condItems.forEach(function(ci, i) {
-                    var bx = ML + i * (boxW + 2.5);
-                    // Fondo caja
-                    doc.setFillColor(245, 247, 250);
-                    doc.roundedRect(bx, y, boxW, boxH, 1.5, 1.5, 'F');
-                    doc.setDrawColor(...BORDER);
-                    doc.setLineWidth(0.2);
-                    doc.roundedRect(bx, y, boxW, boxH, 1.5, 1.5, 'S');
-                    // Label
+                doc.setFontSize(7.5);
+                condItems.forEach(function(ci) {
                     doc.setFont('helvetica','bold');
-                    doc.setFontSize(6);
-                    doc.setTextColor(...NAVY);
-                    doc.text(ci.lbl.toUpperCase(), bx + 2.5, y + 4.5);
-                    // Valor
+                    doc.setTextColor(...GRAY);
+                    doc.text(ci.lbl, ML, y);
                     doc.setFont('helvetica','normal');
-                    doc.setFontSize(6.8);
                     doc.setTextColor(...DARK);
-                    var vLines = doc.splitTextToSize(ci.val, boxW - 4);
-                    doc.text(vLines.slice(0,2), bx + 2.5, y + 8.5);
+                    var vLines = doc.splitTextToSize(ci.val, TW - 50);
+                    doc.text(vLines[0] || ci.val, ML + 38, y);
+                    y += lineH;
                 });
-                y += boxH + 6;
+                y += 3;
 
                 // Saludo
                 doc.setFont('helvetica','bold');
