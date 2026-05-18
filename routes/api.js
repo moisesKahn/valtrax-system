@@ -6,9 +6,17 @@ const router     = Router();
    HELPER: generar folio correlativo
    ════════════════════════════════════════════════════════════ */
 async function nextFolio(tabla, prefijo) {
-    const [rows] = await pool.query(`SELECT COUNT(*) as n FROM \`${tabla}\``);
-    const n = (rows[0].n || 0) + 100;
-    return prefijo + String(n).padStart(5, '0');
+    // Extraer el mayor número de folio existente y sumarle 1, con mínimo en 100
+    const [rows] = await pool.query(
+        `SELECT folio FROM \`${tabla}\` WHERE folio LIKE ? ORDER BY folio DESC LIMIT 1`,
+        [prefijo + '%']
+    );
+    let next = 100;
+    if (rows.length) {
+        const num = parseInt(rows[0].folio.replace(prefijo, ''), 10);
+        if (!isNaN(num)) next = num + 1;
+    }
+    return prefijo + String(next).padStart(5, '0');
 }
 
 /* ════════════════════════════════════════════════════════════
