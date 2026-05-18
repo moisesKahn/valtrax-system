@@ -1299,7 +1299,10 @@
             body:JSON.stringify(obj)
         });
         if(!r.ok){var e=await r.json().catch(()=>({}));throw new Error(e.error||'HTTP '+r.status);}
-        return await r.json();
+        var saved=await r.json();
+        // Actualizar _folio con el que asignó el backend (correlativo real)
+        if(saved && saved.folio) _folio = saved.folio;
+        return saved;
     }
     async function cargarPresupuesto(){
         if(!_pID) return null;
@@ -1614,7 +1617,7 @@
         document.getElementById('cotFaena').textContent=document.getElementById('solFaena').value||'—';
         document.getElementById('cotFecha').textContent=document.getElementById('solFecha').value||'—';
         document.getElementById('cotVigencia').value=document.getElementById('solVigencia').value||'';
-        document.getElementById('cotFolio').value=nextFolio();
+        document.getElementById('cotFolio').value = _folio || nextFolio();
         // Tabla ítems
         var tbody=document.getElementById('tbodyCot');
         var empty=document.getElementById('emptyCot');
@@ -1656,12 +1659,9 @@
 
     // ── Emitir ──────────────────────────────────────────────────
     function nextFolio(){
-        // Usar folio existente si el registro ya tiene uno, o generar COT-XXXXXX
-        if(_pID){
-            var n=parseInt(_pID.replace(/[^0-9]/g,'').slice(-6))||Math.floor(Math.random()*900000+100000);
-            return 'COT-'+String(n).padStart(6,'0');
-        }
-        return 'COT-'+String(Math.floor(Math.random()*900000+100000));
+        // El folio real lo asigna el backend; este es solo un placeholder visual
+        // Se reemplaza cuando la API responde con el folio guardado
+        return _pID ? (_pID.startsWith('COT-') ? _pID : 'COT-?????') : 'COT-?????';
     }
 
     async function pasarAPedido(){

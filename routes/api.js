@@ -331,9 +331,14 @@ router.get('/presupuestos/:id', async (req, res) => {
 router.post('/presupuestos', async (req, res) => {
     try {
         const d = req.body;
+        // Si el frontend no manda folio válido (COT-XXXXX), generar uno correlativo
+        let folio = d.folio;
+        if (!folio || !/^COT-\d{5}$/.test(folio)) {
+            folio = await nextFolio('presupuestos', 'COT');
+        }
         await pool.query(
             'INSERT INTO presupuestos (id,folio,estado,cliente,cliente_id,cabecera,items,ppto) VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE estado=VALUES(estado),cliente=VALUES(cliente),cliente_id=VALUES(cliente_id),cabecera=VALUES(cabecera),items=VALUES(items),ppto=VALUES(ppto)',
-            [d.id, d.folio||d.id, d.estado||'solicitud', d.cabecera?.cliente||'', d.cabecera?.clienteId||'', JSON.stringify(d.cabecera||{}), JSON.stringify(d.items||[]), JSON.stringify(d.ppto||{})]
+            [d.id, folio, d.estado||'solicitud', d.cabecera?.cliente||'', d.cabecera?.clienteId||'', JSON.stringify(d.cabecera||{}), JSON.stringify(d.items||[]), JSON.stringify(d.ppto||{})]
         );
         const [rows] = await pool.query('SELECT * FROM presupuestos WHERE id=?', [d.id]);
         res.json(rows[0]);
