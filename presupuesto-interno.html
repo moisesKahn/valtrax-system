@@ -2438,23 +2438,8 @@
             var ivaAmt = useIva ? Math.round(neto * 0.19) : 0;
             var total  = neto + ivaAmt;
 
-            // Observaciones izquierda (predeterminadas + nota)
+            // Totales — alineados a la derecha
             var totW = 80, totX = MR_x - totW;
-            var obsTexto = nota || [
-                '1. Validez de la oferta: Precios y condiciones validos hasta la fecha indicada. Pasado este plazo, Valtrax no se hace responsable por cambios.',
-                '2. Stock sujeto a disponibilidad: Productos sujetos a disponibilidad de inventario al momento de confirmar el pedido.',
-                '3. Retiro de mercancia: El cliente debe retirar la mercancia en el plazo acordado. De lo contrario, Valtrax no se hace responsable por el producto.'
-            ].join('\n');
-            var obsLines = doc.splitTextToSize(obsTexto, totX - ML - 4);
-            doc.setFont('helvetica','bold');
-            doc.setFontSize(7);
-            doc.setTextColor(...NAVY);
-            doc.text('Observaciones Generales:', ML, y + 3);
-            doc.setFont('helvetica','normal');
-            doc.setTextColor(...GRAY);
-            doc.text(obsLines, ML, y + 7);
-
-            // Totales — derecha
             var totRows = [];
             if (useIva) {
                 totRows.push({ lbl:'Subtotal (neto):', val: fmtCLP(neto) });
@@ -2491,10 +2476,31 @@
                 }
             });
 
-            y = tyStart + totRows.length * 6 + 8;
+            // Avanzar y al final del bloque de totales
+            y = tyStart + totRows.length * 6 + 10;
 
-            // ── Observaciones (ya dibujadas arriba junto a totales) ──
-            // (bloque eliminado para evitar duplicado)
+            // ── Observaciones — debajo de los totales ──────────────
+            doc.setDrawColor(...BORDER);
+            doc.setLineWidth(0.25);
+            doc.line(ML, y, MR_x, y);
+            y += 5;
+
+            var obsTexto = nota || [
+                '1. Validez de la oferta: Precios y condiciones validos hasta la fecha indicada. Pasado este plazo, Valtrax no se hace responsable por cambios.',
+                '2. Stock sujeto a disponibilidad: Productos sujetos a disponibilidad de inventario al momento de confirmar el pedido.',
+                '3. Retiro de mercancia: El cliente debe retirar la mercancia en el plazo acordado. De lo contrario, Valtrax no se hace responsable por el producto.'
+            ].join('\n');
+
+            doc.setFont('helvetica','bold');
+            doc.setFontSize(7.5);
+            doc.setTextColor(...NAVY);
+            doc.text('Observaciones Generales:', ML, y);
+            y += 4.5;
+            doc.setFont('helvetica','normal');
+            doc.setFontSize(7);
+            doc.setTextColor(...GRAY);
+            var obsLines = doc.splitTextToSize(obsTexto, TW);
+            doc.text(obsLines, ML, y);
 
             // ── Guardar y mostrar ──────────────────────────────────
             _pdfDoc  = doc;
