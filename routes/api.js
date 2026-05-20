@@ -375,6 +375,27 @@ router.delete('/presupuestos/:id', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+/* PATCH /api/presupuestos/:id/pdf  — guarda PDF base64 */
+router.patch('/presupuestos/:id/pdf', async (req, res) => {
+    try {
+        const { pdf_b64 } = req.body;
+        if (!pdf_b64) return res.status(400).json({ error: 'pdf_b64 requerido' });
+        // Crear columna si no existe (idempotente)
+        await pool.query(`ALTER TABLE presupuestos ADD COLUMN IF NOT EXISTS pdf_b64 LONGTEXT NULL`).catch(()=>{});
+        await pool.query('UPDATE presupuestos SET pdf_b64=? WHERE id=?', [pdf_b64, req.params.id]);
+        res.json({ ok: true });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+/* GET /api/presupuestos/:id/pdf  — devuelve PDF base64 */
+router.get('/presupuestos/:id/pdf', async (req, res) => {
+    try {
+        const [rows] = await pool.query('SELECT pdf_b64 FROM presupuestos WHERE id=?', [req.params.id]);
+        if (!rows.length) return res.status(404).json({ error: 'No encontrado' });
+        res.json({ pdf_b64: rows[0].pdf_b64 || null });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 /* ─────────────────────────────────────────────────────────────
    APROBAR COTIZACIÓN → genera Pedido + OC de forma atómica
    POST /api/presupuestos/:id/aprobar

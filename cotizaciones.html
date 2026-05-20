@@ -292,6 +292,21 @@
         </div>
     </main>
 
+    <!-- ══ MODAL VISOR PDF ═══════════════════════════════════════════════ -->
+    <div id="modalVisorPDF" style="display:none;position:fixed;inset:0;z-index:17000;background:rgba(15,23,42,0.55);backdrop-filter:blur(8px);align-items:center;justify-content:center;">
+        <div style="width:95%;max-width:860px;height:90vh;background:#fff;border-radius:16px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 60px rgba(15,23,42,0.3);">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #e2e8f0;background:#f8fafc;">
+                <span style="font-weight:700;font-size:15px;color:#1e293b;"><i class="feather-file-text me-2" style="color:#7c3aed;"></i>Visualizador de Cotización</span>
+                <button onclick="cerrarVisorPDF()" style="background:none;border:none;cursor:pointer;color:#64748b;font-size:20px;line-height:1;">&times;</button>
+            </div>
+            <div id="visorPDFLoading" style="display:flex;flex:1;align-items:center;justify-content:center;color:#64748b;gap:10px;">
+                <span class="spinner-border spinner-border-sm"></span> Cargando PDF...
+            </div>
+            <div id="visorPDFErr" style="display:none;padding:24px;color:#dc2626;text-align:center;font-size:14px;"></div>
+            <iframe id="visorPDFFrame" src="about:blank" style="flex:1;border:none;display:block;"></iframe>
+        </div>
+    </div>
+
     <!-- ══ MODAL GLASS: CONFIRMAR APROBAR PRESUPUESTO ═══════════════════ -->
         <div id="mglass" style="display:none;position:fixed;inset:0;z-index:16000;background:rgba(15,23,42,0.42);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);align-items:center;justify-content:center;">
             <div style="width:90%;max-width:420px;background:rgba(255,255,255,0.96);border:1px solid #e2e8f0;border-radius:20px;padding:36px 32px 28px;box-shadow:0 24px 60px rgba(15,23,42,0.22);font-family:'DM Sans',sans-serif;color:#0f172a;">
@@ -492,10 +507,30 @@
         window.location.href = 'presupuesto-interno.html';
     };
 
-    window.verPDFPpto = function(id){
-        sessionStorage.setItem('vx_ppto_id', id);
-        sessionStorage.setItem('vx_ppto_autopdf', '1');
-        window.location.href = 'presupuesto-interno.html';
+    window.verPDFPpto = async function(id){
+        var modal = document.getElementById('modalVisorPDF');
+        var iframe = document.getElementById('visorPDFFrame');
+        var loading = document.getElementById('visorPDFLoading');
+        var errEl = document.getElementById('visorPDFErr');
+        iframe.src = 'about:blank';
+        loading.style.display = 'flex';
+        errEl.style.display = 'none';
+        modal.style.display = 'flex';
+        try {
+            var r = await fetch('/api/presupuestos/'+id+'/pdf');
+            var data = await r.json();
+            if (!data.pdf_b64) throw new Error('Esta cotización aún no tiene PDF generado. Ábrela y usa "Emitir Cotización" para generarlo.');
+            iframe.src = data.pdf_b64;
+            loading.style.display = 'none';
+        } catch(e) {
+            loading.style.display = 'none';
+            errEl.textContent = e.message;
+            errEl.style.display = 'block';
+        }
+    };
+    window.cerrarVisorPDF = function(){
+        document.getElementById('modalVisorPDF').style.display = 'none';
+        document.getElementById('visorPDFFrame').src = 'about:blank';
     };
 
     // Duplicar presupuesto
