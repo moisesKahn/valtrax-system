@@ -1866,6 +1866,15 @@
         }
         else renderItems();
         setEstado(_estado);
+
+        // Modo solo visor PDF: si viene desde el botón "ojo" en la lista de cotizaciones
+        if(sessionStorage.getItem('vx_ppto_autopdf')==='1'){
+            sessionStorage.removeItem('vx_ppto_autopdf');
+            // Bloquear edición y lanzar el visor PDF automáticamente
+            try { bloquearUI(); } catch(e){}
+            var btn=document.getElementById('btnEmitirCot'); if(btn) btn.style.display='none';
+            setTimeout(function(){ try{ emitirCotizacion(); }catch(e){ console.warn('autopdf:',e); } }, 600);
+        }
     });
 
     function loadForm(obj){

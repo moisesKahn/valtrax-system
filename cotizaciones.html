@@ -48,6 +48,7 @@
     <style id="valtrax-nav-pre-init">
     .nxl-navbar .nxl-submenu{display:none}
     html.valtrax-loading .nxl-navigation,html.valtrax-loading .nxl-navigation *{transition:none!important;animation:none!important}
+    .badge.bg-cotizacion-strong{background:#7c3aed!important;color:#fff!important;font-weight:600;}
     </style>
     <!--! [VALTRAX-NAV-STYLE-END] -->
 </head>
@@ -415,7 +416,7 @@
         'solicitud':   'bg-info-subtle text-info',
         'presupuesto': 'bg-warning-subtle text-warning',
         'pendiente':   'bg-warning-subtle text-warning',
-        'cotizacion':  'bg-purple-subtle text-purple',
+        'cotizacion':  'bg-cotizacion-strong',
         'aprobada':    'bg-success-subtle text-success',
         'rechazada':   'bg-danger-subtle text-danger',
         'inactiva':    'bg-secondary-subtle text-secondary'
@@ -452,6 +453,9 @@
           const accEdit = esPpto
             ? `<button onclick="abrirPresupuesto('${c.id||c.f}')" class="text-primary" title="Abrir" style="background:none;border:none;padding:0;cursor:pointer;"><i class="feather-edit-2"></i></button>`
             : `<button onclick="verPDFCot('${c.f}')" class="text-primary" title="Ver PDF" style="background:none;border:none;padding:0;cursor:pointer;"><i class="feather-eye"></i></button>`;
+          const accPDF = (esPpto && c.e === 'cotizacion')
+            ? `<button onclick="verPDFPpto('${c.id||c.f}')" title="Visualizar PDF" style="background:none;border:none;padding:0;cursor:pointer;color:#7c3aed;"><i class="feather-eye"></i></button>`
+            : '';
           const accDup = esPpto
             ? `<button onclick="duplicarPpto('${c.id||c.f}')" class="text-secondary" title="Duplicar" style="background:none;border:none;padding:0;cursor:pointer;"><i class="feather-copy"></i></button>`
             : '';
@@ -477,7 +481,7 @@
             <td class="fs-12">${c.d}</td><td class="fs-12">${c.v}</td>
             <td><span class="badge ${badge}">${label}</span></td>
             <td class="fw-semibold">${fmt(c.t)}</td><td class="fs-12">${c.r}</td>
-            <td><div class="d-flex align-items-center gap-2 flex-wrap">${accEdit}${accDup}${accExtra}</div></td>
+            <td><div class="d-flex align-items-center gap-2 flex-wrap">${accEdit}${accPDF}${accDup}${accExtra}</div></td>
           </tr>`;
         }).join('')
         : '<tr><td colspan="9" class="text-center text-muted py-4">Sin registros en este estado</td></tr>';
@@ -485,6 +489,12 @@
 
     window.abrirPresupuesto = function(id){
         sessionStorage.setItem('vx_ppto_id', id);
+        window.location.href = 'presupuesto-interno.html';
+    };
+
+    window.verPDFPpto = function(id){
+        sessionStorage.setItem('vx_ppto_id', id);
+        sessionStorage.setItem('vx_ppto_autopdf', '1');
         window.location.href = 'presupuesto-interno.html';
     };
 
@@ -607,9 +617,11 @@
                         var tv=0;
                         items.forEach(function(it){
                             var pp=ppto[it.id]||{};
-                            var sel=(pp.opciones||[]).find(function(o){return o.seleccionada;});
+                            var ops=pp.opciones||[];
+                            var sel=ops.find(function(o){return o.seleccionada;}) || ops[0];
                             if(sel) tv+=(parseFloat(sel.ventaUnit)||0)*(parseFloat(it.cant)||1);
                         });
+                        if(!tv && cab.total) tv = parseFloat(cab.total)||0;
                         return tv||null;
                     })(), r: cab.responsable||'VALTRAX', tipo:'ppto',
                     bloqueado: p.bloqueado, pedido_folio: p.pedido_folio, oc_folio: p.oc_folio
