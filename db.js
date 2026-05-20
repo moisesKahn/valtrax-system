@@ -120,6 +120,7 @@ async function initDB() {
             `ALTER TABLE presupuestos ADD COLUMN financiero   JSON`,
             `ALTER TABLE presupuestos ADD COLUMN ppto         JSON`,
             `ALTER TABLE presupuestos ADD COLUMN items        JSON`,
+            `ALTER TABLE presupuestos ADD COLUMN pdf_b64      LONGTEXT`,
             // pedidos: columnas faltantes
             `ALTER TABLE pedidos ADD COLUMN ppto_id       VARCHAR(40)`,
             `ALTER TABLE pedidos ADD COLUMN cliente_id    VARCHAR(40)`,

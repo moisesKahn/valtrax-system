@@ -303,7 +303,7 @@ router.delete('/oc/:folio', async (req, res) => {
 router.get('/presupuestos', async (req, res) => {
     try {
         const [rows] = await pool.query(
-            'SELECT id, folio, estado, cliente, cliente_id, cabecera, creado_en, actualizado FROM presupuestos ORDER BY creado_en DESC'
+            'SELECT id, folio, estado, cliente, cliente_id, cabecera, items, ppto, bloqueado, pedido_folio, oc_folio, creado_en, actualizado FROM presupuestos ORDER BY creado_en DESC'
         );
         res.json(rows.map(r => ({
             ...r,
@@ -380,8 +380,6 @@ router.patch('/presupuestos/:id/pdf', async (req, res) => {
     try {
         const { pdf_b64 } = req.body;
         if (!pdf_b64) return res.status(400).json({ error: 'pdf_b64 requerido' });
-        // Crear columna si no existe (idempotente)
-        await pool.query(`ALTER TABLE presupuestos ADD COLUMN IF NOT EXISTS pdf_b64 LONGTEXT NULL`).catch(()=>{});
         await pool.query('UPDATE presupuestos SET pdf_b64=? WHERE id=?', [pdf_b64, req.params.id]);
         res.json({ ok: true });
     } catch (e) { res.status(500).json({ error: e.message }); }
